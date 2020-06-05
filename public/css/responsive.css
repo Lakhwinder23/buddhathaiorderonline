@@ -1,0 +1,577 @@
+/*
+====================================
+Medium Screen - Others
+====================================
+*/
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+
+    .main-menu-part ul li a {  
+        display: block;
+        padding: 25px 35px;
+        text-transform: capitalize;
+        font-weight: 500;
+        font-size: 16px;
+        color: #202020;
+        transition: 0.3s all ease;
+        -webkit-transition: 0.3s all ease;
+        -moz-transition: 0.3s all ease;
+        border-right: 1px solid #e8e8e8;
+    }
+
+
+
+
+
+
+}
+
+
+/*
+====================================
+Small Screen - Tablate
+====================================
+*/
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+
+    .header-left img {
+        width: 150px;  
+    }
+
+    .subscribe p {
+        padding-right: 0;
+    }
+    .subscribe form input[type="email"] {
+        width: 100%;
+        margin-bottom: 10px;
+        float: none;
+    }
+    .subscribe form input[type="submit"] {
+        width: 100%;
+        margin-left: 0;
+        font-size: 16px;
+        border-radius: 5px;
+    }   
+
+    .subscribe form input {
+        font-size: 14px;
+    }
+
+    .carousel-caption {
+        position: absolute;
+        right: 15%;
+        bottom: 18%;  
+        left: 15%;
+        z-index: 10;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        color: #fff;
+        text-align: left;
+        padding: 15px;
+        color: #000;
+        border-radius: 5px;
+    }
+
+    .carousel-caption h3 {
+        font-size: 17px!important;
+        margin: 0;
+    }
+
+    .service-item {     
+        margin: 15px 0;
+    }
+
+    .services-bg {
+         padding: 50px 0;
+
+    }
+    .main-menu-part2 ul {
+        margin: 10px 0px 20px 0px;
+        background: #ddd;
+    }
+
+    .main-menu-part2 ul li {
+        display: block;
+        float: none;
+    }
+
+    .main-menu-part2 ul li a {
+        display: block;
+        padding: 12px 0px;     
+        font-size: 14px;
+        border: none;
+        text-align: center;
+    }
+    .main-menu-part2 ul li a:hover {
+        background: #E8E8E8;
+    }
+
+    .main-menu-part2 ul li:nth-last-of-type(1) a {   
+        margin-top: 0px;
+        padding: 12px 0px;  
+     
+
+    } 
+    .main-menu-part2 ul li:nth-last-of-type(2) a {
+        margin-top: 0px;
+        padding: 12px 0px;  
+
+    } 
+
+    .main-menu-part2 ul li:nth-last-of-type(2) a {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .bn-right {
+        margin-top: 30px;
+    }
+
+    .pizza1 h2 {
+        font-size: 22px;
+    }
+
+    #last-pizza {
+        height: initial;
+    }
+    .pizza-photo {
+        height:initial;
+    }
+
+    .cart h2 {
+        font-size: 22px;
+    }
+
+    .res-footer {
+        margin-top: 60px;
+    }
+
+
+
+
+
+
+
+
+
+}
+
+
+/*
+====================================
+Small Screen - Mobile
+====================================
+*/
+
+@media screen and (min-width: 576px) and (max-width: 767px) {  
+
+    .header-left img {
+        width: 140px;  
+    }
+
+    .app-img {
+        margin-top: 40px;
+    }
+    .res-list {
+        text-align: center;
+    }
+    .footer-area {
+        text-align: center;
+    }
+    .footer-logo {
+        margin-top: 40px;
+    }
+    .subscribe {
+        padding: 30px 0;
+        border: none;
+    }
+    .subscribe form input[type="email"] {
+        width: 100%;
+        margin-bottom: 10px;
+        float: none;
+    }
+
+    .subscribe form input[type="submit"] {
+        width: 100%;
+        margin-left: 0;
+        font-size: 16px;
+        border-radius: 5px;
+    }
+
+    .contact {
+        margin-top: 16px;
+        margin-bottom: 30px;
+    }
+
+    .copyright-area .social ul {    
+        float: none;
+        margin-top: 15px;
+    }
+
+    .app-img {
+        margin-top: 40px;
+    }
+
+    .service-item {     
+        margin: 15px 0;
+    }
+
+    .services-bg {
+         padding: 40px 0;
+    }
+
+
+    .main-menu-part2 ul {
+        margin: 10px 0px 20px 0px;
+        background: #ddd;
+    }
+
+    .main-menu-part2 ul li {
+        display: block;
+        float: none;
+    }
+
+    .main-menu-part2 ul li a {
+        display: block;
+        padding: 12px 0px;     
+        font-size: 14px;
+        border: none;
+        text-align: center;
+    }
+
+    .main-menu-part2 ul li a:hover {
+        background: #E8E8E8;
+    }
+
+    .main-menu-part2 ul li:nth-last-of-type(1) a {   
+        margin-top: 0px;
+        padding: 12px 0px;     
+
+    } 
+
+    .main-menu-part2 ul li:nth-last-of-type(2) a {
+        margin-top: 0px;
+        padding: 12px 0px; 
+    } 
+
+    .main-menu-part2 ul li:nth-last-of-type(2) a {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .bnl-one img {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .bnl-one {
+        float: none;
+        margin-right: 0;
+    }
+
+    .bnl-two {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .bnr-one {
+        flex-direction: column;
+    }
+
+    .bnro-left {
+        width: 100%;
+        border-right: 0;
+    }
+
+    .bnro-right {
+        width: 100%;
+    }
+
+    .bnr-two {
+        flex-direction: column;
+    }
+
+    .bnrt-left {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid #d0d0d0;
+    }
+
+    .bnrt-right {
+        width: 100%;
+    }
+
+    .pizza1 h2 {
+        margin: 30px 0;
+        font-size: 28px;
+    }
+
+    .pizza-photo {
+        height: initial;
+    }
+
+    .pizza2 {
+        margin-top: 10px;
+    }
+
+    .ppara {
+        margin-bottom: 30px;
+    }
+
+    #last-pizza {
+        height: initial;
+    }
+
+    .res-footer {
+        margin-top: 50px;
+    }
+
+
+
+
+
+
+
+
+}
+
+
+/*
+====================================
+Xtra Small Screen - Small Mobile
+====================================
+*/
+
+@media screen and (max-width: 576px) {  
+
+     .app-img {
+        margin-top: 30px;
+    }
+
+    .app-links {
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    .footer-area {
+        text-align: center;
+    }
+
+    .footer-logo {
+        margin-top: 40px;
+    }
+
+    .subscribe {
+        padding: 30px 0;
+        border: none;
+    }
+
+    .subscribe form input[type="email"] {
+        width: 100%;
+        margin-bottom: 10px;
+        float: none;
+    }
+
+    .subscribe form input[type="submit"] {
+        width: 100%;
+        margin-left: 0;
+        border-radius: 5px;
+    }
+
+    .contact {
+        margin-top: 16px;
+        margin-bottom: 30px;
+    }   
+       
+    .copyright-area .social ul {    
+        float: none;
+        margin-top: 15px;
+    }
+
+    .app-img {
+        margin-top: 30px;
+    }
+
+    .header-left img {
+        width: 100px;
+    }
+
+    .login {
+        background: #fff;
+        color: #000;
+        padding: 5px 20px;
+        display: inline-block;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+
+    .signup {
+        font-size: 15px;
+        background: #C0E948;
+        color: #000;
+        padding: 5px 20px;
+        display: inline-block;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
+
+    .service-item {     
+        margin: 15px 0;
+        padding: 20px;
+    }
+
+    .services-bg {
+         padding: 40px 0;
+    }
+
+    .navbar-brand2 img {
+        width: 80px;
+    }
+
+    .main-menu-part2 ul {
+        margin: 10px 0px 20px 0px;
+        background: #ddd;
+    }
+
+    .main-menu-part2 ul li {
+        display: block;
+        float: none;
+    }
+
+    .main-menu-part2 ul li a {
+        display: block;
+        padding: 12px 0px;     
+        font-size: 14px;
+        border: none;
+        text-align: center;
+    }
+    .main-menu-part2 ul li a:hover {
+        background: #E8E8E8;
+    }
+
+    .main-menu-part2 ul li:nth-last-of-type(1) a {   
+        margin-top: 0px;
+        padding: 12px 0px;  
+     
+
+    } 
+    .main-menu-part2 ul li:nth-last-of-type(2) a {
+        margin-top: 0px;
+        padding: 12px 0px;  
+
+    } 
+
+
+    .theader-wrapper p {
+        font-size: 13px;
+    }
+
+    .main-menu-part2 ul li:nth-last-of-type(2) a {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .bnl-one img {
+        display: block;
+        margin: 0 auto;
+    }
+
+
+    .bnl-one {
+        float: none;
+        margin-right: 0;
+    }
+
+    .bnl-two {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .bnr-one {
+        flex-direction: column;
+    }
+
+    .bnro-left {
+        width: 100%;
+        border-right: 0;
+    }
+
+    .bnro-right {
+        width: 100%;
+    }
+
+    .bnr-two {
+        flex-direction: column;
+    }
+
+    .bnrt-left {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid #d0d0d0;
+    }
+
+    .bnrt-right {
+        width: 100%;
+    }
+
+    .pizza1 h2 {
+        margin: 30px 0;
+        font-size: 22px;
+    }
+
+    .pizza-photo {
+        height: initial;
+    }
+
+    .pizza2 {
+        margin-top: 10px;
+    }
+
+    .ppara {
+        margin-bottom: 30px;
+    }
+
+    .search-area form input {
+        width: 65%;     
+        padding: 5px 15px;     
+    }
+
+    .search-area form input[type="submit"] {
+        width: 30%;       
+        padding: 5px 15px;      
+    }
+
+    .search-area {
+        padding: 35px 0;
+    }
+
+    .res-part-top h2 {
+        font-size: 26px;
+    }
+
+    .restaurant-item {
+        margin-bottom: 15px;
+    }
+
+    .restaurants-part {
+        margin-top: 15px;
+    }
+
+    .res-footer {
+        margin-top: 30px;
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

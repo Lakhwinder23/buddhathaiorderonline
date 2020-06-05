@@ -1,0 +1,37 @@
+<?php
+
+$request = new HttpRequest();
+$request->setUrl('http://rules.diningtek.com/api/v1/merchants/shop/search');
+$request->setMethod(HTTP_METH_GET);
+
+$request->setQueryData(array(
+  'distance_min' => '0.0',
+  'distance_max' => '50000000',
+  'page' => '0',
+  'size' => '100',
+  'search' => 'REGIONAL',
+  'serviceType' => 'NO',
+  'lt' => '39.6579328',
+  'ln' => '-105.0799494',
+  'opened_only' => 'false'
+));
+
+$request->setHeaders(array(
+  'cache-control' => 'no-cache',
+  'Connection' => 'keep-alive',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Host' => 'rules.diningtek.com',
+  'Postman-Token' => '9f949da0-eb3b-4a9c-ac15-f2d457a07c75,2443ab39-009d-4e18-a76e-eb563201f25f',
+  'Cache-Control' => 'no-cache',
+  'Accept' => '*/*',
+  'User-Agent' => 'PostmanRuntime/7.15.2',
+  'authorization' => 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhY2Nlc3NfdG9rZW4iOiIxNGY5ZDYzZS0xZDVkLTRhYjYtYWMyNi0zNDdlYjhkMWE3Y2EiLCJzdWIiOiJvcmcuc3ByaW5nZnJhbWV3b3JrLnNlY3VyaXR5LmNvcmUudXNlcmRldGFpbHMuVXNlckBjYmU5YjVkYTogVXNlcm5hbWU6IHRpZmZpbjsgUGFzc3dvcmQ6IFtQUk9URUNURURdOyBFbmFibGVkOiB0cnVlOyBBY2NvdW50Tm9uRXhwaXJlZDogdHJ1ZTsgY3JlZGVudGlhbHNOb25FeHBpcmVkOiB0cnVlOyBBY2NvdW50Tm9uTG9ja2VkOiB0cnVlOyBOb3QgZ3JhbnRlZCBhbnkgYXV0aG9yaXRpZXMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MjY1NDExMzUyNjUsImV4cCI6Nzc2NjI4MTE1Nzk5MzM3Nn0.iBYnE8GECEHDNjm7rXPV72VaYSOBkAyBg_woOBn3DeDOV7p-RU-KjnECFUnntZHW6qBYYyZGZnrMMIrESoKM5g'
+));
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
