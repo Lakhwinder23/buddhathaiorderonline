@@ -1,7 +1,7 @@
 export const config = {
     api_base: 'https://prod.diningtek.com/api/v1',
     api_root : 'https://prod.diningtek.com',
-    logo_img_root : '/img/world-cafe-banner-3.png',
+    logo_img_root : '/img/buddhathai-logo.png',
     banner_img_root : '/img/world-cafe-banner-2.png',
     resid : '74eceb74a110642705621d1a0d21fd9c',
     key_value : 'buddhathaikitchen',

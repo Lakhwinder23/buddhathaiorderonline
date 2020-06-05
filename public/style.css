@@ -36,7 +36,7 @@ a:hover {
 
 ::selection {
     color: white;
-    background: #ec932f;
+    background: #558333;
 }
 p.modal-required {
     margin-bottom: 0px !important;
@@ -45,12 +45,12 @@ p.modal-required {
 }
 ::-webkit-selection {
     color: white;
-    background: #ec932f;
+    background: #558333;
 }
 
 ::-moz-selection {
     color: white;
-    background: #ec932f;
+    background: #558333;
 }
 .handle-counter .type-error .addon-content {
     color: #fff;
@@ -85,7 +85,7 @@ div#handleCounter3 .__react_component_tooltip.type-error {
 }
 
 .scrolltotop:hover {
-    background: #ec932f;
+    background: #558333;
     color: #fff;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
     -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, .5);
@@ -143,7 +143,7 @@ div#handleCounter3 .__react_component_tooltip.type-error {
     width: 30%;
     border: none;
     float: right;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 8px;
     cursor: pointer;
     color: #fff;
@@ -164,11 +164,11 @@ div#handleCounter3 .__react_component_tooltip.type-error {
     cursor: pointer;
 }
 .carousel-indicators.active , .carousel-indicators li:hover{
-  background-color: #ec932f !important;
+  background-color: #558333 !important;
 }
 
 .carousel-indicators .active {
-    background-color: #ec932f !important;
+    background-color: #558333 !important;
 }
 .carousel-control-next, .carousel-control-prev {
     display: none;
@@ -205,7 +205,7 @@ div#handleCounter3 .__react_component_tooltip.type-error {
 	border:2px solid #292929;
 }
 .header-caption-inner span{
-	color:#ec932f;
+	color:#558333;
 	font-weight: 600;
 	font-family: 'Bambino';
 	/* text-transform:uppercase; */
@@ -252,7 +252,7 @@ div#handleCounter3 .__react_component_tooltip.type-error {
 }
 
 .signup {
-  background: #ec932f;
+  background: #558333;
 color: #fff;
 padding: 7px 18px;
 display: inline-block;
@@ -295,15 +295,15 @@ border: none
 }
 .login-form-button .btn-success {
     color: #fff !important;
-    background-color: #ec932f !important;
-    border-color: #ec932f !important;
+    background-color: #558333 !important;
+    border-color: #558333 !important;
 }
 .login_icon img {
     width: 150px;
 }
 div#modal3 .modal-footer button {
-  background-color: #ec932f !important;
-  border-color: #ec932f !important;
+  background-color: #558333 !important;
+  border-color: #558333 !important;
 }
 .login .form-check {
     text-align: left;
@@ -390,7 +390,7 @@ button.headertwo_signup:hover {
       color: #000;
 }
 .hungry-heading{
-    color: #ec932f;
+    color: #558333;
     font-weight: bold;
 }
 .Hungary-form {
@@ -414,13 +414,13 @@ button.headertwo_signup:hover {
     padding: 17px;
 }
 .Hungary-form .search-input-container .clear-button {
-    background: #ec932f;
+    background: #558333;
     padding: 15px;
     float: right;
     border-radius: 10px 0px 0px 10px;
     margin-top: -10px;
     color: #fff;
-    border-color: #ec932f;
+    border-color: #558333;
 }
   .search-input-container {
     padding: 10px;
@@ -569,7 +569,7 @@ button.headertwo_signup:hover {
     text-align: right;
     display: block;
     font-weight: bold;
-    color: #ec932f;
+    color: #558333;
 }
 
 .res-list {
@@ -690,7 +690,7 @@ button.headertwo_signup:hover {
     outline: none;
     font-size: 14px;
     border: none;
-    background: #ec932f;
+    background: #558333;
     text-transform: uppercase;
     cursor: pointer;
     transition: 0.2s all ease;
@@ -849,7 +849,7 @@ button.headertwo_signup:hover {
 
 .main-menu-part2 ul li:nth-last-of-type(3) a {
     padding: 8px 25px;
-    background: #ec932f;
+    background: #558333;
     margin-left: 40px;
     border:none;
     margin-top: 16px;
@@ -997,7 +997,7 @@ li.phone-header a {
     width: 31%;
     float: left;
     padding-left: 525px;
-    color: #ec932f;
+    color: #558333;
     font-weight: 700;
 }
 /* -- header-area end -- */
@@ -1265,11 +1265,11 @@ span.phone-ic {
 }
 .main-link ul li.active-item a {
     font-weight: 600;
-    border-left: 4px solid #ec932f;
+    border-left: 4px solid #558333;
 }
 
 .main-link ul li a:hover {
-    border-left: 4px solid #ec932f;
+    border-left: 4px solid #558333;
     font-weight: 600;
 }
 
@@ -1277,7 +1277,7 @@ span.phone-ic {
     padding-bottom: 8px;
     display: inline-block;
     padding-right: 30px;
-    border-bottom: 4px solid #ec932f;
+    border-bottom: 4px solid #558333;
     margin-bottom: 50px;
 }
 
@@ -1334,7 +1334,7 @@ li.phone-header {
     display: inline-block;
     float: right;
     color: #000;
-    background-color: #ec932f;
+    background-color: #558333;
     padding: 8px 35px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -1345,7 +1345,7 @@ button.addbutton {
     float: right;
     color: #fff;
     font-weight: 600;
-    background-color: #ec932f;
+    background-color: #558333;
     padding: 8px 35px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -1357,7 +1357,7 @@ button.addbutton {
 
 .count {
     float: right;
-    background: #ec932f;
+    background: #558333;
     padding: 5px;
 }
 
@@ -1542,7 +1542,7 @@ select#tip-select-checkout {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 10px 81px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -1557,7 +1557,7 @@ select#tip-select-checkout {
     font-size: 15px;
     font-weight: 500;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 15px 23px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -1569,7 +1569,7 @@ select#tip-select-checkout {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 0;
     border: none;
     transition: all .2s ease;
@@ -1634,7 +1634,7 @@ div#modal3 {
 	box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.18);
 }
 .contact-form .btn-submit{
-    background: #ec932f;
+    background: #558333;
     border: 0;
     border-radius: 0;
     font-size: 30px;
@@ -1728,7 +1728,7 @@ span.opening-hours {
     width: 20%;
     display: inline-block;
     padding: 10px 15px;
-    background: #ec932f;
+    background: #558333;
     border: none;
     color: #fff;
     float: right;
@@ -1786,7 +1786,7 @@ img.restaurant-image {
 }
 
 .restaurant-item:hover .coupon-part {
-    background: #ec932f;
+    background: #558333;
 }
 
 .restaurant-content h4 {
@@ -1857,7 +1857,7 @@ img.restaurant-image {
 .res-part-top h2 {
     display: inline-block;
     padding-bottom: 5px;
-    border-bottom: 5px solid #ec932f;
+    border-bottom: 5px solid #558333;
 }
 
 .res-part-top {
@@ -1890,7 +1890,7 @@ code {
 
 hr.product-line {
     width: 63% !important;
-    border-top: 2px solid #ec932f !important;
+    border-top: 2px solid #558333 !important;
 }
 .product-name {
     text-align: center;
@@ -1905,24 +1905,24 @@ hr.product-line {
 .total-butn.btn.btn-success {
     margin-right: 166px;
     color: #fff !important;
-    background-color: #ec932f !important;
-    border-color: #ec932f !important;
+    background-color: #558333 !important;
+    border-color: #558333 !important;
     font-weight: 600;
 }
 
 button.repeat-last.btn.btn-success {
     margin-right: 115px;
-    background-color: #ec932f;
+    background-color: #558333;
     font-weight: 600;
 }
 button.Ichosse.btn.btn-secondary{
-    background-color: #ec932f;
+    background-color: #558333;
     font-weight: 600;
 }
 button.add-butn.btn.btn-success {
     color: #fff !important;
-    background-color: #ec932f !important;
-    border-color: #ec932f !important;
+    background-color: #558333 !important;
+    border-color: #558333 !important;
     font-weight: 600;
 }
 .loader {
@@ -1988,7 +1988,7 @@ box-shadow: 0px 0px 22px #000;
 .con-form form button {
     border: none;
     outline: none;
-    background-color: #ec932f;
+    background-color: #558333;
     color: #fff;
     text-transform: uppercase;
     font-size: 18px;
@@ -2121,8 +2121,8 @@ span.Coupon-Applied {
     color: black;
 }
 .Apply-Coupon-input button.btn.btn-secondary {
-    background-color: #ec932f !important;
-    border-color: #ec932f !important;
+    background-color: #558333 !important;
+    border-color: #558333 !important;
     color: #fff !important;
     font-weight: 600 !important;
 }
@@ -2228,10 +2228,10 @@ padding-top: 15px;
 
 }
 .address-form .Loc-form .radio-checkout-form-btn:hover input ~ .checkmark {
-  background-color: #ec932f;
+  background-color: #558333;
 }
 .address-form .Loc-form .radio-checkout-form-btn input:checked ~ .checkmark {
-  background-color: #ec932f;
+  background-color: #558333;
 }
 .address-form .Loc-form .radio-checkout-form-btn {
     width: 100%;
@@ -2275,7 +2275,7 @@ span.phone-error {
     height: auto;
 }
 .address-form .Loc-form-btn {
-  background-color: #ec932f !important;
+  background-color: #558333 !important;
   background-image: none !important;
   border: 0px;
   color: #fff;
@@ -2288,7 +2288,7 @@ span.phone-error {
 }
 .address-box .Loc-form-btn {
     padding: 15px;
-    background-color: #ec932f !important;
+    background-color: #558333 !important;
     background-image: none !important;
     border: 0px;
     color: #fff;
@@ -2311,13 +2311,13 @@ span.phone-error {
     position: absolute;
 }
 .address-form .Loc-form-btn span{
-    background: #ec932f !important;
+    background: #558333 !important;
     height: auto!important;
   padding: 9px 15px!important;
   border-radius: 0px!important;
 }
 .address-box .Loc-form-btn span{
-    background: #ec932f !important;
+    background: #558333 !important;
 }
 .address-form .Loc-form .Loc-form-btn:hover {
     opacity: 0.7;
@@ -2394,14 +2394,14 @@ p.secure-content {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 52px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
     -moz-transition: all .2s ease;
 }
 .address-box .deliver-btn {
-  background: #ec932f;
+  background: #558333;
   padding: 16px;
   text-align: center;
   color: #000;
@@ -2417,7 +2417,7 @@ font-weight: 500;
 }
 
 h2.inner {
-    background-color: #ec932f;
+    background-color: #558333;
     color: #fff;
     margin: -25px 0px 25px -15px;
     padding: 12px 15px;
@@ -2443,12 +2443,12 @@ small.text-muted.cart-text.form-text {
 
 /* .stripe-button-el {
     background-image: none !important;
-    background-color: #ec932f !important;
+    background-color: #558333 !important;
   }
 
   .stripe-button-el span {
     background-image: none !important;
-    background-color: #ec932f !important;
+    background-color: #558333 !important;
   } */
 /*---- Checkout End ----*/
 
@@ -2507,7 +2507,7 @@ h6.Tip-Amount-text {
     border-right: 1px solid #e8e8e8;
     border-left: 1px solid #e8e8e8;
     padding: 7px 25px;
-    background: #ec932f;
+    background: #558333;
     /* margin-left: 40px; */
     border: none;
     margin-top: 16px;
@@ -2625,7 +2625,7 @@ button.available-for-sale {
     min-height: 650px;
 }
 .card-section-inner {
-  background-color: #ec932f;
+  background-color: #558333;
       color: #fff;
       margin: 0px 0px 25px -15px;
       padding: 12px 15px;
@@ -2636,7 +2636,7 @@ button.available-for-sale {
       border-top-right-radius: 3px;
 }
 .google-map h5 {
-    border-bottom: 2px solid #ec932f;
+    border-bottom: 2px solid #558333;
     padding-bottom: 3px;
     width: 23%;
 }
@@ -2645,14 +2645,14 @@ button.available-for-sale {
     margin-top: 10px;
 }
 .schedule h5 {
-    border-bottom: 2px solid #ec932f;
+    border-bottom: 2px solid #558333;
     padding-bottom: 3px;
     width: 46%;
     margin-bottom: 25px;
 }
 
 .footer-address h5 {
-    border-bottom: 2px solid #ec932f;
+    border-bottom: 2px solid #558333;
     padding-bottom: 3px;
     width: 25%;
     margin-bottom: 25px;
@@ -2769,7 +2769,7 @@ button.available-for-sale {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 45px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -2784,7 +2784,7 @@ button.available-for-sale {
     font-size: 15px;
     font-weight: 500;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 15px 23px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -3003,7 +3003,7 @@ bottom: auto;
 }
 .main-link ul li a:hover {
     font-weight: 600;
-    background-color: #ec932f;
+    background-color: #558333;
     color: #fff;
     border: none;
 }
@@ -3022,7 +3022,7 @@ span#lblCartCount {
 /* when play store and app store is not present end*/
 .main-menu-part2 ul li:nth-last-of-type(3) a {
     padding: 8px 5px;
-    background: #ec932f;
+    background: #558333;
     margin-left: 1px;
     margin-top: 16px;
     margin-right: 5px;
@@ -3137,7 +3137,7 @@ li.phone-header {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 123px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -3148,7 +3148,7 @@ li.phone-header {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 140px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -3163,7 +3163,7 @@ li.phone-header {
     font-size: 15px;
     font-weight: 500;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 15px 23px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -3358,7 +3358,7 @@ ul.pagination li {
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 0;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -3378,7 +3378,7 @@ ul.pagination li {
     width: 31%;
     float: left;
     padding-left: 321px;
-    color: #ec932f;
+    color: #558333;
     font-weight: 700;
 }
   li.phone-header {
@@ -3419,7 +3419,7 @@ span#lblCartCount {
 /* when play store and app store no present end */
 .main-menu-part2 ul li:nth-last-of-type(3) a {
     padding: 8px 25px;
-    background: #ec932f;
+    background: #558333;
     margin-left: 0px;
     margin-top: 16px;
     margin-right: 5px;
@@ -3471,7 +3471,7 @@ bottom: auto;
     width: 31%;
     float: left;
     padding-left: 321px;
-    color: #ec932f;
+    color: #558333;
     font-weight: 700;
 }
   .main-menu-part2 ul li:nth-last-of-type(1) {
@@ -3532,7 +3532,7 @@ bottom: auto;
     width: 31%;
     float: left;
     padding-left: 321px;
-    color: #ec932f;
+    color: #558333;
     font-weight: 700;
 }
 .row.menu-heading h3 {
@@ -3582,7 +3582,7 @@ margin-left: 81px;
     font-size: 18px;
     font-weight: 600;
     color: #fff;
-    background: #ec932f;
+    background: #558333;
     padding: 8px 98px;
     transition: all .2s ease;
     -webkit-transition: all .2s ease;
@@ -3600,7 +3600,7 @@ button.add-butn.btn.btn-success {
     margin-right: -3px !important;
 }
 .address-form .Loc-form-btn span {
-    background: #ec932f !important;
+    background: #558333 !important;
     height: auto!important;
     padding: 9px 4px!important;
     border-radius: 0px!important;
@@ -3614,8 +3614,8 @@ small.text-muted.cart-text.form-text {
   .total-butn.btn.btn-success {
     margin-right: 144px;
     color: #fff !important;
-    background-color: #ec932f !important;
-    border-color: #ec932f !important;
+    background-color: #558333 !important;
+    border-color: #558333 !important;
     font-weight: 600;
 }
 .main-menu-part2 ul li:nth-last-of-type(1) {
@@ -3635,7 +3635,7 @@ li.phone-header {
     width: 31%;
     float: left;
     padding-left: 321px;
-    color: #ec932f;
+    color: #558333;
     font-weight: 700;
 }
 }
