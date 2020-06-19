@@ -1010,8 +1010,8 @@ const incrementwithAddon = () =>{
                             <img src={item.image} alt="images not found" />
                           </div>
                           <div className="pprise">
-                            <h6>{item.name.slice(0, 22)}</h6>
-                            <p>{item.shortDescription.slice(0, 85)}</p>
+                            <h6>{item.name}</h6>
+                            <p>{item.shortDescription}</p>
                           </div>
 
                           <div className={showLoader}>
