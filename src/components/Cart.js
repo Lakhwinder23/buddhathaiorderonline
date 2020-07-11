@@ -438,7 +438,7 @@ const cart =
                   : "pamout show_button";
               return (
                 <div className="corn-contant" key={index}>
-                  <p>{item.itemName.slice(0, 15)}</p>
+                  <p>{item.itemName}</p>
                   {item.addons.map((first_addon, index) => {
                     return (
                       <p className="cart-addon" key={index}>

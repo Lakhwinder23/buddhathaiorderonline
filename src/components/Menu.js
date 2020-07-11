@@ -380,7 +380,7 @@ useMemo(() =>{
                     })
                     setOne_addon_of_particular_addongroups(one_addon_of_particular_addongroups.filter( (ele, ind) => ind === one_addon_of_particular_addongroups.findIndex( elem => elem.addOnId === ele.addOnId)))
                   }
-      setFinal_addon_array(one_addon_of_particular_addongroups)
+      //setFinal_addon_array(one_addon_of_particular_addongroups)
     }
   },[one_addon_of_particular_addongroups])
 // when one_addon_of_particular_addongroups has value hook end
@@ -574,13 +574,14 @@ const handleClose = () =>{
 
 // add with addon product to bucket function start
 const saveAddon = () =>{
+  console.log('final addons', final_addon_array);
   setShowmodal2(false)
   setTrue_addongroups([])
   setIsRequired_addongroup([])
   setIsRequired_addongroup_state(false)
   const items_info = {
     final_user_token : finalUserToken,
-    final_addon_array :final_addon_array,
+    final_addon_array :final_addon_array.concat(storage_all_user_addon),
     Unique_bucket_Id : uniqueBucketId,
     product_id : current_product_id,
     cookingInstruction:cookingInstruction,
@@ -613,7 +614,9 @@ const selecthandlechange = (event) =>{
 
       const new_select_addon = { addOnId: event.target.value, quantity: 1 };
       setSelect_final_addon_array(new_select_addon)
+      console.log('new_select_addon', new_select_addon);
   }
+
 }
 // select function End
 
@@ -634,6 +637,8 @@ const radiohandlechange = (event) =>{
       })
     });
     setRadio_final_addon_array(new_radio_addon)
+    console.log('new_radio_addon', new_radio_addon);
+    console.log('final_addon_array', final_addon_array);
 }
 // radiohandlechange function End
 
@@ -668,6 +673,7 @@ const toggle = (event) =>{
             }
           });
       });
+      console.log('final_addon_array', final_addon_array);
 }
 // toggle function End
 

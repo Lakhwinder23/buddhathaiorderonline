@@ -799,7 +799,7 @@ const handleclosecoupon = () => {
             totalprice = item.unit_price * item.qty;
             return(
               <div className="pamout checkout" id="pamut-number" key={index}>
-                  <p>{item.itemName.slice(0, 18)}</p>
+                  <p>{item.itemName}</p>
                     <span>${Number(totalprice, 2).toFixed(2)}</span>
                   <div className="count" id="countted">
                       <div className="handle-counter" id="handleCounter14">
