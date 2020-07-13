@@ -74,9 +74,13 @@ const [withoutAddonProductId,setWithoutAddonProductId] = useState(null)
 const [cookingInstruction,setCookingInstruction] = useState(null)
 const [showmodal2,setShowmodal2] = useState(false)
 const [final_addon_array,setFinal_addon_array] = useState([])
+console.log("final_addon_array",final_addon_array)
 const [radio_final_addon_array,setRadio_final_addon_array] = useState(null)
 const [select_final_addon_array,setSelect_final_addon_array] = useState(null)
+const [checkbox_final_addon_array,setCheckbox_final_addon_array] = useState([])
+console.log("checkbox_final_addon_array",checkbox_final_addon_array)
 const [current_addongroups,setCurrent_addongroups] = useState([])
+console.log("current_addongroups",current_addongroups)
 const [selected_product_modal,setSelected_product_modal] = useState([])
 const [show,setShow] = useState(false)
 const [isRequired_addongroup,setIsRequired_addongroup] = useState([])
@@ -348,18 +352,26 @@ useMemo(() =>{
 
 // when storage_all_user_addon has value hook start
   useMemo(() =>{
+    console.log("storage_all_user_addon--",storage_all_user_addon)
     if(storage_all_user_addon && storage_all_user_addon.length > 0){
+        console.log("storage_all_user_addon------",storage_all_user_addon)
       current_addongroups.filter(itemq =>itemq.addOnGroupId == addongroup_id).map(item11 =>
         {
-                return item11.addons.filter(addons =>addons.addOnId != event_data).map(item6 =>
-                  storage_all_user_addon.map((item8,index) =>{
-                        if(item8.addOnId === item6.addOnId){
-                          setCurrent_addon_total(current_addon_total - item6.unitPrice)
-                          storage_all_user_addon.splice(index,1);
+            if(item11.type != "CHECKBOX"){
+              console.log("nehasaini",item11.type)
+              return item11.addons.filter(addons =>addons.addOnId != event_data).map(item6 =>
+                storage_all_user_addon.map((item8,index) =>{
+                      if(item8.addOnId === item6.addOnId){
+                        setCurrent_addon_total(current_addon_total - item6.unitPrice)
+                        storage_all_user_addon.splice(index,1);
 
-                        }
-                  })
-                )
+                      }
+                })
+              )
+            }
+            else{
+              return null
+            }
               });
     }
 
@@ -436,6 +448,14 @@ useMemo(() =>{
       setStorage_all_user_addon([...storage_all_user_addon,radio_final_addon_array])
     }
   },[radio_final_addon_array])
+// when radio_final_addon_array has value hook end
+
+// when radio_final_addon_array has value hook start
+  useMemo(() =>{
+    if(checkbox_final_addon_array && checkbox_final_addon_array.length > 0){
+      setFinal_addon_array([...final_addon_array,...checkbox_final_addon_array])
+    }
+  },[checkbox_final_addon_array])
 // when radio_final_addon_array has value hook end
 
   useMemo(() =>{
@@ -650,11 +670,12 @@ const toggle = (event) =>{
           .filter(addon => addon.addOnId === event.target.value)
           .map(addonstate => {
             // if("value" in addonstate)
+            setAddongroup_id(addongroup.addOnGroupId)
             if (addonstate.value === true) {
 
-               final_addon_array.map((item8,index) =>{
+               storage_all_user_addon.map((item8,index) =>{
                     if(item8.addOnId === event.target.value){
-                      final_addon_array.splice(index,1);
+                      storage_all_user_addon.splice(index,1);
                     }
               })
               const remaining_selected_addons = current_selected_addons_array.filter(
@@ -662,13 +683,13 @@ const toggle = (event) =>{
               );
               setCurrent_addon_total(current_addon_total - addonstate.unitPrice)
               setCurrent_selected_addons_array(remaining_selected_addons)
-              setFinal_addon_array(final_addon_array.filter( (ele, ind) => ind === final_addon_array.findIndex( elem => elem.addOnId === ele.addOnId)))
+              setStorage_all_user_addon(storage_all_user_addon.filter( (ele, ind) => ind === storage_all_user_addon.findIndex( elem => elem.addOnId === ele.addOnId)))
               addonstate.value = false;
             } else if(addonstate.value === false || addonstate.value === undefined) {
               const new_Addon = { addOnId: event.target.value, quantity: 1 };
               setCurrent_addon_total(current_addon_total + addonstate.unitPrice)
               setCurrent_selected_addons_array(current_selected_addons_array.concat(addonstate))
-              setFinal_addon_array(final_addon_array.concat(new_Addon))
+              setStorage_all_user_addon([...storage_all_user_addon,new_Addon])
               addonstate.value = true;
             }
           });
