@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
-import CheckoutHeader from './CheckoutDataHeader';
-import StripeCheckout from 'react-stripe-checkout';
-import HeaderTwo from './HeaderTwo';
-import CheckoutDataHeader from './CheckoutDataHeader';
+import React,{useEffect,useMemo,useState} from 'react'
+import { useSelector,useDispatch } from 'react-redux';
+import Header from './Header'
+import Footer from './Footer'
+import StripeCheckout from 'react-stripe-checkout'
 import Modal from "react-bootstrap/Modal";
-import Footer from './Footer';
-import {config} from '../config';
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import { Button ,
@@ -16,1333 +14,817 @@ import { Button ,
   } from 'react-bootstrap';
   import {injectStripe} from 'react-stripe-elements';
   import CardSection from './CardSection';
-class Checkout extends Component {
-      constructor(props){
-        super(props);
-        this.state = {
-          checkout_header_info : this.props.location && this.props.location.checkoutinfodata
-          ? this.props.location.checkoutinfodata
-          : [],
-          Delivery_info : [],
-          showmodal_cart_empty : false,
-          cart_empty_click : true,
-          checkout_Delivery_cost : this.props.location && this.props.location.Delivery_cost ? this.props.location.Delivery_cost : 0,
-          apply_coupon_info : [],
-          coupon_applied : [],
-           apply_coupon_state : false,
-           apply_coupon_amount : '0',
-           remove_coupon_status : false,
-           order_loader : false,
-          first_name : '',
-          last_name : '',
-          telephone : '',
-          email : '',
-          address : '',
-          city : '',
-          postal_code : '',
-          state: '122',
-          country : '254',
-          notes_restaurant :'',
-          payment_token :'',
-          payment_complete :false,
-          order_info :[],
-          country_info :'',
-          state_info : [],
-          address_info:[],
-          phone_error : false,
-          email_error : false,
-          lastname_error : false,
-          firstname_error : false,
-          postal_code_error : false,
-          Unique_bucket_Id : this.props.location && this.props.location.bucket_id ? this.props.location.bucket_id : "",
-          checkout_Delivery_method:this.props.location && this.props.location.Delivery_method ? this.props.location.Delivery_method : [],
-          checkout_pickup_restaurant:this.props.location && this.props.location.pickup_restaurant ? this.props.location.pickup_restaurant : "",
-          cart_item_tip:this.props.location && this.props.location.checkout_cart_item_tip ? this.props.location.checkout_cart_item_tip : [],
-          checkout_tip_rate_fees:this.props.location && this.props.location.tip_rate_fees ? this.props.location.tip_rate_fees : [],
-          checkout_address_user : [],
-          user_address_id : null,
-          stripe_key:null,
-          checkout_tip_rate:this.props.location && this.props.location.tip_rate ? this.props.location.tip_rate : null,
-          stripe_info : [],
-          merchant_info : [],
-          final_user_checkout_email : '',
-          final_user_checkout_token : '',
-          selected_address : '',
-          apply_coupoon : null,
-          cart_above_data_checkout : this.props.location && this.props.location.cart_above_data ?
-          this.props.location.cart_above_data : [],
-          cartdetails_checkout :this.props.location && this.props.location.cartdetails ? this.props.location.cartdetails :[],
-          business_data :[],
-          coupon_error : null,
-           coupon_error_modal : false,
-           is_shop_open : false,
-           static_resource_endpoint : null,
-           static_resource_sufix : null,
-           stripe_error : null,
-           checkout_error:null,
-          order_now_click:false,
-          cartdetails_item_checkout : this.props.location && this.props.location.cartdetails_item ? this.props.location.cartdetails_item : []
-        }
-        this.Getinformation = this.Getinformation.bind(this);
-        this.checkoutinfo = this.checkoutinfo.bind(this);
-        this.guestcheckoutinfo = this.guestcheckoutinfo.bind(this);
+import { fetchCountries } from '../Redux/GetCountries/GetCountriesActions';
+import { fetchStates } from '../Redux/GetStates/GetStatesActions';
+import { fetchAddress } from '../Redux/GetAddress/GetAddressActions';
+import { updateShippingMethod } from '../Redux/UpdateShippingMethod/UpdateShippingMethodActions';
+import { fetchBucket } from '../Redux/Bucket/BucketActions';
+import { updateItemQuantity } from '../Redux/UpdateItemQuantity/UpdateItemQuantityActions';
+import { addTip } from '../Redux/AddTip/AddTipActions';
+import { applyCoupon } from '../Redux/ApplyCoupon/ApplyCouponActions';
+import { removeCoupon } from '../Redux/RemoveCoupon/RemoveCouponActions';
+import { paymentCheckout } from '../Redux/PaymentCheckout/PaymentCheckoutActions';
+import { addAddress } from '../Redux/AddAddress/AddAddressActions';
 
-        this.incrementNew = this.incrementNew.bind(this);
-        this.decrementNew = this.decrementNew.bind(this);
-        this.incrementwithAddon = this.incrementwithAddon.bind(this);
-        this.decrementwithAddon = this.decrementwithAddon.bind(this);
-      }
+function Checkout(props){
+  // store data access start
+      const countries_data = useSelector(state =>state.GetCountries)
+      const states_data = useSelector(state =>state.GetStates)
+      const address_data = useSelector(state =>state.GetStates)
+      const updateShippingMethod_data = useSelector(state =>state.UpdateShippingMethod)
+      const bucket_data = useSelector(state =>state.Bucket)
+      const updateItemQuantity_data = useSelector(state =>state.UpdateItemQuantity)
+      const tip_data = useSelector(state => state.AddTip)
+      const applyCoupon_data = useSelector(state =>state.ApplyCoupon)
+      const removeCoupon_data = useSelector(state =>state.RemoveCoupon)
+      const paymentCheckout_data = useSelector(state =>state.PaymentCheckout)
+      const addAddress_data = useSelector(state =>state.AddAddress)
+  // store data access End
+  const dispatch = useDispatch()  // for accessing the redux function
 
+  // component all states define start
+  const [finalUserEmail,setFinalUserEmail] = useState("")
+  const [finalUserToken,setFinalUserToken] = useState("")
+  const [uniqueBucketId,setUniqueBucketId] = useState("")
+  const [banner_info,setBanner_info] = useState([])
+  const [delivery_cost,setDelivery_cost] = useState(0)
+  const [tip_rate_fees,setTip_rate_fees] = useState([])
+  const [configResponseData,setConfigDciResponseData] = useState({
+                                                                  stripe_info:[],
+                                                                  static_resource_endpoint:null,
+                                                                  static_resource_sufix:null,
+                                                                  is_shop_open:false,
+                                                                  static_resource_categories_prefix:null,
 
-      deliveryhandler = event => {
-        const url4 =
-          `${config.api_base}/users/business/bucket/update_shipping_method?access_token=${this.state.final_user_checkout_token}`;
-        fetch(url4, {
-          method: "POST",
-          body: JSON.stringify({
-            form_id: "",
-            user_id: this.state.final_user_checkout_email,
-            fields: {
-              bucketId: this.state.Unique_bucket_Id,
-              shippingId : event.target.value
-            }
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(response => response.json())
-              .then(delivery => {
-                this.setState({
-                  Delivery_info: delivery.object
-                });
-              }).then(() =>{
-                this.setState({
-                  checkout_Delivery_cost : this.state.Delivery_info.cost
-                })
-              })
-          .catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-        }
+                                                                    })
+  const [bucketDciResponseData,setBucketDciResponseData] = useState({
+                                                            Detailed_cart:[],
+                                                            Detailed_cart_item:[],
+                                                            cart_item_tip:[],
+                                                            Detailed_cart_checkout_method:[],
+                                                            Delivery_method:[],
+                                                            pickup_restaurant:[]
+                                                          })
+const [country_info,setCountry_info] = useState([])
+const [state_info,setState_info] = useState([])
+const [checkout_address_user,setCheckout_address_user] = useState([])
+const [selected_address,setSelected_address] = useState(null)
+const [delivery_info,setDelivery_info] = useState([])
+const [bucketInfo,setBucketInfo] = useState([])
+const [updateItemQuantityInfo,setUpdateItemQuantityInfo] = useState([])
+const [loadingData,setLoadingData] = useState(null)
+const [applyCoupoon,setApplyCoupoon] = useState(null)
+const [applyCouponAmount,setApplyCouponAmount] = useState(0)
+const [applyCouponState,setApplyCouponState] = useState(false)
+const [applyCouponInfo,setApplyCouponInfo] = useState([])
+const [couponError,setCouponError] = useState(null)
+const [couponErrorModal,setCouponErrorModal] = useState(false)
+const [removeCouponStatus,setRemoveCouponStatus] = useState(false)
+const [inputValues,setInputValues] = useState({
+                                            first_name : '',
+                                            last_name : '',
+                                            telephone : '',
+                                            email : '',
+                                            address : '',
+                                            city : '',
+                                            postal_code : '',
+                                            state: '122',
+                                            country : '254',
+                                            notes_restaurant :'',
+                                        })
+const [firstname_error,setFirstname_error] = useState(false)
+const [lastname_error,setLastname_error] = useState(false)
+const [phone_error,setPhone_error] = useState(false)
+const [email_error,setEmail_error] = useState(false)
+const [postal_code_error,setPostal_code_error] = useState(false)
+const [order_now_click,setOrder_now_click] = useState(false)
+const [payment_complete,setPayment_complete]= useState(false)
+const [payment_token,setPayment_token]= useState('')
+const [stripe_error,setStripe_error]= useState(null)
+const [cart_empty_click,setCart_empty_click] = useState(true)
+const [user_address_id,setUser_address_id] = useState(null)
+const [order_loader,setOrder_loader] = useState(false)
+const [order_info,setOrder_info] = useState([])
+const [checkout_error,setCheckout_error]= useState(null)
+const [address_info,setAddress_info] = useState([])
+const [showmodal_cart_empty,setShowmodal_cart_empty] = useState(false)
+const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
+// component all states define END
 
-        handleFieldChange = (field, event) => {
-          const new_state = {};
-          new_state[field] = event.target.value;
-          this.setState(new_state);
-      };
-      handleclosecoupon = () => {
-        this.setState({
-          coupon_error_modal: false
-        });
-      };
-
-      cartemptyhandler = () =>{
-        this.setState({
-          showmodal_cart_empty: true
-        });
-      };
-      handleclosecartempty = () => {
-        this.setState({
-          showmodal_cart_empty: false
-        });
-      };
-      shopclosedhandler = () =>{
-    this.setState({
-      showmodal_shop_closed: true
-    });
-  };
-
-  handlecloseShopClosed = () => {
-    this.setState({
-      showmodal_shop_closed: false
-    });
-  };
-      handlePhoneChange = (field, event) => {
-
-        const phone = event.target.value;
-        const phone_digit = /^\d{10}$/;
-        if(phone.length == 10){
-            this.setState({phone_error : false});
-        }
-        else {
-          this.setState({phone_error : true});
-        }
-
-    };
-
-    handleEmailChange = (field, event) => {
-
-      const email = event.target.value;
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
-          this.setState({email_error : false});
-      }
-      else {
-        this.setState({email_error : true});
-      }
-
-  };
-  handleFirstNameChange = (field, event) => {
-
-const first_name = event.target.value;
-if (first_name.match(/^[a-zA-Z ]*$/)){
-    this.setState({firstname_error : false});
-}
-else {
-  this.setState({firstname_error : true});
-}
-
-};
-
-handleLastNameChange = (field, event) => {
-
-const last_name = event.target.value;
-if (last_name.match(/^[a-zA-Z ]*$/)){
-    this.setState({lastname_error : false});
-}
-else {
-  this.setState({lastname_error : true});
-}
-
-};
-    handlePostalCodeChange = (field, event) => {
-
-      const postal_code = event.target.value;
-      if(postal_code.length < 5 || postal_code.length > 10){
-          this.setState({postal_code_error : true});
-      }
-      else {
-        this.setState({postal_code_error : false});
-      }
-
-  };
-
-      selectedaddress = (event) =>{
-          this.setState({
-            user_address_id : event.target.value
-          })
-          console.log("address radio id", this.state.user_address_id);
-      };
-      handlerApplyCouponState = (event) =>{
-        this.setState({
-          apply_coupoon : event.target.value
-        })
-      }
-      handlerApplyCoupon = (event) =>{
-        this.setState({
-          remove_coupon_status : false
-        })
-            const url_coupon =
-        `${config.api_base}/users/business/bucket/apply_coupon?access_token=${this.state.final_user_checkout_token}&user_id=${this.state.final_user_checkout_email}`;
-      fetch(url_coupon, {
-        method: "POST",
-        body: JSON.stringify({
-          fields: {
-            bucketId: this.state.Unique_bucket_Id,
-            //bucketId: "9f027dc54d6096d5dff07b44e9eb7fcd",
-            rule: this.state.apply_coupoon                                              //"10% Discount."
-          },
-          form_id: "",
-          user_id: this.state.final_user_checkout_email
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).then(response => response.json())
-            .then(coupon => {
-              if(coupon.object.error){
-                this.setState({
-                  apply_coupon_amount : "0",
-                  coupon_error_modal : true,
-                  coupon_error : coupon.object.error
-                })
-              }
-              else{
-                this.setState({
-                  apply_coupon_info: coupon.object,
-                  apply_coupon_state : coupon.request_status,
-                  apply_coupon_amount : coupon.object.amount
-                },() =>{
-                  const url5 = `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-                  fetch(url5, {
-                    method: "GET",
-                    headers: {
-                      //Authorization: bearer,
-                      "Content-Type": "application/json"
-                    }
-                  })
-                    .then(response => response.json())
-                    .then(cartData => {
-                      console.log("Second search results", cartData);
-                      this.setState({
-                        cartdetails_checkout: cartData,
-                        cartdetails_item_checkout: cartData.object.items,
-                        cart_item_tip : cartData.object.fees,
-                        checkout_Delivery_method : cartData.object.available_delivery_methods,
-                        checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                        Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                        loadingData: null
-                      });
-                    }).catch(error =>
-                      this.setState({
-                        message: "Something bad happened " + error
-                      })
-                    );
-                });
-              }
-            })
-        .catch(error =>
-          this.setState({
-            message: "Something bad happened " + error
-          })
-        );
-
-
-      //       if(localStorage.getItem("user") != null && localStorage.getItem("access_token") != null){
-      //       const url_coupon_remove =
-      //   `${config.api_base}/users/business/bucket/remove_coupon?access_token=${this.state.final_user_checkout_token}&user_id=${this.state.final_user_checkout_email}`;
-      // fetch(url_coupon_remove, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     fields: {
-      //       bucketId: this.state.Unique_bucket_Id,
-      //      // bucketId: "9f027dc54d6096d5dff07b44e9eb7fcd",
-      //       rule: "10% Discount."                                              //"10% Discount."
-      //     },
-      //     form_id: "",
-      //     user_id: this.state.final_user_checkout_email
-      //   }),
-      //   headers: {
-      //     "Content-Type": "application/json"
-      //   }
-      // }).then(response => response.json())
-      //       .then(coupon => {
-      //         this.setState({
-      //           apply_coupon_info: coupon.object
-      //         });
-      //       })
-      //   .catch(error =>
-      //     this.setState({
-      //       message: "Something bad happened " + error
-      //     })
-      //   );
-      // }
-
-
-
-      }
-      handlerRemoveCoupon = (event) =>{
-        this.setState({
-          apply_coupon_amount : "0"
-        })
-            const url_coupon_remove =
-        `${config.api_base}/users/business/bucket/remove_coupon?access_token=${this.state.final_user_checkout_token}&user_id=${this.state.final_user_checkout_email}`;
-      fetch(url_coupon_remove, {
-        method: "POST",
-        body: JSON.stringify({
-          fields: {
-            bucketId: this.state.Unique_bucket_Id,
-           // bucketId: "9f027dc54d6096d5dff07b44e9eb7fcd",
-            rule: this.state.apply_coupoon                                              //"10% Discount."
-          },
-          form_id: "",
-          user_id: this.state.final_user_checkout_email
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).then(response => response.json())
-            .then(coupon => {
-              this.setState({
-                apply_coupon_info: coupon.object,
-                remove_coupon_status : coupon.request_status
-              });
-            }).then(() =>{
-                const url5 = `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-                fetch(url5, {
-                  method: "GET",
-                  headers: {
-                    //Authorization: bearer,
-                    "Content-Type": "application/json"
-                  }
-                })
-                  .then(response => response.json())
-                  .then(cartData => {
-                    console.log("Second search results", cartData);
-                    this.setState({
-                      cartdetails_checkout: cartData,
-                      cartdetails_item_checkout: cartData.object.items,
-                      cart_item_tip : cartData.object.fees,
-                      checkout_Delivery_method : cartData.object.available_delivery_methods,
-                      checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                      Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                      loadingData: null
-                    });
-                  }).catch(error =>
-                    this.setState({
-                      message: "Something bad happened " + error
-                    })
-                  );
-              })
-        .catch(error =>
-          this.setState({
-            message: "Something bad happened " + error
-          })
-        );
-
-
-
-
-      }
-      guestcheckoutinfo(){
-        this.setState({
-          order_loader : true,
-          cart_empty_click : false
-        })
-        const process_centeralized_payment = this.state.stripe_info  && Object.keys(this.state.stripe_info).length>0 && this.state.stripe_info.STRIPE_ACCOUNT_ID ? "true" : undefined;
-        const url4 =
-        `${config.api_base}/users/business/order/payment/checkout?access_token=${this.state.final_user_checkout_token}`;
-      fetch(url4, {
-        method: "POST",
-        body: JSON.stringify({
-          // form_id: "",
-          // user_id: "guest@onlinebites.com",
-          // fields: {
-          // instrumentMode: "cc",
-          // gatewayId: this.props.location.cartdetails_checkout_method[0].id,
-          // bucketId: this.state.Unique_bucket_Id,
-          // addressId: this.state.address_info.address_id,
-
-          // notes: this.state.notes_restaurant,
-          // // lastName: data.last_name,
-          // // country: 1,
-          //  paymentType: "stripe",
-          // cardToken: this.state.payment_token,
-          // // state: 824,
-          // // postalCode: data.postal_code,
-          // // mobileNumber: data.telephone,
-          // //  city: data.city,
-          // // address1: data.address,
-          // // firstName: data.first_name,
-          // // email: data.email
-          // }
-          fields: {
-            address1: this.state.address,
-            addressId: "",
-            bucketId: this.state.Unique_bucket_Id,
-            cardToken: this.state.payment_token,
-            city: this.state.city,
-            country: this.state.country ,
-            email: this.state.email,
-            firstName: this.state.first_name,
-            gatewayId: this.props.location.cartdetails_checkout_method[0].id,
-            instrumentMode: "cc",
-            lastName: this.state.last_name,
-            mobileNumber: this.state.telephone,
-            notes: this.state.notes_restaurant,
-            orderDate: "",
-            orderTime: "",
-            paymentType: "stripe",
-            postalCode: this.state.postal_code,
-            state: this.state.state
-          },
-          form_id: "",
-          user_id: this.state.final_user_checkout_email,
-          process_centeralized_payment : process_centeralized_payment
-
-
-        }),
-        headers: {
-          //"Authorization" : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhY2Nlc3NfdG9rZW4iOiIxNGY5ZDYzZS0xZDVkLTRhYjYtYWMyNi0zNDdlYjhkMWE3Y2EiLCJzdWIiOiJvcmcuc3ByaW5nZnJhbWV3b3JrLnNlY3VyaXR5LmNvcmUudXNlcmRldGFpbHMuVXNlckBjYmU5YjVkYTogVXNlcm5hbWU6IHRpZmZpbjsgUGFzc3dvcmQ6IFtQUk9URUNURURdOyBFbmFibGVkOiB0cnVlOyBBY2NvdW50Tm9uRXhwaXJlZDogdHJ1ZTsgY3JlZGVudGlhbHNOb25FeHBpcmVkOiB0cnVlOyBBY2NvdW50Tm9uTG9ja2VkOiB0cnVlOyBOb3QgZ3JhbnRlZCBhbnkgYXV0aG9yaXRpZXMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MjY1NDExMzUyNjUsImV4cCI6Nzc2NjI4MTE1Nzk5MzM3Nn0.iBYnE8GECEHDNjm7rXPV72VaYSOBkAyBg_woOBn3DeDOV7p-RU-KjnECFUnntZHW6qBYYyZGZnrMMIrESoKM5g",
-          "Content-Type": "application/json"
-        }
-      }).then(response => response.json())
-            .then(order => {
-              this.setState({
-                order_info: order,
-                order_loader : false,
-                cart_empty_click : true
-              });
-              if(order.object && order.object.error){
-                this.setState({
-                  checkout_error : order.object.error,
-                  order_now_click:false
-                })
-              }
-            })
-        .catch(error =>
-          this.setState({
-            message: "Something bad happened " + error
-          }))
-        }
-      checkoutinfo(){
-        this.setState({
-          order_loader : true,
-          cart_empty_click : false
-        })
-        const process_centeralized_payment = this.state.stripe_info  && Object.keys(this.state.stripe_info).length>0 && this.state.stripe_info.STRIPE_ACCOUNT_ID ? "true" : undefined;
-        const url4 =
-        `${config.api_base}/users/business/order/payment/checkout?access_token=${this.state.final_user_checkout_token}`;
-      fetch(url4, {
-        method: "POST",
-        body: JSON.stringify({
-          // form_id: "",
-          // user_id: "guest@onlinebites.com",
-          // fields: {
-          // instrumentMode: "cc",
-          // gatewayId: this.props.location.cartdetails_checkout_method[0].id,
-          // bucketId: this.state.Unique_bucket_Id,
-          // addressId: this.state.address_info.address_id,
-
-          // notes: this.state.notes_restaurant,
-          // // lastName: data.last_name,
-          // // country: 1,
-          //  paymentType: "stripe",
-          // cardToken: this.state.payment_token,
-          // // state: 824,
-          // // postalCode: data.postal_code,
-          // // mobileNumber: data.telephone,
-          // //  city: data.city,
-          // // address1: data.address,
-          // // firstName: data.first_name,
-          // // email: data.email
-          // }
-
-          fields: {
-            address1: "",
-            addressId: this.state.user_address_id,
-            bucketId: this.state.Unique_bucket_Id,
-            cardToken: this.state.payment_token,
-            city: "",
-            country: "" ,
-            email: "",
-            firstName: "",
-            gatewayId: this.props.location.cartdetails_checkout_method[0].id,
-            instrumentMode: "cc",
-            lastName: "",
-            mobileNumber: "",
-            notes: this.state.notes_restaurant,
-            orderDate: "",
-            orderTime: "",
-            paymentType: "stripe",
-            postalCode: "",
-            state: ""
-          },
-          form_id: "",
-          user_id: this.state.final_user_checkout_email,
-          process_centeralized_payment : process_centeralized_payment
-
-
-        }),
-        headers: {
-          //"Authorization" : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhY2Nlc3NfdG9rZW4iOiIxNGY5ZDYzZS0xZDVkLTRhYjYtYWMyNi0zNDdlYjhkMWE3Y2EiLCJzdWIiOiJvcmcuc3ByaW5nZnJhbWV3b3JrLnNlY3VyaXR5LmNvcmUudXNlcmRldGFpbHMuVXNlckBjYmU5YjVkYTogVXNlcm5hbWU6IHRpZmZpbjsgUGFzc3dvcmQ6IFtQUk9URUNURURdOyBFbmFibGVkOiB0cnVlOyBBY2NvdW50Tm9uRXhwaXJlZDogdHJ1ZTsgY3JlZGVudGlhbHNOb25FeHBpcmVkOiB0cnVlOyBBY2NvdW50Tm9uTG9ja2VkOiB0cnVlOyBOb3QgZ3JhbnRlZCBhbnkgYXV0aG9yaXRpZXMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MjY1NDExMzUyNjUsImV4cCI6Nzc2NjI4MTE1Nzk5MzM3Nn0.iBYnE8GECEHDNjm7rXPV72VaYSOBkAyBg_woOBn3DeDOV7p-RU-KjnECFUnntZHW6qBYYyZGZnrMMIrESoKM5g",
-          "Content-Type": "application/json"
-        }
-      }).then(response => response.json())
-            .then(order => {
-              this.setState({
-                order_info: order,
-                order_loader : false,
-                cart_empty_click : true
-              });
-              if(order.object && order.object.error){
-                this.setState({
-                  checkout_error : order.object.error,
-                  order_now_click:false
-                })
-              }
-            })
-        .catch(error =>
-          this.setState({
-            message: "Something bad happened " + error
-          }))
-        }
-
-      Getinformation(event){
-        const data = {
-          "first_name" : this.state.first_name,
-          "last_name" : this.state.last_name,
-          "telephone" : this.state.telephone,
-          "email" : this.state.email,
-          "address" : this.state.address,
-          "city" : this.state.city,
-          "postal_code" : this.state.postal_code,
-          "state": this.state.state,
-          "country" : this.state.country,
-          "notes_restaurant" :this.state.notes_restaurant
-        }
-
-        const address_url =
-          `${config.api_base}/users/address?user_id=${this.state.final_user_checkout_email}&access_token=${this.state.final_user_checkout_token}`;
-        fetch(address_url, {
-          method: "POST",
-          body: JSON.stringify({
-            form_id: "",
-            user_id: this.state.final_user_checkout_email,
-            fields: {
-            address_id: "",
-            firstName: this.state.first_name,
-            middleName: "",
-            lastName: this.state.last_name,
-            address1: this.state.address,
-            address2: "",
-            city: this.state.city,
-            state: this.state.state,
-            country: this.state.country,
-            postalCode: this.state.postal_code,
-            mobileNumber: this.state.telephone,
-            email: this.state.email
-            }
-
-          }),
-          headers: {
-            //"Authorization" : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhY2Nlc3NfdG9rZW4iOiIxNGY5ZDYzZS0xZDVkLTRhYjYtYWMyNi0zNDdlYjhkMWE3Y2EiLCJzdWIiOiJvcmcuc3ByaW5nZnJhbWV3b3JrLnNlY3VyaXR5LmNvcmUudXNlcmRldGFpbHMuVXNlckBjYmU5YjVkYTogVXNlcm5hbWU6IHRpZmZpbjsgUGFzc3dvcmQ6IFtQUk9URUNURURdOyBFbmFibGVkOiB0cnVlOyBBY2NvdW50Tm9uRXhwaXJlZDogdHJ1ZTsgY3JlZGVudGlhbHNOb25FeHBpcmVkOiB0cnVlOyBBY2NvdW50Tm9uTG9ja2VkOiB0cnVlOyBOb3QgZ3JhbnRlZCBhbnkgYXV0aG9yaXRpZXMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MjY1NDExMzUyNjUsImV4cCI6Nzc2NjI4MTE1Nzk5MzM3Nn0.iBYnE8GECEHDNjm7rXPV72VaYSOBkAyBg_woOBn3DeDOV7p-RU-KjnECFUnntZHW6qBYYyZGZnrMMIrESoKM5g",
-            "Content-Type": "application/json"
-          }
-        }).then(response => response.json())
-              .then(address => {
-                this.setState({
-                  address_info: address.object
-                },() =>{
-                  const process_centeralized_payment = this.state.stripe_info  && Object.keys(this.state.stripe_info).length>0 && this.state.stripe_info.STRIPE_ACCOUNT_ID ? "true" : undefined;
-                  const url4 =
-                  `${config.api_base}/users/business/order/payment/checkout?access_token=${this.state.final_user_checkout_token}`;
-                fetch(url4, {
-                  method: "POST",
-                  body: JSON.stringify({
-                    // form_id: "",
-                    // user_id: "guest@onlinebites.com",
-                    // fields: {
-                    // instrumentMode: "cc",
-                    // gatewayId: this.props.location.cartdetails_checkout_method[0].id,
-                    // bucketId: this.state.Unique_bucket_Id,
-                    // addressId: this.state.address_info.address_id,
-
-                    // notes: this.state.notes_restaurant,
-                    // // lastName: data.last_name,
-                    // // country: 1,
-                    //  paymentType: "stripe",
-                    // cardToken: this.state.payment_token,
-                    // // state: 824,
-                    // // postalCode: data.postal_code,
-                    // // mobileNumber: data.telephone,
-                    // //  city: data.city,
-                    // // address1: data.address,
-                    // // firstName: data.first_name,
-                    // // email: data.email
-                    // }
-
-                    fields: {
-                      address1: "",
-                      addressId: this.state.address_info.address_id,
-                      bucketId: this.state.Unique_bucket_Id,
-                      cardToken: this.state.payment_token,
-                      city: "",
-                      country: "" ,
-                      email: "",
-                      firstName: "",
-                      gatewayId: this.props.location.cartdetails_checkout_method[0].id,
-                      instrumentMode: "cc",
-                      lastName: "",
-                      mobileNumber: "",
-                      notes: this.state.notes_restaurant,
-                      orderDate: "",
-                      orderTime: "",
-                      paymentType: "stripe",
-                      postalCode: "",
-                      state: ""
-                    },
-                    form_id: "",
-                    user_id: this.state.final_user_checkout_email,
-                    process_centeralized_payment : process_centeralized_payment
-
-
-                  }),
-                  headers: {
-                    //"Authorization" : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhY2Nlc3NfdG9rZW4iOiIxNGY5ZDYzZS0xZDVkLTRhYjYtYWMyNi0zNDdlYjhkMWE3Y2EiLCJzdWIiOiJvcmcuc3ByaW5nZnJhbWV3b3JrLnNlY3VyaXR5LmNvcmUudXNlcmRldGFpbHMuVXNlckBjYmU5YjVkYTogVXNlcm5hbWU6IHRpZmZpbjsgUGFzc3dvcmQ6IFtQUk9URUNURURdOyBFbmFibGVkOiB0cnVlOyBBY2NvdW50Tm9uRXhwaXJlZDogdHJ1ZTsgY3JlZGVudGlhbHNOb25FeHBpcmVkOiB0cnVlOyBBY2NvdW50Tm9uTG9ja2VkOiB0cnVlOyBOb3QgZ3JhbnRlZCBhbnkgYXV0aG9yaXRpZXMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MjY1NDExMzUyNjUsImV4cCI6Nzc2NjI4MTE1Nzk5MzM3Nn0.iBYnE8GECEHDNjm7rXPV72VaYSOBkAyBg_woOBn3DeDOV7p-RU-KjnECFUnntZHW6qBYYyZGZnrMMIrESoKM5g",
-                    "Content-Type": "application/json"
-                  }
-                }).then(response => response.json())
-                      .then(order => {
-                        this.setState({
-                          order_info: order
-                        });
-                        if(order.object && order.object.error){
-                          this.setState({
-                            checkout_error : order.object.error,
-                            order_now_click:false
-                          })
-                        }
-                      })
-
-                });
-
-
-              })
-          .catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-
-        console.log("data first name",data.first_name);
-
-
-      }
-
-      incrementNew(value1, value2 ,value3, value4) {
-        this.setState({
-          loadingData: value4
-        });
-        //console.log("increment id", this.state.bucket_id);
-        const bearer =
-      "Bearer" + this.state.final_user_checkout_token;
-    const url4 =
-      `${config.api_base}/users/business/bucket/update/item/qty?access_token=${this.state.final_user_checkout_token}&bucket_id=${value3}&user_id=${this.state.final_user_checkout_email}`;
-    fetch(url4, {
-      method: "POST",
-      body: JSON.stringify({
-        fields: {
-          bucketId: value3,
-          bucketItemId: value1,
-          quantity: value2 + 1
-        },
-        form_id: "",
-        user_id: this.state.final_user_checkout_email
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization" : bearer
-      }
-        })
-          .then(response => response.json())
-          .then(responseData => {
-            const url5 = `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${value3}&user_id=${this.state.final_user_checkout_email}`;
-            //console.log("search results", responseData);
-            this.setState({
-              test_cart: responseData,
-              quantity: responseData.object.quantity
-            });
-            fetch(url5, {
-              method: "GET",
-              headers: {
-                //Authorization: bearer,
-                "Content-Type": "application/json"
-              }
-            })
-              .then(response => response.json())
-              .then(cartData => {
-                console.log("Second search results", cartData);
-                this.setState({
-                  cartdetails_checkout: cartData,
-                  cartdetails_item_checkout: cartData.object.items,
-                  cart_item_tip : cartData.object.fees,
-                  checkout_Delivery_method : cartData.object.available_delivery_methods,
-                  checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                  Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                  loadingData: null
-                });
-              });
-          })
-          .catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-      };
-
-      decrementNew(value1, value2, value3 ,value4) {
-        this.setState({
-          loadingData: value4
-        });
-        console.log("increment id", this.state.Unique_bucket_Id);
-        const bearer =
-      "Bearer" + this.state.final_user_checkout_token;
-    const url4 =
-    `${config.api_base}/users/business/bucket/update/item/qty?access_token=${this.state.final_user_checkout_token}&bucket_id=${value3}&user_id=${this.state.final_user_checkout_email}`;
-    fetch(url4, {
-      method: "POST",
-      body: JSON.stringify({
-        fields: {
-          bucketId: value3,
-          bucketItemId: value1,
-          quantity: value2 - 1
-        },
-        form_id: "",
-        user_id: this.state.final_user_checkout_email
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization" : bearer
-      }
-        })
-          .then(response => response.json())
-          .then(responseData => {
-            if (responseData.object.error == "Invalid Bucket") {
-              this.setState({
-                Unique_bucket_Id: ""
-              });
-              localStorage.removeItem("user_local_bucket_id");
-            }
-            const url5 = `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-            //console.log("search results", responseData);
-            this.setState({
-              test_cart: responseData,
-              quantity: responseData.object.quantity
-            });
-            fetch(url5, {
-              method: "GET",
-              headers: {
-                //Authorization: bearer,
-                "Content-Type": "application/json"
-              }
-            })
-              .then(response => response.json())
-              .then(cartData => {
-                console.log("Second search results", cartData);
-                this.setState({
-                  cartdetails_checkout: cartData,
-                  cartdetails_item_checkout: cartData.object.items,
-                  cart_item_tip : cartData.object.fees,
-                  checkout_Delivery_method : cartData.object.available_delivery_methods,
-                  checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                  Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                  loadingData: null
-                });
-              }).then(() => {
-                  if (this.state.cartdetails_checkout.object.error) {
-                    this.setState({
-                      Unique_bucket_Id: ""
-                    });
-                    localStorage.removeItem("user_local_bucket_id");
-                  }
-                });
-          })
-          .catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-      };
-
-      incrementwithAddon(value1, value2 ,value3) {
-        this.setState({
-          loadingData: value3
-        });
-        console.log("repeat_last_value3", value2);
-        this.setState({
-          show: false,
-          selected_product_modal: [],
-          showmodal2: false
-        });
-        const bearer =
-          "Bearer" + this.state.final_user_checkout_token;
-        const url4 =
-        `${config.api_base}/users/business/bucket/update/item/qty?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-        fetch(url4, {
-          method: "POST",
-          body: JSON.stringify({
-            form_id: "",
-            user_id: this.state.final_user_checkout_email,
-            fields: {
-              bucketId: this.state.Unique_bucket_Id,
-              bucketItemId: value1,
-              quantity: value2 + 1
-            }
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization" : bearer
-          }
-        })
-          .then(response => response.json())
-          .then(responseData => {
-            console.log("search results", responseData);
-            const url5 = `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-            this.setState({
-              test_cart: responseData,
-              quantity: responseData.object.quantity
-            });
-            fetch(url5, {
-              method: "GET",
-              headers: {
-                //"Authorization": bearer,
-                "Content-Type": "application/json"
-              }
-            })
-              .then(response => response.json())
-              .then(cartData => {
-                this.setState({
-                  cartdetails_checkout: cartData,
-                  cartdetails_item_checkout: cartData.object.items,
-                  cart_item_tip : cartData.object.fees,
-                  checkout_Delivery_method : cartData.object.available_delivery_methods,
-                  checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                  Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                  loadingData: null
-                });
-              });
-          })
-          .catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-      }
-
-
-
-      decrementwithAddon(value1, value2, value3) {
-        this.setState({
-          loadingData: value3
-        });
-        console.log("repeat_last_value3", value2);
-        const bearer =
-          "Bearer" + this.state.final_user_checkout_token;
-        const url4 =
-        `${config.api_base}/users/business/bucket/update/item/qty?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-        fetch(url4, {
-          method: "POST",
-          body: JSON.stringify({
-            form_id: "",
-            user_id: this.state.final_user_checkout_email,
-            fields: {
-              bucketId: this.state.Unique_bucket_Id,
-              bucketItemId: value1,
-              quantity: value2 - 1
-            }
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization" : bearer
-          }
-        })
-          .then(response => response.json())
-          .then(responseData => {
-            console.log("search results", responseData);
-            if (responseData.object.error == "Invalid Bucket") {
-              this.setState({
-                Unique_bucket_Id: ""
-              });
-              localStorage.removeItem("user_local_bucket_id");
-            }
-            const url5 = `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
-            this.setState({
-              test_cart: responseData,
-              quantity: responseData.object.quantity
-            });
-            fetch(url5, {
-              method: "GET",
-              headers: {
-                //Authorization: bearer,
-                "Content-Type": "application/json"
-              }
-            })
-              .then(response => response.json())
-              .then(cartData => {
-                this.setState({
-                  cartdetails_checkout: cartData,
-                  cartdetails_item_checkout: cartData.object.items,
-                  cart_item_tip : cartData.object.fees,
-                  checkout_Delivery_method : cartData.object.available_delivery_methods,
-                  checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                  Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                  loadingData: null
-                });
-              })  .then(() => {
-                  if (this.state.cartdetails_checkout.object.error) {
-                    this.setState({
-                      Unique_bucket_Id: ""
-                    });
-                    localStorage.removeItem("user_local_bucket_id");
-                  }
-                });
-          })
-          .catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-      }
-
-
-
-    async  componentDidMount(){
-        const url_merchant_token =
-        `${config.api_root}/security/session/merchants?Key=${config.key_value}&Secret=${config.secret_value}&device_id=21212121121212wqwqw`;
-      fetch(url_merchant_token, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Key" : config.key_value,
-          "Secret" : config.secret_value
-        }
-      }).then(response => response.json())
-            .then(merchant => {
-              this.setState({
-                merchant_info: merchant.object.access_token
-              });
-            }).then(() =>{
-              const user_email =
+// hooks start
+  // get user email,user token and bucket id hook start
+    useEffect(() =>{
+      if(props.location && props.location.merchantInfo && props.location.merchantInfo.access_token){
+        const user_email =
                 localStorage.getItem("user") === null
                   ? "guest@onlinebites.com"
                   : localStorage.getItem("user");
               const user_token =
                 localStorage.getItem("access_token") === null
-                  ? this.state.merchant_info
+                  ? props.location.merchantInfo.access_token
                   : localStorage.getItem("access_token");
-                  this.setState({
-                    final_user_checkout_email: user_email,
-                    final_user_checkout_token: user_token
-                  });
+              const user_local_bucket_id = localStorage.getItem("user_local_bucket_id") == null && localStorage.getItem("user_local_bucket_id") == undefined
+                ? ""
+                : localStorage.getItem("user_local_bucket_id");
+                setFinalUserEmail(user_email)
+                setFinalUserToken(user_token)
+                setUniqueBucketId(user_local_bucket_id)
+      }
+    },[props.location])
+  // get user email,user token and bucket id hook end
 
-            const url6 =
-               `${config.api_base}/enterprised/countries?access_token=${user_token}&pageSize=250&status=ACTIVE`;
-            fetch(url6, {
-              method: "GET"
-            })
-              .then(response => response.json())
-              .then(responseData => {
-                console.log("search results", responseData);
-
-                this.setState({
-                  country_info: responseData.data[0]
-                });
-                const url7 =
-              `${config.api_base}/enterprised/countries/states?access_token=${user_token}&country_id=254&pageSize=250&status=ACTIVE`;
-            fetch(url7, {
-              method: "GET"
-            })
-              .then(response => response.json())
-              .then(responseData => {
-                console.log("search results", responseData);
-
-                this.setState({
-                  state_info: responseData.data
-                });
-              })
-              })
-              .catch(error =>
-                this.setState({
-                  message: "Something bad happened " + error
-                })
-              );
-              const var_value = Math.floor(Math.random() * 90 + 10);
-              const restId = config.resid;
-              const url_stripe =
-              `${config.api_base}/merchants/config?device_id=21212121121212wqwqw&Key=${config.key_value}&Secret=${config.secret_value}&access_token=${user_token}`;
-            fetch(url_stripe, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json"
-              }
-            }).then(response => response.json())
-                  .then(stripe => {
-                    this.setState({
-                      stripe_info: stripe.object,
-                      is_shop_open: stripe.object.IS_SHOP_OPEN,
-                      static_resource_endpoint : stripe.object.STATIC_RESOURCE_ENDPOINT,
-                    static_resource_sufix : stripe.object.STATIC_RESOURCE_SUFFIX
-                    });
-                  }).then(() =>{
-                    const restaurant_info_url = `${this.state.static_resource_endpoint}${restId}${this.state.static_resource_sufix}?var=${var_value}`;
-                    console.log("restaurant-info", restaurant_info_url);
-                    fetch(restaurant_info_url, {
-                      method: "GET",
-                      headers: {
-                        "Content-Type": "application/json"
-                      }
-                    })
-                      .then(response => response.json())
-                      .then(responseData => {
-                        console.log("single res results", responseData);
-                        this.setState({
-                          banner_info: responseData.object,
-                          logo : responseData.object.LOGO,
-                          business_data :responseData.object,
-                          stripe_key : responseData.object.STRIPE_PUBLISH_KEY
-                        });
-                      })
-                      .catch(error =>
-                        this.setState({
-                          message: "Something bad happened " + error
-                        })
-                      );
-                  })
-            .catch(error =>
-              this.setState({
-                message: "Something bad happened " + error
-              })
-            );
-
-
-              if(localStorage.getItem("user") != null && localStorage.getItem("access_token") != null){
-                const get_address =
-                `${config.api_base}/users/addresses?access_token=${user_token}&user_id=${user_email}&pageSize=10&pageNumber=0`;
-              fetch(get_address, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "key" : config.key_value,
-                  "secret" : config.secret_value
-                }
-              }).then(response => response.json())
-                    .then(address => {
-                      this.setState({
-                        checkout_address_user: address.data
-                      });
-                    }).then(() =>{
-                      if(this.state.checkout_address_user.length > 0){
-                        this.setState({
-                          selected_address : "Saved Address"
-                        })
-                      }
-                      else{
-                        this.setState({
-                          selected_address : "New Address"
-                        })
-                      }
-                    })
-                .catch(error =>
-                  this.setState({
-                    message: "Something bad happened " + error
-                  })
-                );
-              }
-
-            })
-      .catch(error =>
-        this.setState({
-          message: "Something bad happened " + error
+  // add config data into config const hook start
+    useEffect(() =>{
+      if(props.location && props.location.configInfo && Object.keys(props.location.configInfo).length > 0){
+        setConfigDciResponseData({
+          stripe_info:props.location.configInfo,
+          static_resource_endpoint:props.location.configInfo && props.location.configInfo.STATIC_RESOURCE_ENDPOINT ? props.location.configInfo.STATIC_RESOURCE_ENDPOINT : null,
+          static_resource_sufix:props.location.configInfo && props.location.configInfo.STATIC_RESOURCE_SUFFIX ? props.location.configInfo.STATIC_RESOURCE_SUFFIX : null,
+          is_shop_open:props.location.configInfo && props.location.configInfo.IS_SHOP_OPEN ? props.location.configInfo.IS_SHOP_OPEN : false
         })
-      );
+      }
 
-        // const url_coupon_remove =
-        //   `${config.api_base}/users/business/bucket/remove_coupon?access_token=${user_token}&user_id=${user_email}`;
-        // fetch(url_coupon_remove, {
-        //   method: "POST",
-        //   body: JSON.stringify({
-        //     fields: {
-        //       bucketId: this.state.Unique_bucket_Id,
-        //       //bucketId: "9f027dc54d6096d5dff07b44e9eb7fcd",
-        //       rule: "10% Discount."                                              //"10% Discount."
-        //     },
-        //     form_id: "",
-        //     user_id: user_email
-        //   }),
-        //   headers: {
-        //     "Content-Type": "application/json"
-        //   }
-        // }).then(response => response.json())
-        //       .then(coupon => {
-        //         this.setState({
-        //           apply_coupon_info: coupon.object
-        //         });
-        //       })
-        //   .catch(error =>
-        //     this.setState({
-        //       message: "Something bad happened " + error
-        //     })
-        //   );
+    },[props.location])
+  // add config data into config const hook end
 
-        try {
-            setInterval(async () => {
-              console.log("this.state.merchant_info--",this.state.merchant_info);
-             if(this.state.merchant_info != null){
-               const url_stripe =
-               `${config.api_base}/merchants/config?device_id=21212121121212wqwqw&Key=${config.key_value}&Secret=${config.secret_value}&access_token=${this.state.final_user_checkout_token}`;
-                 const res = await fetch(url_stripe, {
-                   method: "GET",
-                   headers: {
-                     "Content-Type": "application/json"
-                   }
-                 });
-                 const result = await res.json();
-                  const is_shop_open = result && result.object && result.object.IS_SHOP_OPEN ? result.object.IS_SHOP_OPEN : null;
+  // add config data into config const hook start
+    useEffect(() =>{
+      if(props.location && props.location.bucketDciResponseData && props.location.bucketDciResponseData.length > 0){
+        setBucketDciResponseData({
+          Detailed_cart:props.location.bucketDciResponseData.Detailed_cart,
+          Detailed_cart_item:props.location.bucketDciResponseData.Detailed_cart_item,
+          cart_item_tip:props.location.bucketDciResponseData.cart_item_tip,
+          Detailed_cart_checkout_method:props.location.bucketDciResponseData.Detailed_cart_checkout_method,
+          Delivery_method:props.location.bucketDciResponseData.Delivery_method,
+          pickup_restaurant:props.location.bucketDciResponseData.pickup_restaurant
+        })
+      }
 
-                 this.setState({
-                   is_shop_open: is_shop_open
-                 })
-             }
+    },[props.location])
+  // add config data into config const hook end
 
-           }, 150000000);
-            console.log("is_shop_open...........",this.state.is_shop_open);
-          } catch(e) {
-            console.log(e);
+// add deilvery cost props into constant, hook start
+  useEffect(() =>{
+    if(props.location && props.location.Delivery_cost){
+      setDelivery_cost(props.location.Delivery_cost)
+    }
+
+  },[props.location])
+// add deilvery cost props into constant, hook end
+
+// add tip_rate_fees props into constant, hook start
+  useEffect(() =>{
+    if(props.location && props.location.tip_rate_fees){
+      setTip_rate_fees(props.location.tip_rate_fees)
+    }
+
+  },[props.location])
+// add tip_rate_fees props into constant, hook End
+
+// add banner_info props into constant, hook start
+  useEffect(() =>{
+    if(props.location && props.location.banner_info){
+      setBanner_info(props.location.banner_info)
+    }
+
+  },[props.location])
+// add banner_info props into constant, hook End
+
+// props function call, hook start
+  useMemo(() =>{
+    if(configResponseData.stripe_info && Object.keys(configResponseData.stripe_info).length > 0)
+    props.stripe_info_parentCallback(configResponseData.stripe_info)
+  },[configResponseData.stripe_info])
+// props function call, hook End
+
+// fetch countries and state api, hook start
+  useMemo(() =>{
+    if(finalUserToken != ""){
+      const countries_info = {
+        user_token : finalUserToken
+      }
+      dispatch(fetchCountries(countries_info))
+      const states_info = {
+        user_token : finalUserToken
+      }
+      dispatch(fetchStates(states_info))
+    }
+  },[finalUserToken])
+// fetch countries and state api, hook End
+
+// add data of countries api into constant,hook start
+  useMemo(() =>{
+    if(countries_data && countries_data.countries && countries_data.countries.data ){
+      setCountry_info(countries_data.countries.data[0])
+    }
+  },[countries_data && countries_data.countries && countries_data.countries.request_status === true])
+// add data of countries api into constant,hook end
+
+// add data of states api into constant,hook start
+  useMemo(() =>{
+    if(states_data && states_data.states && states_data.states.data ){
+      setState_info(states_data.states.data)
+    }
+  },[states_data && states_data.states && states_data.states.request_status === true])
+  // add data of states api into constant,hook end
+
+// fetch address api ,hook start
+  useEffect(() =>{
+    if(localStorage.getItem("user") != null && localStorage.getItem("access_token") != null){
+      const address_info ={
+        user_token:localStorage.getItem("access_token"),
+        user_email:localStorage.getItem("user")
+      }
+      dispatch(fetchAddress(address_info))
+    }
+  },[])
+// fetch address api ,hook End
+
+// add data of address api into constant,hook start
+  useMemo(() =>{
+    if(address_data && address_data.address && address_data.address.data ){
+      setCheckout_address_user(address_data.address.data)
+    }
+  },[address_data && address_data.address && address_data.address.request_status === true])
+// add data of address api into constant,hook End
+
+//when checkout_address_user constant change then data add into constant,hook start
+  useMemo(() =>{
+    if(localStorage.getItem("user") != null && localStorage.getItem("access_token") != null){
+      if(checkout_address_user && checkout_address_user.length > 0){
+        setSelected_address("Saved Address")
+      }
+      else{
+        setSelected_address("New Address")
+      }
+    }
+
+  },[checkout_address_user ])
+//when checkout_address_user constant change then data add into constant,hook End
+
+
+  // when uniqueBucketId has value hook start
+    useMemo(() =>{
+      if(uniqueBucketId != ""){
+        const bucket_info = {
+          user_token:finalUserToken,
+          user_local_bucket_id:uniqueBucketId,
+          user_email:finalUserEmail
+        }
+        dispatch(fetchBucket(bucket_info))
+        window.localStorage.setItem('user_local_bucket_id', uniqueBucketId);
+      }
+    },[uniqueBucketId])
+  // when uniqueBucketId has value hook end
+
+// add data of updateshppingmethod api into constant hook start
+  useMemo(() =>{
+    if(updateShippingMethod_data && updateShippingMethod_data.update_shipping_method && updateShippingMethod_data.update_shipping_method.object && updateShippingMethod_data.update_shipping_method.request_status === true){
+        setDelivery_info(updateShippingMethod_data.update_shipping_method.object)
+
+    }
+  },[updateShippingMethod_data && updateShippingMethod_data.update_shipping_method && updateShippingMethod_data.update_shipping_method.object && updateShippingMethod_data.update_shipping_method.requestId])
+// add data of updateshppingmethod api into constant hook End
+
+// when delivery_info change data add into constant hook start
+  useMemo(() =>{
+    if(delivery_info && Object.keys(delivery_info).length > 0){
+      setDelivery_cost(delivery_info.cost)
+    }
+  },[delivery_info])
+// when delivery_info change data add into constant hook End
+
+  // add updateItemQuantity api response data into constant hook start
+  useMemo(() =>{
+    if(updateItemQuantity_data && updateItemQuantity_data.update_item_qty && updateItemQuantity_data.update_item_qty.object && updateItemQuantity_data.update_item_qty.request_status === true){
+      setUpdateItemQuantityInfo(updateItemQuantity_data.update_item_qty.object)
+    }
+  },[updateItemQuantity_data && updateItemQuantity_data.update_item_qty && updateItemQuantity_data.update_item_qty.object && updateItemQuantity_data.update_item_qty.requestId])
+  // add updateItemQuantity api response data into constant hook End
+
+  // when updateItemQuantity api have error then  response data into constant hook start
+  useMemo(() =>{
+    if(updateItemQuantity_data && updateItemQuantity_data.update_item_qty && updateItemQuantity_data.update_item_qty.object && updateItemQuantity_data.update_item_qty.request_status === false && updateItemQuantity_data.update_item_qty.object.error == "Invalid Bucket"){
+      setUpdateItemQuantityInfo(updateItemQuantity_data.update_item_qty.object)
+      setUniqueBucketId("")
+      localStorage.removeItem("user_local_bucket_id");
+
+    }
+  },[updateItemQuantity_data && updateItemQuantity_data.update_item_qty && updateItemQuantity_data.update_item_qty.object && updateItemQuantity_data.update_item_qty.requestId])
+  // when updateItemQuantity api have error then response data into constant hook End
+
+  // when updateItemQuantityInfo has value hook start
+    useMemo(() =>{
+      if(updateItemQuantityInfo){
+        const bucket_info = {
+          user_token:finalUserToken,
+          user_local_bucket_id:uniqueBucketId,
+          user_email:finalUserEmail
+        }
+        dispatch(fetchBucket(bucket_info))
+      }
+
+    },[updateItemQuantityInfo])
+  // when updateItemQuantityInfo has value hook end
+
+  // add bucket dci response data into constant hook start
+  useMemo(() =>{
+    if(bucket_data && bucket_data.bucket &&  bucket_data.bucket.object && bucket_data.bucket.request_status === true){
+      setBucketInfo(bucket_data.bucket.object)
+
+    }
+  },[bucket_data && bucket_data.bucket &&  bucket_data.bucket.object])
+  // add bucket dci response data into constant hook End
+
+  // when bucket dci have error then respone add into constant hook start
+    useMemo(() =>{
+      if(bucket_data && bucket_data.bucket &&  bucket_data.bucket.object && bucket_data.bucket.request_status === false && bucket_data.bucket.object.error == "Invalid Bucket" ){
+        setBucketInfo(bucket_data.bucket.object)
+        setUniqueBucketId("")
+        localStorage.removeItem("user_local_bucket_id");
+      }
+    },[bucket_data && bucket_data.bucket &&  bucket_data.bucket.object])
+  // when bucket dci have error then respone add into constant hook end
+
+  // add bucketinfo data into constant hook start
+    useMemo(() =>{
+      if(bucketInfo){
+        setBucketDciResponseData({
+          Detailed_cart:bucketInfo,
+          Detailed_cart_item:bucketInfo.items ? bucketInfo.items : [],
+          cart_item_tip:bucketInfo && bucketInfo.fees ? bucketInfo.fees : [],
+          Detailed_cart_checkout_method:bucketInfo && bucketInfo.available_checkout_methods ? bucketInfo.available_checkout_methods : [],
+          Delivery_method:bucketInfo && bucketInfo.available_delivery_methods ? bucketInfo.available_delivery_methods : [],
+          pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : []
+        })
+        setLoadingData(null)
+      }
+    },[bucketInfo])
+  // add bucketinfo data into constant hook End
+
+//fetch bucket api after fetch tip api hook start
+  useMemo(() =>{
+    if(tip_data && tip_data.add_tip && tip_data.add_tip.object && tip_data.add_tip.request_status === true){
+      const bucket_info = {
+        user_token:finalUserToken,
+        user_local_bucket_id:uniqueBucketId,
+        user_email:finalUserEmail
+      }
+      dispatch(fetchBucket(bucket_info))
+
+    }
+  },[tip_data && tip_data.add_tip && tip_data.add_tip.requestId])
+//fetch bucket api after fetch tip api hook End
+
+//when fetch applyCoupon api after that data add into constant,hook start
+  useMemo(() =>{
+    if(applyCoupon_data && applyCoupon_data.apply_coupon && applyCoupon_data.apply_coupon.request_status === true){
+      setApplyCouponInfo(applyCoupon_data.apply_coupon.object)
+      setApplyCouponState(applyCoupon_data.apply_coupon.request_status)
+      setApplyCouponAmount(applyCoupon_data.apply_coupon.object.amount)
+      const bucket_info = {
+        user_token:finalUserToken,
+        user_local_bucket_id:uniqueBucketId,
+        user_email:finalUserEmail
+      }
+      dispatch(fetchBucket(bucket_info))
+    }
+    else if (applyCoupon_data && applyCoupon_data.apply_coupon && applyCoupon_data.apply_coupon.request_status === false && applyCoupon_data.apply_coupon.object.error) {
+      setApplyCouponAmount(0)
+      setCouponErrorModal(true)
+      setCouponError(applyCoupon_data.apply_coupon.object.error)
+    }
+
+  },[applyCoupon_data && applyCoupon_data.apply_coupon && applyCoupon_data.apply_coupon.requestId])
+//when fetch applyCoupon api after that data add into constant,hook End
+
+//when fetch removeCoupon api after that data add into constant,hook start
+  useMemo(() =>{
+    if(removeCoupon_data && removeCoupon_data.remove_coupon && removeCoupon_data.remove_coupon.request_status === true){
+      setApplyCouponInfo(removeCoupon_data.remove_coupon.object)
+      setRemoveCouponStatus(removeCoupon_data.remove_coupon.request_status)
+      const bucket_info = {
+        user_token:finalUserToken,
+        user_local_bucket_id:uniqueBucketId,
+        user_email:finalUserEmail
+      }
+      dispatch(fetchBucket(bucket_info))
+    }
+
+  },[removeCoupon_data && removeCoupon_data.remove_coupon && removeCoupon_data.remove_coupon.requestId])
+//when fetch removeCoupon api after that data add into constant,hook End
+
+//when payment_token data change then fetch paymentcheckout api ,hook start
+  useMemo(() =>{
+    if(payment_complete === true){
+      if(user_address_id != null){
+        setOrder_loader(true)
+        setCart_empty_click(false)
+        const process_centeralized_payment = configResponseData.stripe_info  && Object.keys(configResponseData.stripe_info).length>0 && configResponseData.stripe_info.STRIPE_ACCOUNT_ID ? "true" : undefined;
+        const payment_checkout_info = {
+          final_user_checkout_token:finalUserToken,
+          address:undefined,
+          addressId:user_address_id,
+          Unique_bucket_Id:uniqueBucketId,
+          payment_token:payment_token,
+          city:undefined,
+          country:undefined,
+          email:undefined,
+          first_name:undefined,
+          gatewayId:bucketDciResponseData.Detailed_cart_checkout_method[0].id,
+          last_name:undefined,
+          telephone:undefined,
+          notes_restaurant:inputValues.notes_restaurant,
+          postal_code:undefined,
+          state:undefined,
+          final_user_checkout_email:finalUserEmail,
+          process_centeralized_payment:process_centeralized_payment
+        }
+        dispatch(paymentCheckout(payment_checkout_info))
+        setPayment_complete(false)
+      }
+      else if (user_address_id == null && localStorage.getItem("user") != null && localStorage.getItem("access_token") != null) {
+        setOrder_loader(true)
+        setCart_empty_click(false)
+        const address_info = {
+          final_user_checkout_email:finalUserEmail,
+          final_user_checkout_token:finalUserToken,
+          first_name:inputValues.first_name,
+          last_name:inputValues.last_name,
+          address:inputValues.address,
+          city:inputValues.city,
+          state:inputValues.state,
+          country:inputValues.country,
+          postal_code:inputValues.postal_code,
+          telephone:inputValues.telephone,
+          email:inputValues.email
+        }
+        dispatch(addAddress(address_info))
+        setPayment_complete(false)
+      }
+      else if (localStorage.getItem("user") === null && localStorage.getItem("access_token") === null && user_address_id === null) {
+        setOrder_loader(true)
+        setCart_empty_click(false)
+        const process_centeralized_payment = configResponseData.stripe_info  && Object.keys(configResponseData.stripe_info).length>0 && configResponseData.stripe_info.STRIPE_ACCOUNT_ID ? "true" : undefined;
+        const payment_checkout_info = {
+          final_user_checkout_token:finalUserToken,
+          address:inputValues.address,
+          addressId:undefined,
+          Unique_bucket_Id:uniqueBucketId,
+          payment_token:payment_token,
+          city:inputValues.city,
+          country:inputValues.country,
+          email:inputValues.email,
+          first_name:inputValues.first_name,
+          gatewayId:bucketDciResponseData.Detailed_cart_checkout_method[0].id,
+          last_name:inputValues.last_name,
+          telephone:inputValues.telephone,
+          notes_restaurant:inputValues.notes_restaurant,
+          postal_code:inputValues.postal_code,
+          state:inputValues.state,
+          final_user_checkout_email:finalUserEmail,
+          process_centeralized_payment:process_centeralized_payment
+        }
+        dispatch(paymentCheckout(payment_checkout_info))
+        setPayment_complete(false)
+      }
+    }
+
+  },[payment_token])
+//when payment_token data change then fetch paymentcheckout api ,hook End
+
+//add data of paymentcheckout api into constant,hook start
+useMemo(() =>{
+  if(paymentCheckout_data && paymentCheckout_data.payment_checkout && paymentCheckout_data.payment_checkout.request_status === true){
+      setOrder_info(paymentCheckout_data.payment_checkout)
+      setOrder_loader(false)
+      setCart_empty_click(true)
+  }
+  else if (paymentCheckout_data && paymentCheckout_data.payment_checkout && paymentCheckout_data.payment_checkout.request_status === false) {
+    setCheckout_error(paymentCheckout_data.payment_checkout.object.error)
+    setOrder_now_click(false)
+  }
+},[paymentCheckout_data && paymentCheckout_data.payment_checkout && paymentCheckout_data.payment_checkout.requestId])
+//add data of paymentcheckout api into constant,hook End
+
+// add data of addAddress api into constant,hook start
+useMemo(() =>{
+  if(addAddress_data && addAddress_data.add_address && addAddress_data.add_address.object && addAddress_data.add_address.request_status === true){
+    setAddress_info(addAddress_data.add_address.object)
+  }
+
+},[addAddress_data && addAddress_data.add_address && addAddress_data.add_address.requestId])
+// add data of addAddress api into constant,hook End
+
+//when data of address_info change then fetch paymentcheckout api,hook start
+useMemo(() =>{
+  if(address_info && Object.keys(address_info).length > 0){
+    const process_centeralized_payment = configResponseData.stripe_info  && Object.keys(configResponseData.stripe_info).length>0 && configResponseData.stripe_info.STRIPE_ACCOUNT_ID ? "true" : undefined;
+    const payment_checkout_info = {
+      final_user_checkout_token:finalUserToken,
+      address:undefined,
+      addressId:address_info.address_id,
+      Unique_bucket_Id:uniqueBucketId,
+      payment_token:payment_token,
+      city:undefined,
+      country:undefined,
+      email:undefined,
+      first_name:undefined,
+      gatewayId:bucketDciResponseData.Detailed_cart_checkout_method[0].id,
+      last_name:undefined,
+      telephone:undefined,
+      notes_restaurant:inputValues.notes_restaurant,
+      postal_code:undefined,
+      state:undefined,
+      final_user_checkout_email:finalUserEmail,
+      process_centeralized_payment:process_centeralized_payment
+    }
+    dispatch(paymentCheckout(payment_checkout_info))
+  }
+},[address_info])
+//when data of address_info change then fetch paymentcheckout api,hook End
+
+// hooks end
+
+// component function start
+// deliveryhandler function start
+const deliveryhandler = (event) =>{
+  const update_shipping_method_info ={
+    final_user_token:finalUserToken,
+    final_user_email:finalUserEmail,
+    Unique_bucket_Id:uniqueBucketId,
+    shippingId:event.target.value
+  }
+    dispatch(updateShippingMethod(update_shipping_method_info))
+}
+// deliveryhandler function End
+
+// incrementNew function start
+const incrementNew =(value1, value2, value3, value4) =>{
+  setLoadingData(value4)
+  const update_item_qty_info = {
+    final_user_token:finalUserToken,
+    bucket_id:value3,
+    final_user_email:finalUserEmail,
+    bucketItemId:value1,
+    quantity:value2 + 1
+  }
+  dispatch(updateItemQuantity(update_item_qty_info))
+}
+// incrementNew function end
+
+// decrementNew function start
+const decrementNew = (value1, value2, value3, value4) =>{
+  setLoadingData(value4)
+  const update_item_qty_info = {
+    final_user_token:finalUserToken,
+    bucket_id:value3,
+    final_user_email:finalUserEmail,
+    bucketItemId:value1,
+    quantity:value2 - 1
+  }
+  dispatch(updateItemQuantity(update_item_qty_info))
+}
+// decrementNew function end
+
+
+// incrementwithAddon function start
+const incrementwithAddon =(value1, value2, value3) =>{
+  setLoadingData(value3)
+  const update_item_qty_info = {
+    final_user_token:finalUserToken,
+    bucket_id:uniqueBucketId,
+    final_user_email:finalUserEmail,
+    bucketItemId:value1,
+    quantity:value2 + 1
+  }
+  dispatch(updateItemQuantity(update_item_qty_info))
+}
+// incrementwithAddon function end
+
+// decrementwithAddon function start
+const decrementwithAddon =(value1, value2, value3) =>{
+  setLoadingData(value3)
+  const update_item_qty_info = {
+    final_user_token:finalUserToken,
+    bucket_id:uniqueBucketId,
+    final_user_email:finalUserEmail,
+    bucketItemId:value1,
+    quantity:value2 - 1
+  }
+  dispatch(updateItemQuantity(update_item_qty_info))
+}
+// incrementwithAddon function end
+
+// tiphandlerchange function start
+const tiphandlerchange = (event) =>{
+  if(bucketDciResponseData.cart_item_tip &&
+  bucketDciResponseData.cart_item_tip.length > 0){
+    bucketDciResponseData.cart_item_tip.map((tip,index) =>{
+      const tip_info = {
+        final_user_token:finalUserToken,
+        final_user_email:finalUserEmail,
+        Unique_bucket_Id:uniqueBucketId,
+        taxId:tip.fee_id,
+        taxRate:event.target.value
+      }
+      dispatch(addTip(tip_info))
+    })
+  }
+
+}
+// tiphandlerchange function End
+
+//handlerApplyCoupon function start
+const handlerApplyCoupon =() =>{
+  setRemoveCouponStatus(false)
+  const apply_coupon_info ={
+    final_user_checkout_token:finalUserToken,
+    final_user_checkout_email:finalUserEmail,
+    Unique_bucket_Id:uniqueBucketId,
+    apply_coupoon:applyCoupon
+  }
+  dispatch(applyCoupon(apply_coupon_info))
+}
+//handlerApplyCoupon function End
+
+//handlerRemoveCoupon function start
+const handlerRemoveCoupon = () =>{
+  setApplyCouponAmount(0)
+  const remove_coupon_info = {
+    final_user_checkout_token:finalUserToken,
+    final_user_checkout_email:finalUserEmail,
+    Unique_bucket_Id:uniqueBucketId,
+    apply_coupoon:applyCoupon
+  }
+  dispatch(removeCoupon(remove_coupon_info))
+}
+//handlerRemoveCoupon function End
+
+//handleFirstNameChange function start
+const handleFirstNameChange = (event) =>{
+  const first_name = event.target.value;
+if (first_name.match(/^[a-zA-Z ]*$/)){
+    setFirstname_error(false)
+}
+else {
+  setFirstname_error(true)
+}
+}
+//handleFirstNameChange function End
+
+//handleLastNameChange function start
+const handleLastNameChange = (event) =>{
+  const last_name = event.target.value;
+if (last_name.match(/^[a-zA-Z ]*$/)){
+    setLastname_error(false)
+}
+else {
+  setLastname_error(true)
+}
+}
+//handleLastNameChange function End
+
+//handlePhoneChange function start
+const handlePhoneChange = (event) =>{
+  const phone = event.target.value;
+  const phone_digit = /^\d{10}$/;
+          if(phone.length == 10){
+            setPhone_error(false)
           }
+          else {
+            setPhone_error(true)
+          }
+}
+//handlePhoneChange function End
 
+//handleEmailChange function start
+const handleEmailChange = (event) =>{
+  const email = event.target.value;
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
+        setEmail_error(false)
       }
-      handleFieldaddress = event =>{
-        this.setState({
-          selected_address : event.target.value
-        })
+      else {
+        setEmail_error(true)
       }
-      Tiphandlerchange = event =>{
-        this.state.cart_item_tip.map(tip =>{
-          const tip_url =
-            `${config.api_base}/users/business/bucket/custom_taxrate?access_token=${this.state.final_user_checkout_token}`;
-          fetch(tip_url, {
-            method: "POST",
-            body: JSON.stringify({
-              form_id: "",
-              user_id: this.state.final_user_checkout_email,
-              fields: {
-                bucketId: this.state.Unique_bucket_Id,
-                taxId: tip.fee_id,
-                taxRate: event.target.value
-              }
-            }),
-            headers: {
-              "Content-Type": "application/json"
-            }
-          }).then(response => response.json())
-                .then(tip_res => {
-                  this.setState({
-                    Tip_info: tip_res
-                  });
-                }).then(()=>{
-                  const show_cart= `${config.api_base}/users/business/bucket/dci?access_token=${this.state.final_user_checkout_token}&bucket_id=${this.state.Unique_bucket_Id}&user_id=${this.state.final_user_checkout_email}`;
+}
+//handleEmailChange function End
 
-                  fetch(show_cart, {
-                    method: "GET",
-                    headers: {
-                      //Authorization: bearer,
-                      "Content-Type": "application/json"
-                    }
-                  })
-                    .then(response => response.json())
-                    .then(cartData => {
-                      console.log("Second search results", cartData);
-                      this.setState({
-                        cartdetails_checkout: cartData,
-                        cartdetails_item_checkout: cartData.object.items,
-                        cart_item_tip : cartData.object.fees,
-                        checkout_Delivery_method : cartData.object.available_delivery_methods,
-                        checkout_pickup_restaurant : cartData.object.available_pickup_methods,
-                        Detailed_cart_checkout_method: cartData.object.available_checkout_methods,
-                        loadingData: null
-                      });
-                    });
-                })
-            .catch(error =>
-              this.setState({
-                message: "Something bad happened " + error
-              })
-            );
-        })
+//handlePostalCodeChange function start
+const handlePostalCodeChange = (event) =>{
+  const postal_code = event.target.value;
+      if(postal_code.length < 5 || postal_code.length > 10){
+        setPostal_code_error(true)
       }
-      handleSubmit = (ev) => {
-  // We don't want to let default form submission happen here, which would refresh the page.
-  ev.preventDefault();
-  this.setState({
-    order_now_click : true
-  })
-  if (this.props.stripe) {
-        this.props.stripe
-          .createToken()
-          .then((payload) => {
-            console.log('[token]', payload)
-            if(payload && payload.token && payload.token.id){
-          this.setState({payment_complete :true, payment_token: payload.token.id });
-        }
-        else if(payload && payload.error){
-          this.setState({
-            stripe_error : payload.error.message,
-            order_now_click : false
-          })
-        }
-        });
-      } else {
-        console.log("Stripe.js hasn't loaded yet.");
+      else {
+        setPostal_code_error(false)
       }
+}
+//handlePostalCodeChange function end
+
+//handleFieldaddress function start
+const handleFieldaddress = (event) =>{
+  setSelected_address(event.target.value)
+}
+//handleFieldaddress function end
+
+//handleSubmit function start
+const handleSubmit =(event) =>{
+  event.preventDefault();
+  setOrder_now_click(true)
+  if (props.stripe) {
+          props.stripe
+            .createToken()
+            .then((payload) => {
+              if(payload && payload.token && payload.token.id){
+                setPayment_complete(true)
+                setPayment_token(payload.token.id)
+          }
+          else if(payload && payload.error){
+            setStripe_error(payload.error.message)
+            setOrder_now_click(false)
+          }
+          });
+        } else {
+          console.log("Stripe.js hasn't loaded yet.");
+        }
+}
+//handleSubmit function end
+
+//cartemptyhandler function start
+const cartemptyhandler = () =>{
+  setShowmodal_cart_empty(true)
+}
+//cartemptyhandler function End
+
+//handleclosecartempty function start
+const handleclosecartempty = () => {
+        setShowmodal_cart_empty(false)
 };
-    render() {
-      // if (this.state.checkout_header_info.length == 0) {
-      //   return <Redirect to="/" />;
-      // }
-      const stripe_amount = this.state.cartdetails_checkout.object &&  this.state.cartdetails_checkout.object.total_amount ? ((this.state.cartdetails_checkout.object.total_amount + this.state.checkout_Delivery_cost + this.state.apply_coupon_amount)*100) : 0 ;
-      if (this.state.cart_above_data_checkout.length == 0) {
-        return <Redirect to="/" />;
-      }
+//handleclosecartempty function End
 
-      if (Object.keys(this.state.order_info).length>0 && this.state.order_info.request_status == true) {
-        return <Redirect to="/thankyou" />;
-      }
+//shopclosedhandler function start
+const shopclosedhandler = () =>{
+  setShowmodal_shop_closed(true)
+}
+//shopclosedhandler function End
 
-      if (this.state.payment_complete == true) {
-        console.log("submitt..................................................");
-        if(this.state.user_address_id != null){
-          this.checkoutinfo();
-          this.setState({payment_complete: false });
-        }
-        else if(this.state.user_address_id == null && localStorage.getItem("user") != null && localStorage.getItem("access_token") != null) {
-          this.Getinformation();
-        this.setState({payment_complete: false });
-        }
-        else if (localStorage.getItem("user") === null && localStorage.getItem("access_token") === null && this.state.user_address_id === null) {
-          this.guestcheckoutinfo();
-          this.setState({payment_complete: false });
-        }
+//handlecloseShopClosed function start
+const handlecloseShopClosed = () => {
+    setShowmodal_shop_closed(false)
+  };
+//handlecloseShopClosed function End
 
-      }
-      console.log("this.state.business_data.MERCHANT_ADD_FEAT_DELIVERY_TIME",this.props.location.checkout_business_data.MERCHANT_ADD_FEAT_DELIVERY_TIME);
-     console.log("country",this.state.country_info);
-       console.log("state_info",this.state.state_info);
-       console.log("checkout_address_user",this.state.checkout_address_user);
-       console.log("address id get",this.state.address_info);
-       console.log("user_address_id",this.state.user_address_id);
-    //   console.log("address_info",this.state.address_info.address_id);
-      console.log("cartdetails_checkout_method",this.props.location.cartdetails_checkout_method[0].id);
-       console.log(" stripe_info",this.state.stripe_info);
-       console.log(" merchant_info",this.state.merchant_info);
+//selectedaddress function start
+const selectedaddress = (event) =>{
+          setUser_address_id(event.target.value)
+};
+//selectedaddress function End
 
-       console.log(" order_info",this.state.order_info);
-       console.log("apply_coupon_info",this.state.apply_coupon_info);
-       console.log(" apply_coupon_state",this.state. apply_coupon_state);
-       console.log("apply_coupon_amount",this.state.apply_coupon_amount);
-      console.log("stripe key checkout" , this.props.location.stripe_key);
-       console.log("Delivery_info",this.state.Delivery_info);
-        //console.log("this.state.cartdetails_checkout.object.applied_coupons.length",Object.keys(this.state.cartdetails_checkout.object.applied_coupons).length);
-    //   console.log("cart_above_data",this.state.cart_above_data_checkout);
-    //   console.log("state",this.state);
-       console.log("payment_token",this.state.payment_token);
-      const cart_details = this.state.cartdetails_item_checkout && this.state.cartdetails_item_checkout.length > 0   && this.state.is_shop_open == "true" ?
-      this.state.cartdetails_item_checkout.map((item,index) =>{
+//handleclosecoupon function start
+const handleclosecoupon = () => {
+  setCouponErrorModal(false)
+};
+//handleclosecoupon function End
+
+
+// component function end
+
+// component constant start that contain small part of html
+
+//cart details constant start
+  const cart_details = bucketDciResponseData.Detailed_cart_item && bucketDciResponseData.Detailed_cart_item.length > 0   && configResponseData.is_shop_open == "true" ?
+      bucketDciResponseData.Detailed_cart_item.map((item,index) =>{
         let totalprice = 0;
             totalprice = item.unit_price * item.qty;
             return(
               <div className="pamout checkout" id="pamut-number" key={index}>
-                  <p>{item.itemName}</p>
+                  <p>{item.itemName.slice(0, 18)}</p>
                     <span>${Number(totalprice, 2).toFixed(2)}</span>
                   <div className="count" id="countted">
                       <div className="handle-counter" id="handleCounter14">
                       {item.addons && item.addons.length > 0 ? (<>
-                        <button className="counter-minus" onClick={this.decrementwithAddon.bind(
-                          this,
+                        <button className="counter-minus" onClick={() =>decrementwithAddon(
                           item.item_id,
                           item.qty,
                           item.product_id
                         )}>-</button>
                           {item.qty}
-                          <button className="counter-plus" onClick={this.incrementwithAddon.bind(
-                          this,
+                          <button className="counter-plus" onClick={() =>incrementwithAddon(
                           item.item_id,
                           item.qty,
                           item.product_id
                         )}>+</button></>):(
-                          <><button className="counter-minus" onClick={this.decrementNew.bind(
-                          this,
+                          <><button className="counter-minus" onClick={() =>decrementNew(
                           item.item_id,
                           item.qty,
-                          this.state.Unique_bucket_Id
+                          uniqueBucketId
                         )}>-</button>
                           {item.qty}
-                          <button className="counter-plus" onClick={this.incrementNew.bind(
-                          this,
+                          <button className="counter-plus" onClick={() =>incrementNew(
                           item.item_id,
                           item.qty,
-                          this.state.Unique_bucket_Id
+                          uniqueBucketId
                         )}>+</button></>)}
                         </div>
                     </div>
@@ -1354,26 +836,28 @@ else {
           <h4>Empty cart</h4>
         </div>
       )
+//cart details constant End
 
+//delivery_content constant start
       const delivery_content = <Form className="delivery-form" >
-      <Form.Label>Delivery</Form.Label>
+      <Form.Label>Select Option</Form.Label>
       <Form.Group controlId="formBasicPickup">
 
         <Form.Check
             type="radio"
-            label="Pickup at Restaurant"
+            label="Curbside Pickup"
             name="formHorizontalRadios"
-            id="Pickup at Restaurant"
-            value = {this.state.checkout_pickup_restaurant}
-            defaultChecked = {this.state.checkout_Delivery_cost == "0.0" ? true : false}
-            onClick={event => this.deliveryhandler(event)}
+            id="Curbside Pickup"
+            value = {bucketDciResponseData.pickup_restaurant}
+            defaultChecked = {delivery_cost == "0.0" ? true : false}
+            onClick={event => deliveryhandler(event)}
             //onChange={(evt) => this.changeTitle(evt)}
           />
           <Form.Text className="text-muted cart-text">
               $0
           </Form.Text>
       </Form.Group>
-      {this.state.checkout_Delivery_method && this.state.checkout_Delivery_method.length > 0 ? this.state.checkout_Delivery_method.map((checkout_delivery,index) =>{
+      {bucketDciResponseData.Delivery_method && bucketDciResponseData.Delivery_method.length > 0 ? bucketDciResponseData.Delivery_method.map((checkout_delivery,index) =>{
         return(
           <Form.Group controlId="formBasicPickup">
 
@@ -1383,8 +867,8 @@ else {
                 name="formHorizontalRadios"
                 id={checkout_delivery.name}
                 value = {checkout_delivery.id}
-                defaultChecked = {this.state.checkout_Delivery_cost == checkout_delivery.cost ? true : false}
-                onClick={event => this.deliveryhandler(event)}
+                defaultChecked = {delivery_cost == checkout_delivery.cost ? true : false}
+                onClick={event => deliveryhandler(event)}
                 //onChange={(evt) => this.changeTitle(evt)}
               />
               <Form.Text className="text-muted checkout-text">
@@ -1394,24 +878,21 @@ else {
         );
       }):null}
   </Form>
+//delivery_content constant End
 
-        return (
-            <>
-            <CheckoutDataHeader infoheader = {this.state.checkout_header_info} />
-            <HeaderTwo  banner_info={this.state.cart_above_data_checkout}
-              business_stripe={ this.state.stripe_key}
-            Detailed_cart_item= {this.state.cartdetails_item_checkout}
-            Detailed_cart= {this.state.cartdetails_checkout}
-            Detailed_cart_checkout_method={this.props.location.cartdetails_checkout_method}
-            Delivery_method={this.state
-              .checkout_Delivery_method}
-            pickup_restaurant={this.state
-              .checkout_pickup_restaurant}
-              Unique_bucket_Id={this.state.Unique_bucket_Id}
-              business_data={this.state.business_data}
-              Delivery_cost={this.state.checkout_Delivery_cost}/>
-            {!this.state.order_loader ? (
-            <div className="main1">
+//stripe_amount constant start
+const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseData.Detailed_cart.total_amount ? ((bucketDciResponseData.Detailed_cart.total_amount + delivery_cost + applyCouponAmount)*100) : 0 ;
+//stripe_amount constant end
+
+  // component constant end that contain small part of html
+  return(
+    <>
+    {order_info && Object.keys(order_info).length > 0 && order_info.request_status == true ? <Redirect to={{pathname:'/thankyou', order_info :order_info}} /> : null}
+    {props.location && props.location.banner_info && Object.keys(props.location.banner_info).length > 0 ? null : <Redirect to="/" />}
+    <Header configInfo={props.location.configInfo}
+      Detailed_cart_item={bucketDciResponseData.Detailed_cart_item}
+    />
+    <div className="main1">
                  <div className="container">
                    <div className="main1-wrapper">
                      <div className="row">
@@ -1419,12 +900,12 @@ else {
                            <div className="row checkout-cart-banner">
                            <div className="col-md-3">
                              <div className="top-right-logo">
-                               <img src={this.state.cart_above_data_checkout.BANNER} />
+                               <img src={banner_info.BANNER} />
                              </div>
                            </div>
                            <div className="col-md-9">
-                             <h5>{this.state.cart_above_data_checkout.name}</h5>
-                             <p>{this.state.cart_above_data_checkout.city}</p>
+                             <h5>{banner_info.name}</h5>
+                             <p>{banner_info.city}</p>
                            </div>
                          </div>
 
@@ -1441,16 +922,16 @@ else {
                                <img src="img/sales-coupon.png" />
                              </div>
                              <div className="Apply-Coupon-input">
-                               {this.state.cartdetails_checkout ? this.state.cartdetails_checkout.object && this.state.cartdetails_checkout.object.applied_coupons ? Object.keys(this.state.cartdetails_checkout.object.applied_coupons).length === 0 ?
-                                 (<><input type="text" name="ApplyCoupon" placeholder="Apply Coupon" value = {this.state.apply_coupoon} onChange = {e => this.handlerApplyCouponState(e)}/><button type="button" class="btn btn-secondary" onClick = {this.handlerApplyCoupon}>Apply</button></>)
+                               {bucketDciResponseData.Detailed_cart ? bucketDciResponseData.Detailed_cart.applied_coupons ? Object.keys(bucketDciResponseData.Detailed_cart.applied_coupons).length === 0 ?
+                                 (<><input type="text" name="ApplyCoupon" placeholder="Apply Coupon" value = {applyCoupoon} onChange = {e => setApplyCoupoon(e.target.value)}/><button type="button" class="btn btn-secondary" onClick = {() =>handlerApplyCoupon()}>Apply</button></>)
                                  :
-                                 (<><span className = "Applied-coupon">Applied Coupon - {Object.keys(this.state.cartdetails_checkout.object.applied_coupons)[0]}</span><input type="hidden" name="ApplyCoupon" placeholder="Apply Coupon" value = {Object.keys(this.state.cartdetails_checkout.object.applied_coupons)[0]} onChange = {e => this.handlerApplyCouponState(e)}/><button type="button" class="btn btn-secondary remove-btun" onClick = {this.handlerRemoveCoupon}>Remove</button></>)
+                                 (<><span className = "Applied-coupon">Applied Coupon - {Object.keys(bucketDciResponseData.Detailed_cart.applied_coupons)[0]}</span><input type="hidden" name="ApplyCoupon" placeholder="Apply Coupon" value = {Object.keys(bucketDciResponseData.Detailed_cart.applied_coupons)[0]} onChange = {e => setApplyCoupoon(e.target.value)}/><button type="button" class="btn btn-secondary remove-btun" onClick = {() =>handlerRemoveCoupon()}>Remove</button></>)
                                  :null:null
                                }
 
                              </div>
 
-                              {this.state.apply_coupon_state == false || this.state.remove_coupon_status == true ? null
+                              {applyCouponState == false || removeCouponStatus == true ? null
                                  : (<div>
                                    <span className = "Coupon-Applied">Coupon Applied Successfully</span>
                                  </div>
@@ -1474,14 +955,14 @@ else {
                            <div className="col-md-12">
                              <p>Bill Details</p>
                            </div>
-                           {this.state.cartdetails_checkout.object  ?
+                           {bucketDciResponseData.Detailed_cart  ?
                                 (
                            <div className="col-md-12">
                              <ul>
                                 <li>
                                  Item total
-                                 <span>{this.state.cartdetails_checkout.object.sub_total ? (<>${Number(
-                                  this.state.cartdetails_checkout.object.sub_total,
+                                 <span>{bucketDciResponseData.Detailed_cart.sub_total ? (<>${Number(
+                                  bucketDciResponseData.Detailed_cart.sub_total,
                                   2
                                 ).toFixed(2)}</>) : "$0"}</span>
                                </li>
@@ -1494,28 +975,28 @@ else {
                                //    : null}</span>
                                // </li>
                              }
-                             {this.state.cartdetails_checkout && this.state.cartdetails_checkout.object && this.state.cartdetails_checkout.object.taxes ? this.state.cartdetails_checkout.object.taxes.map((taxes,index) =>(
-                             <li>
-                               {taxes.name}
-                               <span><>
-                                 {" "}
-                                 $
-                                 {Number(
-                                  taxes.amount,
-                                   2
-                                 ).toFixed(2)}
-                               </></span>
-                             </li>
-                           )
+                             {bucketDciResponseData.Detailed_cart && bucketDciResponseData.Detailed_cart.taxes ? bucketDciResponseData.Detailed_cart.taxes.map((taxes,index) =>(
+                               <li>
+                                 {taxes.name}
+                                 <span><>
+                                   {" "}
+                                   $
+                                   {Number(
+                                    taxes.amount,
+                                     2
+                                   ).toFixed(2)}
+                                 </></span>
+                               </li>
+                             )
 
-                         ) :null }
+                           ) :null }
                                <li>
                                  Tip
-                                 <span><select onChange={this.Tiphandlerchange}  className="form-control" id="tip-select-checkout">
-                                 {this.state.cart_item_tip && this.state.cart_item_tip.length > 0 ? (
-                                   this.state.checkout_tip_rate_fees.map((item, index) => {
-                                     const fee_id = this.state.cart_item_tip[0].fee_id;
-                                     const fee_rate = this.state.cart_item_tip[0].rate;
+                                 <span><select onChange={(e) =>tiphandlerchange(e)}  className="form-control" id="tip-select-checkout">
+                                 {bucketDciResponseData.cart_item_tip && bucketDciResponseData.cart_item_tip.length > 0 ? (
+                                   tip_rate_fees.map((item, index) => {
+                                     const fee_id = bucketDciResponseData.cart_item_tip[0].fee_id;
+                                     const fee_rate = bucketDciResponseData.cart_item_tip[0].rate;
                                      const selected = fee_rate == item ? 'selected' : null;
                                          return (
                                            <option
@@ -1536,10 +1017,10 @@ else {
                                <hr />
                                <li>
                                   Tip Amount
-                                  <span>${this.state.cart_item_tip && this.state.cart_item_tip[0] ? this.state.cart_item_tip[0].amount: "0"}</span>
+                                  <span>${bucketDciResponseData.cart_item_tip && bucketDciResponseData.cart_item_tip[0] ? bucketDciResponseData.cart_item_tip[0].amount: "0"}</span>
                                </li>
                                <hr />
-                               {this.state.cartdetails_checkout && this.state.cartdetails_checkout.object && this.state.cartdetails_checkout.object.additional_fees ? this.state.cartdetails_checkout.object.additional_fees.map((additional_fee,index) =>(
+                               {bucketDciResponseData.Detailed_cart  && bucketDciResponseData.Detailed_cart.additional_fees ? bucketDciResponseData.Detailed_cart.additional_fees.map((additional_fee,index) =>(
                                  <>
                                  <li>
                                     {additional_fee.name}
@@ -1559,28 +1040,28 @@ else {
                                )
 
                              ) :null }
-                               {this.state.cartdetails_checkout.object.applied_coupons && Object.keys(this.state.cartdetails_checkout.object.applied_coupons).length > 0 ? (
+                               {bucketDciResponseData.Detailed_cart.applied_coupons && Object.keys(bucketDciResponseData.Detailed_cart.applied_coupons).length > 0 ? (
                                 <>
                                  <li>
                                     Applied Coupon
-                                    <span>{Object.keys(this.state.cartdetails_checkout.object.applied_coupons)[0]}</span>
+                                    <span>{Object.keys(bucketDciResponseData.Detailed_cart.applied_coupons)[0]}</span>
                                  </li>
                                  <hr />
                                  <li>
                                     Coupon Discount
-                                    <span>${Object.values(this.state.cartdetails_checkout.object.applied_coupons)[0]}</span>
+                                    <span>${Object.values(bucketDciResponseData.Detailed_cart.applied_coupons)[0]}</span>
                                  </li>
                                  <hr />
                                  </>
                                ) : null}
                                <li>
-                                 Delivery Fee
-                                 <span>${this.state.checkout_Delivery_method && this.state.checkout_Delivery_method.length > 0 ? this.state.checkout_Delivery_cost : 0}</span>
+                                 Curbside Pickup
+                                 <span>${bucketDciResponseData.Delivery_method && bucketDciResponseData.Delivery_method.length > 0 ? delivery_cost : 0}</span>
                                </li>
                                <hr />
                                <li>
                                  TO PAY
-                                  <span>{this.state.cartdetails_checkout.object.total_amount ? (<>${Number(this.state.cartdetails_checkout.object.total_amount + this.state.checkout_Delivery_cost + this.state.apply_coupon_amount,2).toFixed(2)}</>) : "$0"}</span>
+                                  <span>{bucketDciResponseData.Detailed_cart.total_amount ? (<>${Number(bucketDciResponseData.Detailed_cart.total_amount + delivery_cost + applyCouponAmount,2).toFixed(2)}</>) : "$0"}</span>
                                </li>
                              </ul>
 
@@ -1602,8 +1083,7 @@ else {
 
                                <div className="address-form">
                                <h2 className = "inner">Your Order Details</h2>
-
-                               {this.state.selected_address != '' && this.state.selected_address == "Saved Address" || this.state.selected_address == "New Address" ? (
+                               {selected_address != null && selected_address == "Saved Address" || selected_address == "New Address" ? (
                                  <Form.Row>
                                  <Form.Group as={Col} controlId="formBasicTelephone">
                                  <Form.Check
@@ -1611,9 +1091,9 @@ else {
                                       label="New Address"
                                       name="formHorizontalRadios"
                                       id="formHorizontalRadios1"
-                                      defaultChecked ={this.state.selected_address == "New Address" ? true : false}
+                                      defaultChecked ={selected_address == "New Address" ? true : false}
                                       Value = "New Address"
-                                      onChange = {e => this.handleFieldaddress(e)}
+                                      onChange = {e => handleFieldaddress(e)}
                                     />
                                  </Form.Group>
                                  <Form.Group as={Col} controlId="formBasicEmail">
@@ -1622,61 +1102,61 @@ else {
                                       label="Saved Address"
                                       name="formHorizontalRadios"
                                       id="formHorizontalRadios1"
-                                      defaultChecked ={this.state.selected_address == "Saved Address" ? true : false}
+                                      defaultChecked ={selected_address == "Saved Address" ? true : false}
                                       value = "Saved Address"
-                                      onChange = {e => this.handleFieldaddress(e)}
+                                      onChange = {e => handleFieldaddress(e)}
                                     />
                                  </Form.Group>
                                  </Form.Row>
                                ):null}
 
-                               {this.state.selected_address == '' ||  this.state.selected_address == "New Address" ?(<>
+                               {selected_address == null ||  selected_address == "New Address" ?(<>
                                  <Form className="Loc-form"  id="AddressForm" >
                                  <Form.Row>
                                     <Form.Group as={Col} controlId="formBasicfname">
                                       <Form.Label>First Name</Form.Label>
-                                      <Form.Control type="text" placeholder="First Name" value = {this.state.first_name} onChange = {e => this.handleFieldChange('first_name', e)} onBlur = {e => this.handleFirstNameChange('first_name', e)} required/>
-                                        {this.state.firstname_error ? (<span className ="phone-error">*Please enter alphabet characters only.</span>) : null}
+                                      <Form.Control type="text" placeholder="First Name" value = {inputValues.first_name} onChange = {e => setInputValues({...inputValues,first_name:e.target.value})} onBlur = {e => handleFirstNameChange(e)} required/>
+                                        {firstname_error && firstname_error === true ? (<span className ="phone-error">*Please enter alphabet characters only.</span>) : null}
                                     </Form.Group>
                                     <Form.Group as={Col} controlId="formBasiclname">
                                       <Form.Label>Last Name</Form.Label>
-                                      <Form.Control type="text" placeholder="Last Name" value = {this.state.last_name} onChange = {e => this.handleFieldChange('last_name', e)} onBlur = {e => this.handleLastNameChange('last_name', e)} required/>
-                                        {this.state.lastname_error ? (<span className ="phone-error">*Please enter alphabet characters only.</span>) : null}
+                                      <Form.Control type="text" placeholder="Last Name" value = {inputValues.last_name} onChange = {e => setInputValues({...inputValues,last_name:e.target.value})} onBlur = {e => handleLastNameChange(e)} required/>
+                                        {lastname_error && lastname_error === true ? (<span className ="phone-error">*Please enter alphabet characters only.</span>) : null}
                                     </Form.Group>
                                     </Form.Row>
                                     <Form.Row>
                                     <Form.Group as={Col} controlId="formBasicTelephone">
 
                                       <Form.Label>Telephone/mobile</Form.Label>
-                                        <Form.Control type="number" pattern="[0-9]*"  placeholder="Telephone/mobile"   value = {this.state.telephone} onChange = {e => this.handleFieldChange('telephone', e)} onBlur = {e => this.handlePhoneChange('telephone', e)} required/>
-                                        {this.state.phone_error ? (<span className ="phone-error">Phone Number must be 10 digits</span>) : null}
+                                        <Form.Control type="number" pattern="[0-9]*"  placeholder="Telephone/mobile"   value = {inputValues.telephone} onChange = {e => setInputValues({...inputValues,telephone:e.target.value})} onBlur = {e => handlePhoneChange(e)} required/>
+                                        {phone_error && phone_error === true ? (<span className ="phone-error">Phone Number must be 10 digits</span>) : null}
                                     </Form.Group>
                                     <Form.Group as={Col} controlId="formBasicEmail">
                                       <Form.Label>Email address</Form.Label>
-                                      <Form.Control type="email" placeholder="Enter email" value = {this.state.email} onChange = {e => this.handleFieldChange('email', e)} onBlur = {e => this.handleEmailChange('email', e)} required/>
-                                      {this.state.email_error ? (<span className ="phone-error">Please enter valid email</span>) : null}
+                                      <Form.Control type="email" placeholder="Enter email" value = {inputValues.email} onChange = {e => setInputValues({...inputValues,email:e.target.value})} onBlur = {e => handleEmailChange(e)} required/>
+                                      {email_error && email_error === true  ? (<span className ="phone-error">Please enter valid email</span>) : null}
                                     </Form.Group>
                                     </Form.Row>
                                     <Form.Group controlId="formBasicaddress">
                                       <Form.Label>Your full address</Form.Label>
-                                      <Form.Control type="text" placeholder="Your full address" value = {this.state.address} onChange = {e => this.handleFieldChange('address', e)} required/>
+                                      <Form.Control type="text" placeholder="Your full address" value = {inputValues.address} onChange = {e => setInputValues({...inputValues,address:e.target.value})} required/>
                                     </Form.Group>
                                     <Form.Row>
                                     <Form.Group as={Col} controlId="formBasicCity">
                                       <Form.Label>City</Form.Label>
-                                      <Form.Control type="text" placeholder="City" value = {this.state.city} onChange = {e => this.handleFieldChange('city', e)} required/>
+                                      <Form.Control type="text" placeholder="City" value = {inputValues.city} onChange = {e => setInputValues({...inputValues,city:e.target.value})} required/>
                                     </Form.Group>
                                     <Form.Group  as={Col} controlId="formBasicPostalcode">
                                       <Form.Label>Postal code</Form.Label>
-                                      <Form.Control type="text" pattern="[0-9]*" placeholder="Postal code"  value = {this.state.postal_code} onChange = {e => this.handleFieldChange('postal_code', e)} onBlur = {e => this.handlePostalCodeChange('postal_code', e)} required/>
-                                      {this.state.postal_code_error ? (<span className ="phone-error">Postal code must be in between 5 digits to 10 digits</span>) : null}
+                                      <Form.Control type="text" pattern="[0-9]*" placeholder="Postal code"  value = {inputValues.postal_code} onChange = {e => setInputValues({...inputValues,postal_code:e.target.value})} onBlur = {e => handlePostalCodeChange(e)} required/>
+                                      {postal_code_error && postal_code_error === true ? (<span className ="phone-error">Postal code must be in between 5 digits to 10 digits</span>) : null}
                                     </Form.Group>
                                     </Form.Row>
                                     <Form.Row>
                                     <Form.Group as={Col} controlId="State">
                                       <Form.Label>State</Form.Label>
-                                      <Form.Control as="select"  onChange = {e => this.handleFieldChange('state', e)} required>
-                                        {this.state.state_info && this.state.state_info.length > 0 ? this.state.state_info.map((statedata,index) =>
+                                      <Form.Control as="select"  onChange = {e => setInputValues({...inputValues,state:e.target.value})} required>
+                                        {state_info && state_info.length > 0 ? state_info.map((statedata,index) =>
                                          (
                                           <option value = {statedata.id } key = {index}>{statedata.name}</option>
                                         )
@@ -1686,130 +1166,64 @@ else {
                                     </Form.Group>
                                     <Form.Group as={Col} controlId="Country">
                                       <Form.Label>Country</Form.Label>
-                                      <Form.Control as="select"  onChange = {e => this.handleFieldChange('country', e)} required>
-                                        <option value ={this.state.country_info.id}>{this.state.country_info.name}</option>
+                                      <Form.Control as="select"  onChange = {e => setInputValues({...inputValues,country:e.target.value})} required>
+                                        <option value ={country_info.id}>{country_info.name}</option>
 
                                       </Form.Control>
                                     </Form.Group>
                                     </Form.Row>
                                     <Form.Group controlId="exampleForm.ControlTextarea1">
                                         <Form.Label>Notes for the restaurant</Form.Label>
-                                        <Form.Control as="textarea" rows="3" value = {this.state.notes_restaurant} onChange = {e => this.handleFieldChange('notes_restaurant', e)}/>
+                                        <Form.Control as="textarea" rows="3" value = {inputValues.notes_restaurant} onChange = {e => setInputValues({...inputValues,notes_restaurant:e.target.value})}/>
                                     </Form.Group>
-                                    {/* <Form.Row className="radio-checkout-form-row">
-                                    <Form.Group as={Col} controlId="formBasicCity" className="radio-checkout-form-btn">
-                                    <Form.Check
-                                        type="radio"
-                                        name="radio"
-                                        id="formHorizontalRadios1"
-
-                                      />
-                                      <span className="checkmark"><span><img src="img/home-icon.png" /></span>Home</span>
-                                    </Form.Group>
-                                    <Form.Group as={Col} controlId="formBasicCity" className="radio-checkout-form-btn">
-                                    <Form.Check
-                                        type="radio"
-                                        name="radio"
-                                        id="formHorizontalRadios1"
-
-                                      />
-                                      <span className="checkmark"><span><img src="img/work-icon.png" /></span>Work</span>
-                                    </Form.Group>
-                                    <Form.Group as={Col} controlId="formBasicCity" className="radio-checkout-form-btn">
-                                    <Form.Check
-                                        type="radio"
-                                        name="radio"
-                                        id="formHorizontalRadios1"
-
-                                      />
-                                       <span className="checkmark"><span><img src="img/other-icon.png" /></span>Other</span>
-                                    </Form.Group>
-                                    </Form.Row> */}
-
                                   </Form>
-                                   {/* <form className="Loc-form">
-                                     <input type="text" name="address" placeholder="Address" />
-                                     <input type="text" name="address" placeholder="Address" />
-                                     <input type="text" name="address" placeholder="Address" />
-                                     <div className="row radio-checkout-form-row">
-                                       <div className="col-md-4">
-                                         <label className="radio-checkout-form-btn">
-                                           <input type="radio" name="radio" />
-                                           <span className="checkmark"><span><img src="img/home-icon.png" /></span>Home</span>
-                                         </label>
-                                       </div>
-                                       <div className="col-md-4">
-                                         <label className="radio-checkout-form-btn">
-                                           <input type="radio" name="radio" />
-                                           <span className="checkmark"><span><img src="img/work-icon.png" /></span>Work</span>
-                                         </label>
-                                       </div>
-                                       <div className="col-md-4">
-                                         <label className="radio-checkout-form-btn">
-                                           <input type="radio" name="radio" />
-                                           <span className="checkmark"><span><img src="img/other-icon.png" /></span>Other</span>
-                                         </label>
-                                       </div>
-                                     </div>
-                                     <StripeCheckout
-                                        amount="500"
-                                        //billingAddress
-                                        description="Awesome Product"
-                                        locale="auto"
-                                        name="YourDomain.tld"
-                                        stripeKey="pk_test_iCB3R1msXLGshPKxWjL6wIu5007ezXC0PW"
-                                        token={this.onToken}
-                                        zipCode
-                                        label="SAVE ADDRESS &amp; PROCEED"
-                                        className="Loc-form-btn"
-                                    />  */}
-                                     {/* <button className="Loc-form-btn" type="submit">SAVE ADDRESS &amp; PROCEED</button> */}
-                                    {/* </form> */}
-                                    {this.state.is_shop_open === "true" || this.state.is_shop_open === "True" ?  stripe_amount != 0 ?  this.state.first_name != "" &&
-                                  this.state.last_name != "" &&
-                                  this.state.telephone != "" &&
-                                  this.state.telephone.length == 10 &&
-                                  this.state.email_error === false &&
-                                  this.state.firstname_error === false &&
-                                  this.state.lastname_error === false &&
-                                  this.state.address != "" &&
-                                  this.state.city != "" &&
-                                  this.state.postal_code !="" &&
-                                  this.state.postal_code.length >= 5 &&
-                                  this.state.postal_code.length <= 10 &&
-                                  this.state.state != "" &&
-                                  this.state.country != ""  ?
+
+                                    {configResponseData.is_shop_open === "true" || configResponseData.is_shop_open === "True" ?  stripe_amount != 0 ?
+                                      inputValues.first_name != "" &&
+                                  inputValues.last_name != "" &&
+                                  inputValues.telephone != "" &&
+                                  inputValues.telephone.length == 10 &&
+                                  email_error === false &&
+                                  firstname_error === false &&
+                                  lastname_error === false &&
+                                  inputValues.address != "" &&
+                                  inputValues.city != "" &&
+                                  inputValues.postal_code !="" &&
+                                  inputValues.postal_code.length >= 5 &&
+                                  inputValues.postal_code.length <= 10 &&
+                                  inputValues.state != "" &&
+                                  inputValues.country != ""  ?
                                   (
                                     <>
                                 <div>
-                                {this.state.stripe_error != null ? (<span className="stripe-error">{this.state.stripe_error}</span>) : null}
-                               {this.state.checkout_error != null ? (<span className="stripe-error">{this.state.checkout_error}</span>) : null}
+                                {stripe_error != null ? (<span className="stripe-error">{stripe_error}</span>) : null}
+                                {checkout_error != null ? (<span className="stripe-error">{checkout_error}</span>) : null}
                                   <CardSection />
                                 </div>
                                 <button
-                                    disabled = {this.state.order_now_click ? true : false}
+                                disabled = {order_now_click ? true : false}
                                     className="Loc-form-btn"
-                                    onClick = {this.handleSubmit}
+                                    onClick = {(e) =>handleSubmit(e)}
                                   ><span>ORDER NOW</span></button>
                                 </>):(<button
                                       type="submit"
                                       form="AddressForm"
                                       className="StripeCheckout Loc-form-btn"
                                       value="submit"
-                                      disabled = {this.state.phone_error || this.state.postal_code_error || this.state.email_error  || this.state.firstname_error || this.state.lastname_error ? true : false}
+                                      disabled = {phone_error || postal_code_error || email_error  || firstname_error || lastname_error ? true : false}
                                     >  <span>ORDER NOW</span>
                                     </button>) : (<button
-                                      disabled = {!this.state.cart_empty_click}
+                                      disabled = {!cart_empty_click}
                                       className="StripeCheckout Loc-form-btn"
-                                      onClick={this.cartemptyhandler}
+                                      onClick={() =>cartemptyhandler()}
                                     >  <span>ORDER NOW</span>
                                     </button>):(<button
                                       className="StripeCheckout Loc-form-btn"
-                                      onClick={this.shopclosedhandler}
+                                      onClick={() =>shopclosedhandler()}
                                     >  <span>ORDER NOW</span>
                                     </button>)}
-                                 </>):this.state.selected_address != '' && this.state.selected_address == "Saved Address" ? ( <>
-                                   {this.state.checkout_address_user && this.state.checkout_address_user.length > 0 ? this.state.checkout_address_user.map(address =>{
+                                 </>):selected_address != null && selected_address == "Saved Address" ? ( <>
+                                   {checkout_address_user && checkout_address_user.length > 0 ? checkout_address_user.map(address =>{
                                    return (<div className="address-box">
                                    <input type="radio" name="gender" onClick = {e => this.selectedaddress(e)} value={address.address_id}/>
                                       <ul className ="saved-address-data">
@@ -1824,29 +1238,29 @@ else {
                                  )
                                       }):null
                                       }
-                                      {this.state.is_shop_open === "true" || this.state.is_shop_open === "True" ? stripe_amount != 0 ? (
+                                      {configResponseData.is_shop_open === "true" || configResponseData.is_shop_open === "True" ? stripe_amount != 0 ? (
                                         <>
                                   <div>
-                                  {this.state.stripe_error != null ? (<span className="stripe-error">{this.state.stripe_error}</span>) : null}
-                                 {this.state.checkout_error != null ? (<span className="stripe-error">{this.state.checkout_error}</span>) : null}
+                                  {stripe_error != null ? (<span className="stripe-error">{stripe_error}</span>) : null}
+                                  {checkout_error != null ? (<span className="stripe-error">{checkout_error}</span>) : null}
                                     <CardSection />
                                   </div>
                                   <button
-                                      disabled = {this.state.order_now_click ? true : false}
+                                      disabled = {order_now_click ? true : false}
                                       className="Loc-form-btn"
-                                      onClick = {this.handleSubmit}
+                                      onClick = {(e) =>handleSubmit(e)}
                                     ><span>ORDER NOW</span></button>
                                   </>
                                     ) : (
                                       <button
-                                        disabled = {!this.state.cart_empty_click}
+                                        disabled = {!cart_empty_click}
                                         className="StripeCheckout Loc-form-btn"
-                                        onClick={this.cartemptyhandler}
+                                        onClick={() =>cartemptyhandler()}
                                       >  <span>ORDER NOW</span>
                                       </button>
                                     ):(<button
                                         className="StripeCheckout Loc-form-btn"
-                                        onClick={this.shopclosedhandler}
+                                        onClick={() =>shopclosedhandler()}
                                       >  <span>ORDER NOW</span>
                                       </button>)}
                                    </>) : null }
@@ -1873,9 +1287,9 @@ else {
                               <i className="fa fa-clock-o"></i>
                               </div>
                                <div className="col-md-1"></div>
-                                 <p><span>Delivery :</span> Order will be delivered within {this.state.business_data.MERCHANT_ADD_FEAT_DELIVERY_TIME}.</p>
+                                 <p><span>Delivery :</span> Order will be delivered within {banner_info.MERCHANT_ADD_FEAT_DELIVERY_TIME}.</p>
 
-                               <p><span>Pickup :</span> Order will be ready within {this.state.business_data.MERCHANT_ADD_FEAT_PICKUP_TIME} to pickup.</p>
+                               <p><span>Pickup :</span> Order will be ready within {banner_info.MERCHANT_ADD_FEAT_PICKUP_TIME} to pickup.</p>
                                <hr></hr>
                                <div className="row">
                                 <div className="col-md-9 secure-payment">
@@ -1909,45 +1323,36 @@ else {
                      </div>
                    </div>
                  </div>
-     </div>):(
-       <div className="main1">
-         <div className="main-contant load">
-          <img className = "loader" src="/img/menu-loader.gif" />
-         </div>
-         </div>
-     )}
-
-
-            <Footer banner_info={this.state.banner_info} />
-            <Modal show={this.state.showmodal_cart_empty} id="modal3" size="sm">
-              <Modal.Body>Cart is empty.</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={this.handleclosecartempty}>
-                  ok
-                </Button>
-              </Modal.Footer>
-            </Modal>
-
-            <Modal show={this.state.coupon_error_modal} id="modal3" size="sm">
-              <Modal.Body>{this.state.coupon_error === "INVALID COUPON" || this.state.coupon_error === "INVALID RULE"  ? (<>INVALID COUPON</>) : null}</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={this.handleclosecoupon}>
-                  ok
-                </Button>
-              </Modal.Footer>
-            </Modal>
-
-            <Modal show={this.state.showmodal_shop_closed} id="modal3" size="sm">
-            <Modal.Body>Shop is Closed.</Modal.Body>
+     </div>
+    <Footer configInfo={props.location.configInfo} merchantInfo={props.location.merchantInfo} banner_info={banner_info}/>
+    <Modal show={showmodal_cart_empty} id="modal3" size="sm">
+            <Modal.Body>Cart is empty.</Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={this.handlecloseShopClosed}>
+              <Button variant="secondary" onClick={() =>handleclosecartempty()}>
                 ok
               </Button>
             </Modal.Footer>
           </Modal>
-            </>
-        )
-    }
+
+          <Modal show={couponErrorModal} id="modal3" size="sm">
+            <Modal.Body>{couponError === "INVALID COUPON" || couponError === "INVALID RULE"  ? (<>INVALID COUPON</>) : null}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() =>handleclosecoupon()}>
+                ok
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal show={showmodal_shop_closed} id="modal3" size="sm">
+          <Modal.Body>Shop is Closed.</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() =>handlecloseShopClosed()}>
+              ok
+            </Button>
+          </Modal.Footer>
+        </Modal>
+    </>
+  )
 }
 
-export default injectStripe(Checkout);
+export default injectStripe(Checkout)

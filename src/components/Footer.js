@@ -1,150 +1,112 @@
-import React, { Component } from 'react';
+import React,{useEffect,useMemo,useState} from 'react'
+import { useSelector,useDispatch } from 'react-redux';
 import {config} from '../config';
+import { fetchRestaurantTiming } from '../Redux/RestaurantTiming/RestaurantTimingActions';
+function Footer(props){
+  // store data access start
+const restaurantTiming_data = useSelector(state =>state.RestaurantTiming)
+// store data access End
+  const dispatch = useDispatch()  // for accessing the redux function
 
-class Footer extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      timing_token : null,
-  timing:[],
-  config_info : []
-    }
-  }
-  componentDidMount(){
-  const url_token = `${config.api_root}/security/session/merchants?Key=${config.key_value}&Secret=${config.secret_value}&device_id=21212121121212wqwqw`;
-  fetch(url_token, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Key" : config.key_value,
-      "Secret" : config.secret_value
-    }
-  })
-    .then(response => response.json())
-    .then(cartData => {
-      this.setState({
-        timing_token: cartData.object.access_token
-      },() =>{
-        const url_info =
-        `${config.api_base}/merchants/config?device_id=21212121121212wqwqw&Key=${config.key_value}&Secret=${config.secret_value}&access_token=${this.state.timing_token}`;
-      fetch(url_info, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).then(response => response.json())
-            .then(stripe => {
-              this.setState({
-                config_info: stripe.object
-              });
-            })
-            .catch(error =>
-              this.setState({
-                message: "Something bad happened " + error
-              })
-            );
+  // component all states define start
+  const [restaurantTimingInfo,setRestaurantTimingInfo] = useState([])
+  // component all states define End
 
-        const bearer = "Bearer " + this.state.timing_token;
-        const url_timing = `${config.api_base}/merchants/timing_v2`;
-        fetch(url_timing, {
-          method: "GET",
-          headers: {
-            Authorization: bearer,
-            "Content-Type": "application/json"
-          }
-        })
-          .then(response => response.json())
-          .then(timing => {
-            this.setState({
-              timing: timing.data
-            });
-          }).catch(error =>
-            this.setState({
-              message: "Something bad happened " + error
-            })
-          );
-      });
-    }).catch(error =>
-      this.setState({
-        message: "Something bad happened " + error
-      })
-    );
-}
-    render() {
-      const current_url = window.location.href;
-      const ischeckoutpage = current_url.search("checkout");
-      console.log('current_url',current_url.search("checkout"));
-      console.log("timing_token",this.state.timing_token);
-      console.log("timing",this.state.timing);
-        return (
-          <>
-          <footer className="footer">
+   //hooks start
+   useEffect(() =>{
+     if(props && props.merchantInfo && props.merchantInfo.access_token){
+       const user_token = props.merchantInfo.access_token
+       dispatch(fetchRestaurantTiming(user_token))
+     }
+   },[dispatch && props && props.merchantInfo])
+
+   useMemo(()=>{
+    if(restaurantTiming_data && restaurantTiming_data.restaurant_timing && restaurantTiming_data.restaurant_timing.data){
+      setRestaurantTimingInfo(restaurantTiming_data.restaurant_timing.data)
+    }
+  },[restaurantTiming_data])
+   //hooks end
+  return(
+    <>
+      <footer className="footer">
+            <div className="container">
+                <div className="row">
+                <div className="col-md-4 mb-3 border-right">
+                {
+                  //<div className="footer-logo"><img src={config.logo_img_root} alt="" /></div>
+                }
+                <div className="schedule">
+                <h5>Restaurant Hours</h5>
+                {restaurantTimingInfo && restaurantTimingInfo.length > 0 ? restaurantTimingInfo.map((time,index) =>{
+              return(
+                  <div key={index}>
+                  <span className="time-ico"><img src="/img/time-icon.png" alt="" /></span>
+                <span className="time-text"><span className="Day">{time.openingDay + " - " + time.closingDay}</span></span><br/>
+                <span className="opening-hours">Opening Hours : {time.openingTime} - {time.closingTime}</span><br></br><br></br>
+                  </div>
+                )
+
+              }) :null}
+                </div>
+                </div>
+                <div className="col-md-4 mb-3 border-right">
+                <div className="footer-address">
+                    <h5>Address</h5>
+                    <span className="time-ico"><img src="/img/home-icon.png" alt="" /></span>
+                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_address},  {props.banner_info.address_city},CO {props.banner_info.name_point}  </>) : null}<br></br>
+                    {
+                    //   <span className="time-ico"><img src="/img/phone-icon.png" alt="" /></span>
+                    // <span className="time-text">{this.props && this.props.banner_info ? this.props.banner_info.MERCHANT_CONTACT : null}<br></br></span>
+                  }
+                    {/* <span className="time-ico"><img src="img/mail-icon.png" alt="" /></span> */}
+                    {/* <span className="time-text"><a href="mailto:info@gaiamasalasindiacafe.com">info@gaiamasalasindiacafe.com</a></span></span> */}
+
+                    </span>
+                    {props && props.configInfo && Object.keys(props.configInfo).length > 0 && props.configInfo.qr_code_100  ? (
+                      <div className="qr-code-information"><span className = "qr-code"><img src={props.configInfo.qr_code_100} alt="" /></span>
+                        <span className = "qr-code-text">Download the {props && props.banner_info ? props.banner_info.name : null} Order App</span>
+                      </div>) : null}
+                </div>
+                </div>
+                <div className="col-md-4 mb-3">
+                <div className="google-map">
+                  <h5>Location</h5>
+                    <iframe src={config.iframe_root} title="myFrame" width="100%" height="225" frameBorder="0" style={{border:0}} allowFullScreen=""></iframe>
+
+                  {
+                  //<iframe src={`https://maps.google.com/maps/place?q=${latitude},${longitude}&z=15&output=embed`} width="100%" height="880" frameborder="0" style={{border:0}} allowfullscreen=""></iframe>
+                }
+
+                    </div>
+                </div>
+                <div className="clear"></div>
+            </div>
+            </div>
+
+            {/* <!-- /.container --> */}
+            <div className="footer-bottom">
                 <div className="container">
                     <div className="row">
-                    <div className="col-md-4 mb-3 border-right">
-                        <div className="footer-logo"><img src={config.logo_img_root} alt="" /></div>
-                    </div>
-                    <div className="col-md-4 mb-3 border-right">
-                        <div className="schedule">
-                        {this.state.timing && this.state.timing.length > 0 ? this.state.timing.map((time,index) =>{
-                      return(
-                          <>
-                          <span className="time-ico"><img src="/img/time-icon.png" alt="" /></span>
-                        <span className="time-text"><span class="Day">{time.openingDay + " - " + time.closingDay}</span></span><br/>
-                        <span class="opening-hours">Opening Hours : {time.openingTime} - {time.closingTime}</span><br></br><br></br>
-                          </>
-                        )
-
-                      }) :null}
+                        <div className="col-md-6 copyright-text">
+                            © 2020  |  Privacy Policy
                         </div>
-                    </div>
-                    <div className="col-md-4 mb-3">
-                        <div className="footer-address">
-
-                            <span className="time-ico"><img src="/img/home-icon.png" alt="" /></span>
-                            <span className="time-text">{this.props && this.props.banner_info ? (<>{this.props.banner_info.address_address},  {this.props.banner_info.address_city},CO {this.props.banner_info.name_point}  </>) : null}<br></br>
-                            {
-                            //   <span className="time-ico"><img src="/img/phone-icon.png" alt="" /></span>
-                            // <span className="time-text">{this.props && this.props.banner_info ? this.props.banner_info.MERCHANT_CONTACT : null}<br></br></span>
+                        <div className="col-md-6 footer-social">
+                        {
+                            // <a href="#" target="_blank"><img src="/img/google.jpg" alt="" /></a>
+                            // <a href="#" target="_blank"><img src="/img/insta.jpg" alt="" /></a>
+                            // <a href="#" target="_blank"><img src="/img/twitter.jpg" alt="" /></a>
                           }
-                            {/* <span className="time-ico"><img src="img/mail-icon.png" alt="" /></span> */}
-                            {/* <span className="time-text"><a href="mailto:info@gaiamasalasindiacafe.com">info@gaiamasalasindiacafe.com</a></span></span> */}
-
-                            </span>
-                            {this.state.config_info && Object.keys(this.state.config_info).length > 0 && this.state.config_info.qr_code_100  ? (
-                              <div className="qr-code-information"><span className = "qr-code"><img src={this.state.config_info.qr_code_100} alt="" /></span>
-                                <span className = "qr-code-text">Download the {this.props && this.props.banner_info ? this.props.banner_info.name : null} Order App</span>
-                              </div>) : null}
-                        </div>
-                    </div>
-                    <div className="clear"></div>
-                </div>
-                </div>
-
-                {/* <!-- /.container --> */}
-                <div className="footer-bottom">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-6 copyright-text">
-                                © 2020  |  Privacy Policy
-                            </div>
-                            <div className="col-md-6 footer-social">
                             {
-                                // <a href="#" target="_blank"><img src="/img/google.jpg" alt="" /></a>
-                                // <a href="#" target="_blank"><img src="/img/insta.jpg" alt="" /></a>
-                                // <a href="#" target="_blank"><img src="/img/twitter.jpg" alt="" /></a>
-                              //  <a href="https://www.facebook.com/pages/Thai-Kitchen/117770488250191" target="_blank"><img src="/img/fb.jpg" alt="" /></a>
-                              }
-
-                            </div>
+                              //<a href={config.facebook_link} target="_blank" rel="noopener noreferrer"><img src="/img/fb.jpg" alt="" /></a>
+                            }
                         </div>
                     </div>
                 </div>
+            </div>
 
-          </footer>
-        </>
-        );
-    }
+      </footer>
+    </>
+  )
 }
 
-export default Footer;
+export default Footer

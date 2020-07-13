@@ -1,16 +1,12 @@
-// CardSection.js
 import React from 'react';
-import {CardElement,
-  CardNumberElement,
+import {CardNumberElement,
     CardExpiryElement,
     CardCVCElement} from 'react-stripe-elements';
 
-class CardSection extends React.Component {
-  render() {
-    return (
-
-      <label className="card-section">
-        Card details
+function CardSection(){
+  return(
+    <label className="card-section">
+        <h2 className = "card-section-inner">Card details</h2>
         <label>
          Card number
          <CardNumberElement
@@ -28,8 +24,7 @@ class CardSection extends React.Component {
          />
        </label>
       </label>
-    );
-  }
+  )
 }
 
-export default CardSection;
+export default CardSection

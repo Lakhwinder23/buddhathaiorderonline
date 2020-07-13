@@ -1,33 +1,28 @@
-import React, { Component } from 'react';
-// import { geolocated } from "react-geolocated";
-//import '../css/bootstrap-3.3.4-dist/css/bootstrap.min.css';
+import React,{useEffect,useMemo,useState} from 'react'
+import { useSelector,useDispatch } from 'react-redux';
 import {config} from '../config';
-import { Link } from "react-router-dom";
-class BelowHeader extends Component {
 
-
-    render() {
-        return (
-
-          <>
-              <header className="bg-image-full cafe-header" style={{backgroundImage: `url(${config.banner_img_root})`}}>
-                <div className="header-caption">
-                    <div className="header-caption-inner">
-                    Authentic<br></br><span>American, Mediterranean, and Indian cuisine</span>
-                    </div>
-                </div>
-            </header>
-            </>
-
-
-        )
-    }
+function BelowHeader(){
+  const restaurantInformation_data = useSelector(state =>state.RestaurantInformation)
+  console.log("restaurantInformation_data",restaurantInformation_data)
+  return(
+    <>
+            <header className="bg-image-full cafe-header" style={{backgroundImage: `url(${restaurantInformation_data &&
+              Object.keys(restaurantInformation_data).length > 0 &&
+              restaurantInformation_data.restaurant_info &&
+              restaurantInformation_data.restaurant_info.object &&
+              restaurantInformation_data.restaurant_info.request_status === true &&
+              restaurantInformation_data.restaurant_info.object.BANNER ?
+              restaurantInformation_data.restaurant_info.object.BANNER : null
+            })`}}>
+              <div className="header-caption">
+                  <div className="header-caption-inner">
+                  Authentic<br></br><span>American, Mediterranean, and Indian cuisine</span>
+                  </div>
+              </div>
+          </header>
+          </>
+  )
 }
-// export default geolocated({
-//   positionOptions: {
-//       enableHighAccuracy: false,
-//   },
-//   userDecisionTimeout: 5000,
-// })(BelowHeader);
 
-export default BelowHeader;
+export default BelowHeader

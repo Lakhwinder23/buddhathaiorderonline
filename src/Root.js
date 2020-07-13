@@ -1,93 +1,96 @@
-import React,{Component} from 'react';
+import React,{useMemo,useState,useEffect} from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import store from './Redux/store';
+import { Provider } from 'react-redux';
+import App from './App';
+import Cart from './components/Cart'
+import Checkout from './components/Checkout'
+import ThankYou from './components/ThankYou'
 import {StripeProvider} from 'react-stripe-elements';
 import {Elements} from 'react-stripe-elements';
 import StripeScriptLoader from "react-stripe-script-loader";
-import App from './App';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Restaurant from './components/Restaurant';
-import RestaurantInfo from './components/RestaurantInfo';
-import RestaurantInfo2 from './components/RestaurantInfo2';
-import RestaurantData from './components/RestaurantData';
-import RestaurantData2 from './components/RestaurantData2';
-import Checkout from './components/Checkout';
-import Contactus from './components/Contactus';
-import Cart from './components/Cart';
-import Book_table from "./components/Book_table";
-
-import ThankYou from './components/ThankYou';
-import { Provider } from 'react-redux';
-import PropTypes from 'prop-types';
+import { fetchMerchantToken } from './Redux/MerchantToken/MerchantTokenActions';
+import { fetchConfig } from './Redux/Config/ConfigActions';
 
 
-class Root extends Component {
-    constructor(props){
-        super(props);{
-            this.state = {
-                user_root_email : "",
-                user_root_access_token : "",
-                id : "951b86ebef0c3ef40d3f38f76da17242",
-                stripe_info : null,
-                stripe_publish_key : null,
-                stripe_account_id : null
-            }
-        }
-    }
-    callbackFunctionRoot = (value1,value2) => {
-        this.setState({
-            user_root_email: value1,
-            user_root_access_token : value2
-        })
-    }
+function Root(){
+  const [merchantToken,setMerchantToken] = useState('')
+  const [stripe_info,setStripe_info] = useState([])
+  const [stripe_publish_key,setStripe_publish_key] = useState(null)
+  const [stripe_account_id,setStripe_account_id] =useState(null)
+  console.log("storeData",stripe_account_id)
+  store.subscribe(() => {
+    if(store.getState() &&
+    store.getState().MerchantToken &&
+    store.getState().MerchantToken.merchant_token &&
+    store.getState().MerchantToken.merchant_token.request_status === true &&
+    store.getState().MerchantToken.merchant_token.object &&
+    store.getState().MerchantToken.merchant_token.object.access_token
+  ){
+    setMerchantToken(store.getState().MerchantToken.merchant_token.object.access_token)
+  }
+  console.log('[Subscribe]', store.getState());
+});
 
-    callbackFunction = (stripe_info) => {
-    this.setState({
-      stripe_info: stripe_info
-    },() =>{
-      this.setState({
-        stripe_publish_key : this.state.stripe_info.STRIPE_PUBLISHABLE_KEY
-      })
-      console.log("neha###################################################################################################################################################################");
-      if(this.state.stripe_info.STRIPE_ACCOUNT_ID){
-        this.setState({
-          stripe_account_id :this.state.stripe_info.STRIPE_ACCOUNT_ID
-        })
-      }
-    })
-
+store.subscribe(() => {
+  if(store.getState() &&
+  store.getState().Config &&
+  store.getState().Config.config &&
+  store.getState().Config.config.request_status === true &&
+  store.getState().Config.config.object
+){
+  if(store.getState().Config.config.object.STRIPE_PUBLISHABLE_KEY){
+    setStripe_publish_key(store.getState().Config.config.object.STRIPE_PUBLISHABLE_KEY)
+  }
+  if(store.getState().Config.config.object.STRIPE_ACCOUNT_ID){
+    setStripe_account_id(store.getState().Config.config.object.STRIPE_ACCOUNT_ID)
+  }
 }
-    render() {
-        console.log("email_root",this.state.user_root_email);
-        console.log("access_root",this.state.user_root_access_token);
+console.log('[Subscribe]', store.getState());
+});
+  useEffect(() => store.dispatch(fetchMerchantToken()), []);
+  useMemo(() =>{
+    if(merchantToken !=''){
+      console.log("neha")
+      store.dispatch(fetchConfig(merchantToken))
+    }
+  },[merchantToken])
 
+  // useMemo(() =>{
+  //   if(stripe_info && Object.keys(stripe_info).length > 0){
+  //     setStripe_publish_key(stripe_info.STRIPE_PUBLISHABLE_KEY)
+  //     if(stripe_info.STRIPE_ACCOUNT_ID){
+  //       setStripe_account_id(stripe_info.STRIPE_ACCOUNT_ID)
+  //     }
+  //   }
+  // },[stripe_info])
+  //
+  const stripe_info_callbackFunction = (childdata) =>{
+    setStripe_info(childdata)
+  }
         return (
-        <Router>
+          <Provider store={store}>
+            <Router>
             <Switch>
-
-                 <Route path="/restaurants" component={Restaurant}/>
-                 <Route path="/restaurantinfo" component={RestaurantInfo} />
-                 <Route path="/restaurantinfo2" component={RestaurantInfo2} />
-                 <Route exact path="/" render={(props) => <RestaurantData2 {...props} parentCallback={this.callbackFunction} />}/>
-                 <Route path="/restaurant2" component={RestaurantData}  />
-                <Route path="/booktable" component={Book_table}  />
-                <Route path="/cart" component={Cart}  />
-                 <Route path="/thankyou" component={ThankYou} />
-                 <Route path="/contact-us" component={Contactus} />
-                 <StripeScriptLoader
+                <Route exact path="/"  component={App}/>
+                <Route path="/cart" component={Cart} />
+                <Route path="/thankyou" component={ThankYou} />
+                <StripeScriptLoader
                   uniqueId="myUniqueId"
                   script="https://js.stripe.com/v3/"
                   loader="Loading..."
                 >
 
-                <StripeProvider  apiKey={this.state.stripe_publish_key != null  ? this.state.stripe_publish_key : 'pk_test_sn4v71GtpdSuGyF3oVJLSj7I'} stripeAccount={this.state.stripe_account_id != null &&  this.state.stripe_account_id ?  this.state.stripe_account_id : undefined}>
+                <StripeProvider  apiKey={stripe_publish_key != null  ? stripe_publish_key : 'pk_test_sn4v71GtpdSuGyF3oVJLSj7I'} stripeAccount={stripe_account_id != null ?  stripe_account_id : undefined}>
                 <Elements>
-                <Route path="/checkout" component={Checkout} />
+                <Route path="/checkout"  render={(props) => <Checkout {...props} stripe_info_parentCallback={stripe_info_callbackFunction} />}/>
                 </Elements>
                  </StripeProvider>
                  </StripeScriptLoader>
             </Switch>
         </Router>
+        </Provider>
         );
-    }
 }
 
 export default Root;
