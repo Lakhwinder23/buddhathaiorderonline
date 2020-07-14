@@ -48,6 +48,7 @@ function Checkout(props){
   const [uniqueBucketId,setUniqueBucketId] = useState("")
   const [banner_info,setBanner_info] = useState([])
   const [delivery_cost,setDelivery_cost] = useState(0)
+  console.log("delivery_cost---",delivery_cost)
   const [tip_rate_fees,setTip_rate_fees] = useState([])
   const [configResponseData,setConfigDciResponseData] = useState({
                                                                   stripe_info:[],
@@ -110,6 +111,8 @@ const [checkout_error,setCheckout_error]= useState(null)
 const [address_info,setAddress_info] = useState([])
 const [showmodal_cart_empty,setShowmodal_cart_empty] = useState(false)
 const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
+const [currentShippingMethodName,setCurrentShippingMethodName] = useState(null)
+console.log("currentShippingMethodName-----",currentShippingMethodName)
 // component all states define END
 
 // hooks start
@@ -164,7 +167,11 @@ const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
 
     },[props.location])
   // add config data into config const hook end
-
+useMemo(() =>{
+  if(props.location && props.location.currentShippingMethodName){
+    setCurrentShippingMethodName(props.location.currentShippingMethodName)
+  }
+},[props.location])
 // add deilvery cost props into constant, hook start
   useEffect(() =>{
     if(props.location && props.location.Delivery_cost){
@@ -191,6 +198,21 @@ const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
 
   },[props.location])
 // add banner_info props into constant, hook End
+
+useMemo(() =>{
+  if(bucketDciResponseData.current_shipment_method !=null){
+    if(bucketDciResponseData.current_shipment_method === bucketDciResponseData.pickup_restaurant){
+      setCurrentShippingMethodName("Pickup at Restaurant")
+      setDelivery_cost("0")
+    }
+    else{
+      const filterdata = bucketDciResponseData.Delivery_method.filter(item =>item.id === bucketDciResponseData.current_shipment_method)
+      console.log("filterdata",filterdata[0].name)
+      setCurrentShippingMethodName(filterdata[0].name)
+      setDelivery_cost(filterdata[0].cost)
+    }
+  }
+},[bucketDciResponseData.current_shipment_method])
 
 // props function call, hook start
   useMemo(() =>{
@@ -808,7 +830,7 @@ const handleclosecoupon = () => {
             totalprice = item.unit_price * item.qty;
             return(
               <div className="pamout checkout" id="pamut-number" key={index}>
-                  <p>{item.itemName.slice(0, 18)}</p>
+                  <p>{item.itemName}</p>
                     <span>${Number(totalprice, 2).toFixed(2)}</span>
                   <div className="count" id="countted">
                       <div className="handle-counter" id="handleCounter14">
@@ -890,9 +912,9 @@ const handleclosecoupon = () => {
 //delivery_content constant End
 
 //stripe_amount constant start
-const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseData.Detailed_cart.total_amount ? ((bucketDciResponseData.Detailed_cart.total_amount + delivery_cost + applyCouponAmount)*100) : 0 ;
+const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseData.Detailed_cart.total_amount ? ((bucketDciResponseData.Detailed_cart.total_amount)*100) : 0 ;
 //stripe_amount constant end
-
+const shipping_method_name = currentShippingMethodName != null ? currentShippingMethodName :null;
   // component constant end that contain small part of html
   return(
     <>
@@ -1064,7 +1086,7 @@ const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseD
                                  </>
                                ) : null}
                                <li>
-                                 Curbside Pickup
+                                 {shipping_method_name}
                                  <span>${bucketDciResponseData.Delivery_method && bucketDciResponseData.Delivery_method.length > 0 ? delivery_cost : 0}</span>
                                </li>
                                <hr />

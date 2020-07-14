@@ -59,9 +59,11 @@ const [showmodaldelivery,setShowmodaldelivery] = useState(false)
 const [delivery_click,setDelivery_click] = useState(true)
 const [delivery_info,setDelivery_info] = useState([])
 const [delivery_cost,setDelivery_cost] = useState(0)
+console.log("cart delivery_cost",delivery_cost)
 const [test_cart,setTest_cart] = useState([])
 const [quantity,setQuantity] = useState("")
 const [loadingData,setLoadingData] = useState(null)
+const [currentShippingMethodName,setCurrentShippingMethodName] = useState(null)
   // component all states define End
 
   //hooks start
@@ -279,6 +281,21 @@ useMemo(() =>{
 },[tip_data && tip_data.add_tip && tip_data.add_tip.requestId])
 //fetch bucket api after fetch tip api hook start
 
+useMemo(() =>{
+  if(bucketDciResponseData.current_shipment_method !=null){
+    if(bucketDciResponseData.current_shipment_method === bucketDciResponseData.pickup_restaurant){
+      setCurrentShippingMethodName("Pickup at Restaurant")
+      setDelivery_cost("0")
+    }
+    else{
+      const filterdata = bucketDciResponseData.Delivery_method.filter(item =>item.id === bucketDciResponseData.current_shipment_method)
+      console.log("filterdata",filterdata[0].name)
+      setCurrentShippingMethodName(filterdata[0].name)
+      setDelivery_cost(filterdata[0].cost)
+    }
+  }
+},[bucketDciResponseData.current_shipment_method])
+
   //hooks end
 
   // component function start
@@ -449,7 +466,7 @@ const cart =
                   : "pamout show_button";
               return (
                 <div className="corn-contant" key={index}>
-                  <p>{item.itemName.slice(0, 15)}</p>
+                  <p>{item.itemName}</p>
                   {item.addons.map((first_addon, index) => {
                     return (
                       <p className="cart-addon" key={index}>
@@ -543,7 +560,7 @@ const cart =
                   <>
                     <div className="corn">{cart}</div>
                     <div className="row cart-below">
-                      <div className="col-md-6">
+                      <div className="col-md-7">
                         <h6>Subtotal</h6>
                         {bucketDciResponseData.Detailed_cart  && bucketDciResponseData.Detailed_cart.taxes ? bucketDciResponseData.Detailed_cart.taxes.map((taxes_name,index) =>(
                           <h6>{taxes_name.name}</h6>
@@ -557,10 +574,10 @@ const cart =
                       )
 
                     ) :null }
-                        <h6>Curbside Pickup</h6>
+                        <h6>{currentShippingMethodName != null ? currentShippingMethodName : null}</h6>
                         <h6>Total</h6>
                       </div>
-                      <div className="col-md-6">
+                      <div className="col-md-5">
                         <h6>
                           $
                           {Number(
@@ -631,10 +648,7 @@ const cart =
 
                       ) :null }
                         <h6>
-                          $
-                          {delivery_cost == 0
-                            ? "0"
-                            : delivery_cost}
+                        {currentShippingMethodName != null ? ("$" + delivery_cost) : null}
                         </h6>
                         <h6>
                           $
@@ -646,8 +660,7 @@ const cart =
                               ).toFixed(2)
                             : Number(
                                 bucketDciResponseData.Detailed_cart
-                                  .total_amount +
-                                  delivery_cost,
+                                  .total_amount,
                                 2
                               ).toFixed(2)}
                         </h6>
@@ -670,7 +683,8 @@ const cart =
                               configInfo:configInfo,
                               merchantInfo:merchantInfo,
                               Delivery_cost: delivery_cost,
-                              tip_rate_fees: tip_rate_fees
+                              tip_rate_fees: tip_rate_fees,
+                              currentShippingMethodName:currentShippingMethodName
                             }}
                           >
                             Checkout
