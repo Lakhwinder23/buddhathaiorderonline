@@ -60,7 +60,7 @@ function ThankYou(props){
                                       <div className="row">
                                       {item.addons.map((addon,index) =>(
                                         <div className="col-12">
-                                          <p>{addon.addon_full_name}: ${addon.unit_price}</p>
+                                          <p>{addon.addon_full_name} {addon.unit_price == "0" ? null : (": $"+ addon.unit_price) }</p>
                                         </div>
                                       ))}
                                       </div>

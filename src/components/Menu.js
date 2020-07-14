@@ -1324,7 +1324,10 @@ const incrementwithAddon = () =>{
       <div className="container">
         <div className="main1-wrapper" id="menu">
         <div className="row menu-heading text-center">
-          <h3>{config.RestaurantName}</h3>
+        {
+          // <h3>{config.RestaurantName}</h3>
+        }
+
           <h2>MENU</h2>
           </div>
           {menuListResponseData.restaurantsdata && menuListResponseData.restaurantsdata.length > 0 ? (

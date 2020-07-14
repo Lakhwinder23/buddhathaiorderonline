@@ -40,7 +40,8 @@ const restaurantInformation_data = useSelector(state =>state.RestaurantInformati
                                                             cart_item_tip:[],
                                                             Detailed_cart_checkout_method:[],
                                                             Delivery_method:[],
-                                                            pickup_restaurant:[]
+                                                            pickup_restaurant:[],
+                                                            current_shipment_method:null
 
                                                         })
 const [configResponseData,setConfigDciResponseData] = useState({
@@ -194,7 +195,8 @@ useMemo(() =>{
         cart_item_tip:bucketInfo && bucketInfo.fees ? bucketInfo.fees : [],
         Detailed_cart_checkout_method:bucketInfo && bucketInfo.available_checkout_methods ? bucketInfo.available_checkout_methods : [],
         Delivery_method:bucketInfo && bucketInfo.available_delivery_methods ? bucketInfo.available_delivery_methods : [],
-        pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : []
+        pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : [],
+        current_shipment_method:bucketInfo && bucketInfo.shippment_method ? bucketInfo.shippment_method : null,
       })
       setLoadingData(null)
     }
@@ -216,6 +218,13 @@ useMemo(() =>{
     setDelivery_cost(delivery_info.cost)
     setDelivery_choose(true)
     setDelivery_click(true)
+    const bucket_info = {
+      user_token:finalUserToken,
+      user_local_bucket_id:uniqueBucketId,
+      user_email:finalUserEmail
+    }
+    dispatch(fetchBucket(bucket_info))
+
   }
 },[delivery_info])
 // when delivery_info change data add into constant hook End
@@ -386,14 +395,15 @@ useMemo(() =>{
   // delivery content start
   const delivery_content = (
     <Form className="delivery-form">
-      <Form.Label>Select Option</Form.Label>
+      <Form.Label>Services Categories</Form.Label>
       <Form.Group controlId="formBasicPickup">
         <Form.Check
           type="radio"
-          label="Curbside Pickup"
+          label="Pickup at Restaurant"
           name="formHorizontalRadios"
-          id="Curbside Pickup"
+          id="Pickup at Restaurant"
           value={bucketDciResponseData.pickup_restaurant}
+          checked={bucketDciResponseData.pickup_restaurant === bucketDciResponseData.current_shipment_method ? true : false}
           onClick={event => deliveryhandler(event)}
           //onChange={(evt) => this.changeTitle(evt)}
         />
@@ -409,6 +419,7 @@ useMemo(() =>{
                   name="formHorizontalRadios"
                   id={delivery.name}
                   value={delivery.id}
+                  checked={delivery.id === bucketDciResponseData.current_shipment_method ? true : false}
                   onClick={event =>deliveryhandler(event)}
                   //onChange={(evt) => this.changeTitle(evt)}
                 />
@@ -649,7 +660,7 @@ const cart =
                     </div>
                     <div className="sub">
                       <div className="subtotal"></div>
-                      {delivery_choose == true ? (
+                      {bucketDciResponseData.current_shipment_method != null ? (
                         <div className="checkout text-center">
                           <Link
                             to={{

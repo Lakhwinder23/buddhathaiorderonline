@@ -63,7 +63,8 @@ function Checkout(props){
                                                             cart_item_tip:[],
                                                             Detailed_cart_checkout_method:[],
                                                             Delivery_method:[],
-                                                            pickup_restaurant:[]
+                                                            pickup_restaurant:[],
+                                                            current_shipment_method:null
                                                           })
 const [country_info,setCountry_info] = useState([])
 const [state_info,setState_info] = useState([])
@@ -88,7 +89,7 @@ const [inputValues,setInputValues] = useState({
                                             address : '',
                                             city : '',
                                             postal_code : '',
-                                            state: '122',
+                                            state: "",
                                             country : '254',
                                             notes_restaurant :'',
                                         })
@@ -156,7 +157,8 @@ const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
           cart_item_tip:props.location.bucketDciResponseData.cart_item_tip,
           Detailed_cart_checkout_method:props.location.bucketDciResponseData.Detailed_cart_checkout_method,
           Delivery_method:props.location.bucketDciResponseData.Delivery_method,
-          pickup_restaurant:props.location.bucketDciResponseData.pickup_restaurant
+          pickup_restaurant:props.location.bucketDciResponseData.pickup_restaurant,
+          current_shipment_method:props.location.bucketDciResponseData.current_shipment_method
         })
       }
 
@@ -290,6 +292,12 @@ const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
   useMemo(() =>{
     if(delivery_info && Object.keys(delivery_info).length > 0){
       setDelivery_cost(delivery_info.cost)
+      const bucket_info = {
+        user_token:finalUserToken,
+        user_local_bucket_id:uniqueBucketId,
+        user_email:finalUserEmail
+      }
+      dispatch(fetchBucket(bucket_info))
     }
   },[delivery_info])
 // when delivery_info change data add into constant hook End
@@ -355,7 +363,8 @@ const [showmodal_shop_closed,setShowmodal_shop_closed] = useState(false)
           cart_item_tip:bucketInfo && bucketInfo.fees ? bucketInfo.fees : [],
           Detailed_cart_checkout_method:bucketInfo && bucketInfo.available_checkout_methods ? bucketInfo.available_checkout_methods : [],
           Delivery_method:bucketInfo && bucketInfo.available_delivery_methods ? bucketInfo.available_delivery_methods : [],
-          pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : []
+          pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : [],
+          current_shipment_method:bucketInfo && bucketInfo.shippment_method ? bucketInfo.shippment_method : null,
         })
         setLoadingData(null)
       }
@@ -713,7 +722,7 @@ const handleEmailChange = (event) =>{
 //handlePostalCodeChange function start
 const handlePostalCodeChange = (event) =>{
   const postal_code = event.target.value;
-      if(postal_code.length < 5 || postal_code.length > 10){
+      if(postal_code.length > 5){
         setPostal_code_error(true)
       }
       else {
@@ -840,16 +849,16 @@ const handleclosecoupon = () => {
 
 //delivery_content constant start
       const delivery_content = <Form className="delivery-form" >
-      <Form.Label>Select Option</Form.Label>
+      <Form.Label>Services Categories</Form.Label>
       <Form.Group controlId="formBasicPickup">
 
         <Form.Check
             type="radio"
-            label="Curbside Pickup"
+            label="Pickup at Restaurant"
             name="formHorizontalRadios"
-            id="Curbside Pickup"
+            id="Pickup at Restaurant"
             value = {bucketDciResponseData.pickup_restaurant}
-            defaultChecked = {delivery_cost == "0.0" ? true : false}
+            defaultChecked={bucketDciResponseData.pickup_restaurant === bucketDciResponseData.current_shipment_method ? true : false}
             onClick={event => deliveryhandler(event)}
             //onChange={(evt) => this.changeTitle(evt)}
           />
@@ -867,7 +876,7 @@ const handleclosecoupon = () => {
                 name="formHorizontalRadios"
                 id={checkout_delivery.name}
                 value = {checkout_delivery.id}
-                defaultChecked = {delivery_cost == checkout_delivery.cost ? true : false}
+                defaultChecked = {bucketDciResponseData.current_shipment_method === checkout_delivery.id ? true : false}
                 onClick={event => deliveryhandler(event)}
                 //onChange={(evt) => this.changeTitle(evt)}
               />
@@ -1061,7 +1070,7 @@ const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseD
                                <hr />
                                <li>
                                  TO PAY
-                                  <span>{bucketDciResponseData.Detailed_cart.total_amount ? (<>${Number(bucketDciResponseData.Detailed_cart.total_amount + delivery_cost + applyCouponAmount,2).toFixed(2)}</>) : "$0"}</span>
+                                  <span>{bucketDciResponseData.Detailed_cart.total_amount ? (<>${Number(bucketDciResponseData.Detailed_cart.total_amount,2).toFixed(2)}</>) : "$0"}</span>
                                </li>
                              </ul>
 
@@ -1128,7 +1137,7 @@ const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseD
                                     <Form.Group as={Col} controlId="formBasicTelephone">
 
                                       <Form.Label>Telephone/mobile</Form.Label>
-                                        <Form.Control type="number" pattern="[0-9]*"  placeholder="Telephone/mobile"   value = {inputValues.telephone} onChange = {e => setInputValues({...inputValues,telephone:e.target.value})} onBlur = {e => handlePhoneChange(e)} required/>
+                                        <Form.Control type="text" pattern="[0-9]*"  maxlength="10" placeholder="Telephone/mobile"   value = {inputValues.telephone} onChange = {e => setInputValues({...inputValues,telephone:e.target.value})} onBlur = {e => handlePhoneChange(e)} required/>
                                         {phone_error && phone_error === true ? (<span className ="phone-error">Phone Number must be 10 digits</span>) : null}
                                     </Form.Group>
                                     <Form.Group as={Col} controlId="formBasicEmail">
@@ -1148,14 +1157,15 @@ const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseD
                                     </Form.Group>
                                     <Form.Group  as={Col} controlId="formBasicPostalcode">
                                       <Form.Label>Postal code</Form.Label>
-                                      <Form.Control type="text" pattern="[0-9]*" placeholder="Postal code"  value = {inputValues.postal_code} onChange = {e => setInputValues({...inputValues,postal_code:e.target.value})} onBlur = {e => handlePostalCodeChange(e)} required/>
-                                      {postal_code_error && postal_code_error === true ? (<span className ="phone-error">Postal code must be in between 5 digits to 10 digits</span>) : null}
+                                      <Form.Control type="text" pattern="[0-9]*" maxlength="5" placeholder="Postal code"  value = {inputValues.postal_code} onChange = {e => setInputValues({...inputValues,postal_code:e.target.value})} onBlur = {e => handlePostalCodeChange(e)} required/>
+                                      {postal_code_error && postal_code_error === true ? (<span className ="phone-error">Postal code must be in less than and equal to 5 digits</span>) : null}
                                     </Form.Group>
                                     </Form.Row>
                                     <Form.Row>
                                     <Form.Group as={Col} controlId="State">
                                       <Form.Label>State</Form.Label>
                                       <Form.Control as="select"  onChange = {e => setInputValues({...inputValues,state:e.target.value})} required>
+                                        <option value="">Select state</option>
                                         {state_info && state_info.length > 0 ? state_info.map((statedata,index) =>
                                          (
                                           <option value = {statedata.id } key = {index}>{statedata.name}</option>
