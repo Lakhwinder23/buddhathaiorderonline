@@ -560,7 +560,7 @@ const cart =
                   <>
                     <div className="corn">{cart}</div>
                     <div className="row cart-below">
-                      <div className="col-md-7">
+                      <div className="col-7 col-sm-6">
                         <h6>Subtotal</h6>
                         {bucketDciResponseData.Detailed_cart  && bucketDciResponseData.Detailed_cart.taxes ? bucketDciResponseData.Detailed_cart.taxes.map((taxes_name,index) =>(
                           <h6>{taxes_name.name}</h6>
@@ -577,7 +577,7 @@ const cart =
                         <h6>{currentShippingMethodName != null ? currentShippingMethodName : null}</h6>
                         <h6>Total</h6>
                       </div>
-                      <div className="col-md-5">
+                      <div className="col-5 col-sm-6">
                         <h6>
                           $
                           {Number(
