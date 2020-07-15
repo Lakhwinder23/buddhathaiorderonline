@@ -917,6 +917,7 @@ const stripe_amount = bucketDciResponseData.Detailed_cart &&  bucketDciResponseD
 const shipping_method_name = currentShippingMethodName != null ? currentShippingMethodName :null;
   // component constant end that contain small part of html
   return(
+
     <>
     {order_info && Object.keys(order_info).length > 0 && order_info.request_status == true ? <Redirect to={{pathname:'/thankyou', order_info :order_info}} /> : null}
     {props.location && props.location.banner_info && Object.keys(props.location.banner_info).length > 0 ? null : <Redirect to="/" />}
@@ -1356,6 +1357,7 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
                    </div>
                  </div>
      </div>
+
     <Footer configInfo={props.location.configInfo} merchantInfo={props.location.merchantInfo} banner_info={banner_info}/>
     <Modal show={showmodal_cart_empty} id="modal3" size="sm">
             <Modal.Body>Cart is empty.</Modal.Body>
@@ -1367,7 +1369,7 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
           </Modal>
 
           <Modal show={couponErrorModal} id="modal3" size="sm">
-            <Modal.Body>{couponError === "INVALID COUPON" || couponError === "INVALID RULE"  ? (<>INVALID COUPON</>) : null}</Modal.Body>
+            <Modal.Body>{couponError === "INVALID COUPON" || couponError === "INVALID RULE"  ? (<>INVALID COUPON</>) : couponError}</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() =>handleclosecoupon()}>
                 ok
