@@ -1552,9 +1552,9 @@ const incrementwithAddon = () =>{
             </div>
           ) : (
             <div className="menuLoader">
-            <div className="menu-loader-border">
+            <div className="">
               <img src="/img/loc-loader2.gif"/>
-              <h6>Loading restaurant menu</h6>
+
           </div>
             </div>
           )}
