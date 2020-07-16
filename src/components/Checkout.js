@@ -1369,7 +1369,7 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
           </Modal>
 
           <Modal show={couponErrorModal} id="modal3" size="sm">
-            <Modal.Body>{couponError === "INVALID COUPON" || couponError === "INVALID RULE"  ? (<>INVALID COUPON</>) : couponError}</Modal.Body>
+            <Modal.Body>{couponError}</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() =>handleclosecoupon()}>
                 ok
