@@ -87,8 +87,8 @@ const restaurantTiming_data = useSelector(state =>state.RestaurantTiming)
             <div className="footer-bottom">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-6 copyright-text">
-                            © 2020  |  Privacy Policy
+                        <div className="col-md-12 copyright-text">
+                            © 2020  |  <a href="/privacy-policy">Privacy Policy</a> |  <a href="/terms-of-use">Terms of Use</a>
                         </div>
                         <div className="col-md-6 footer-social">
                         {

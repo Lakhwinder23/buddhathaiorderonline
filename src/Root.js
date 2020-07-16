@@ -6,6 +6,8 @@ import App from './App';
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import ThankYou from './components/ThankYou'
+import PrivacyPolicy from './components/privacypolicy'
+import TermsOfUse from './components/termsofuse'
 import {StripeProvider} from 'react-stripe-elements';
 import {Elements} from 'react-stripe-elements';
 import StripeScriptLoader from "react-stripe-script-loader";
@@ -75,6 +77,8 @@ console.log('[Subscribe]', store.getState());
                 <Route exact path="/"  component={App}/>
                 <Route path="/cart" component={Cart} />
                 <Route path="/thankyou" component={ThankYou} />
+                <Route path="/privacy-policy" component={PrivacyPolicy} />
+                <Route path="/terms-of-use" component={TermsOfUse} />
                 <StripeScriptLoader
                   uniqueId="myUniqueId"
                   script="https://js.stripe.com/v3/"
