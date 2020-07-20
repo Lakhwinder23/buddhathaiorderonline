@@ -1325,7 +1325,8 @@ const incrementwithAddon = () =>{
         <div className="main1-wrapper" id="menu">
         <div className="row menu-heading text-center">
         {
-          // <h3>{config.RestaurantName}</h3>
+          <h3>{singleRestaurantResponseData.business_data && singleRestaurantResponseData.business_data.SPECIAL_MESSAGE ? singleRestaurantResponseData.business_data.SPECIAL_MESSAGE : null}</h3>
+
         }
 
           <h2>MENU</h2>
