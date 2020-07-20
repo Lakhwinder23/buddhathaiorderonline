@@ -673,7 +673,7 @@ const handlerApplyCoupon =() =>{
     final_user_checkout_token:finalUserToken,
     final_user_checkout_email:finalUserEmail,
     Unique_bucket_Id:uniqueBucketId,
-    apply_coupoon:applyCoupon
+    apply_coupoon:applyCoupoon
   }
   dispatch(applyCoupon(apply_coupon_info))
 }
