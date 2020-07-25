@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useState} from 'react'
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector,useDispatch, useStore } from 'react-redux';
 import Header from './Header'
 import Footer from './Footer'
 import StripeCheckout from 'react-stripe-checkout'
@@ -41,6 +41,10 @@ function Checkout(props){
       const addAddress_data = useSelector(state =>state.AddAddress)
   // store data access End
   const dispatch = useDispatch()  // for accessing the redux function
+
+  const store = useStore()
+  const propsStatePayments = store.getState().PaymentCheckout
+  const propsStateBucket = store.getState().Bucket
 
   // component all states define start
   const [finalUserEmail,setFinalUserEmail] = useState("")
@@ -1233,11 +1237,12 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
                                 {checkout_error != null ? (<span className="stripe-error">{checkout_error}</span>) : null}
                                   <CardSection />
                                 </div>
+                                {console.log('propsState', propsStatePayments)}
                                 <button
                                 disabled = {order_now_click ? true : false}
                                     className="Loc-form-btn"
                                     onClick = {(e) =>handleSubmit(e)}
-                                  ><span>ORDER NOW</span></button>
+                                  ><span>{!propsStatePayments.payment_checkout_loading ? 'ORDER NOW' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)} </span></button>
                                 </>):(<button
                                       type="submit"
                                       form="AddressForm"

@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useState} from 'react'
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector,useDispatch, useStore } from 'react-redux';
 import Header from './Header'
 import Footer from './Footer'
 import Modal from "react-bootstrap/Modal";
@@ -25,7 +25,9 @@ const tip_data = useSelector(state => state.AddTip)
 const restaurantInformation_data = useSelector(state =>state.RestaurantInformation)
 // store data access End
   const dispatch = useDispatch()  // for accessing the redux function
-
+  const store = useStore()
+  const propsStateShipping = store.getState().UpdateShippingMethod
+  const propsStateBucket = store.getState().Bucket
   // component all states define start
   const [merchantInfo,setMerchantInfo] = useState([])
   const [configInfo,setConfigInfo] = useState([])
@@ -669,7 +671,8 @@ const cart =
                     </div>
 
                     <div className="row cart-below-form">
-                      {delivery_content}
+                      {propsStateShipping && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? delivery_content : (<span className="delivery-processing">Processing...</span>)}
+                      {console.log('delivery_process', propsStateBucket.bucket_loading)}
                     </div>
                     <div className="sub">
                       <div className="subtotal"></div>

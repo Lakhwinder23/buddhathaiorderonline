@@ -2459,9 +2459,8 @@ small.text-muted.cart-text.form-text {
 /* thankyou page start */
 
 .Booking-confirmation {
-    margin-top: 180px;
-    margin-left: 374px;
-    margin-bottom: 120px;
+    margin-top: 125px;
+    text-align: center;
 }
 
 /* thankyou page end */
@@ -3649,4 +3648,22 @@ li.phone-header {
     }
 footer.footer {
     clear: both;
+}
+.delivery-form .form-group {
+    max-width: 300px!important;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+span.delivery-processing {
+    margin: 0 auto;
+    font-size: 0px;
+    margin-top: 21px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    animation: spin 2s linear infinite;
 }
