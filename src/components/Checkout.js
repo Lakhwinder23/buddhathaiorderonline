@@ -45,6 +45,11 @@ function Checkout(props){
   const store = useStore()
   const propsStatePayments = store.getState().PaymentCheckout
   const propsStateBucket = store.getState().Bucket
+  const propsStateApplyCoupon = store.getState().ApplyCoupon
+  const propsStateRemoveCoupon = store.getState().RemoveCoupon
+  const propsStateAddTip = store.getState().AddTip
+  const propsStateShipping = store.getState().UpdateShippingMethod
+  console.log('propsStateApplyCoupon',propsStateApplyCoupon);
 
   // component all states define start
   const [finalUserEmail,setFinalUserEmail] = useState("")
@@ -140,6 +145,18 @@ console.log("currentShippingMethodName-----",currentShippingMethodName)
       }
     },[props.location])
   // get user email,user token and bucket id hook end
+
+  // fetch address api ,hook start
+    useEffect(() =>{
+      if(localStorage && localStorage.getItem("user") != null && localStorage.getItem("access_token") != null){
+        const address_info ={
+          user_token:localStorage.getItem("access_token"),
+          user_email:localStorage.getItem("user")
+        }
+        dispatch(fetchAddress(address_info))
+      }
+    },[])
+  // fetch address api ,hook End
 
   // add config data into config const hook start
     useEffect(() =>{
@@ -256,24 +273,13 @@ useMemo(() =>{
   },[states_data && states_data.states && states_data.states.request_status === true])
   // add data of states api into constant,hook end
 
-// fetch address api ,hook start
-  useEffect(() =>{
-    if(localStorage.getItem("user") != null && localStorage.getItem("access_token") != null){
-      const address_info ={
-        user_token:localStorage.getItem("access_token"),
-        user_email:localStorage.getItem("user")
-      }
-      dispatch(fetchAddress(address_info))
-    }
-  },[])
-// fetch address api ,hook End
 
 // add data of address api into constant,hook start
   useMemo(() =>{
     if(address_data && address_data.address && address_data.address.data ){
       setCheckout_address_user(address_data.address.data)
     }
-  },[address_data && address_data.address && address_data.address.request_status === true])
+  },[address_data])
 // add data of address api into constant,hook End
 
 //when checkout_address_user constant change then data add into constant,hook start
@@ -932,7 +938,7 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
                  <div className="container">
                    <div className="main1-wrapper">
                      <div className="row">
-                       <div className="col-lg-4 col-md-4 left-panel checkout-main-left-sidebar">
+                       <div className={!propsStateApplyCoupon.apply_coupon_loading && !propsStateRemoveCoupon.remove_coupon_loading && !propsStateAddTip.add_tip_loading && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? 'col-lg-4 col-md-4 left-panel checkout-main-left-sidebar' : 'col-lg-4 col-md-4 left-panel checkout-main-left-sidebar loadingstate loadingleft'}>
                            <div className="row checkout-cart-banner">
                            <div className="col-md-3">
                              <div className="top-right-logo">
@@ -944,7 +950,9 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
                              <p>{banner_info.city}</p>
                            </div>
                          </div>
-
+                         <div id="overlay">
+        <i class="fa fa-spinner fa-spin spin-big"></i>
+    </div>
 
                          <div className="row main-checkout-row">
                            {cart_details}
@@ -954,6 +962,7 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
                          </div>
                          <div className="row Apply-Coupon">
                            <div className="Apply-Coupon-field">
+                           <div className="Apply-Coupon-empty"></div>
                              <div className="Apply-Coupon-icon">
                                <img src="img/sales-coupon.png" />
                              </div>
@@ -1302,7 +1311,7 @@ const shipping_method_name = currentShippingMethodName != null ? currentShipping
                                       >  <span>ORDER NOW</span>
                                       </button>)}
                                    </>) : null }
-                                   <div className="back-to-menu text-center">
+                                   <div className={!propsStatePayments.payment_checkout_loading ? 'back-to-menu text-center' : 'back-to-menu text-center disabled-menu'}>
                                     <Link
                                       to={{
                                         pathname: "/",

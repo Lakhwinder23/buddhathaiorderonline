@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useState} from 'react'
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector,useDispatch, useStore } from 'react-redux';
 import Modal from "react-bootstrap/Modal";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import ScrollableAnchor from "react-scrollable-anchor";
@@ -29,6 +29,12 @@ const updateItemQuantity_data = useSelector(state =>state.UpdateItemQuantity)
 const tip_data = useSelector(state => state.AddTip)
 // store data access End
   const dispatch = useDispatch()  // for accessing the redux function
+
+  const store = useStore()
+  const propsStateBucket = store.getState().Bucket
+  const propsStateAddItem = store.getState().AddItems
+    const propsState = store.getState()
+  console.log('propsState',propsState);
 
   // component all states define start
   const [bucketInfo,setBucketInfo] = useState([])
@@ -73,6 +79,7 @@ const [quantity,setQuantity] = useState("")
 const [withoutAddonProductId,setWithoutAddonProductId] = useState(null)
 const [cookingInstruction,setCookingInstruction] = useState(null)
 const [showmodal2,setShowmodal2] = useState(false)
+const [additemCicked,setAdditemCicked] = useState(false)
 const [final_addon_array,setFinal_addon_array] = useState([])
 console.log("final_addon_array",final_addon_array)
 const [radio_final_addon_array,setRadio_final_addon_array] = useState(null)
@@ -250,6 +257,22 @@ useMemo(() =>{
         pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : []
       })
       setLoadingData(null)
+      setShow(false)
+      setCookingShow(false)
+      current_addongroups.map((addongroup,index) =>{
+          addongroup.addons.map((addon,index) =>{
+            if("value" in addon){
+              addon.value = false;
+            }
+          })
+        })
+        // : null;
+        setTrue_addongroups([])
+        setIsRequired_addongroup([])
+        setIsRequired_addongroup_state(false)
+        setCurrent_addon_total(0)
+        setSelected_product_modal([])
+        setAdditemCicked(false)
     }
   },[bucketInfo])
 // add bucketinfo data into constant hook End
@@ -529,7 +552,6 @@ const handleCookingInstruction = event => {
 // add without addon product to bucket function start
 const handleSelect = (event) =>{
     setLoadingData(event.target.value)
-    setCookingShow(false)
 
     menuListResponseData.restaurantsdata.map(items => {
     items.products
@@ -589,11 +611,13 @@ const handleClose = () =>{
     setIsRequired_addongroup_state(false)
     setCurrent_addon_total(0)
     setSelected_product_modal([])
+    setAdditemCicked(false)
 }
 // close the addon product modal function end
 
 // add with addon product to bucket function start
 const saveAddon = () =>{
+  setAdditemCicked(true)
   setShowmodal2(false)
   setTrue_addongroups([])
   setIsRequired_addongroup([])
@@ -1562,7 +1586,7 @@ const incrementwithAddon = () =>{
         </div>
       </div>
     </div>
-    <Modal show={show} onHide={() =>handleClose()} id="modal1">
+    <Modal show={show} onHide={() =>handleClose()} id="modal1" data-backdrop="static" data-keyboard="false">
           <Modal.Body>
             {modal_content}
           </Modal.Body>
@@ -1571,32 +1595,32 @@ const incrementwithAddon = () =>{
               TOTAL $
               {total_price.toFixed(2)}
             </Button>
-            <Button variant="secondary" className = "close-butn" onClick={() =>handleClose()}>
-              CLOSE
-            </Button>
+              {!propsStateAddItem.add_item_loading &&  !propsStateBucket.bucket_loading ? (<Button variant="secondary" className = "close-butn" onClick={() =>handleClose()}>
+             CLOSE
+            </Button>) : null}
             {isRequired_addongroup.length > 0 ?
               isRequired_addongroup_state == true ?
               (
               <Button
                 variant="success"
                 className="add-butn"
-                onClick={() =>{saveAddon();handleClose()}}
+                onClick={() =>{saveAddon()}}
               >
-                ADD ITEMS
+                {!propsStateAddItem.add_item_loading && !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
               </Button>
             ):(<Button
               variant="success"
               className="add-butn"
               //onClick={this.saveAddon}
             >
-              ADD ITEMS
+              {!propsStateAddItem.add_item_loading && !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
             </Button>) : (
               <Button
                 variant="success"
                 className="add-butn"
-                onClick={() =>{saveAddon();handleClose()}}
+                onClick={() =>{saveAddon();}}
               >
-                ADD ITEMS
+                {!propsStateAddItem.add_item_loading && !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
               </Button>
             )}
 
@@ -1662,7 +1686,7 @@ const incrementwithAddon = () =>{
           value={withoutAddonProductId}
           onClick={(e) =>handleSelect(e)}
         >
-          ADD ITEMS
+        {!propsStateAddItem.add_item_loading &&  !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
         </Button>
         </Modal.Footer>
       </Modal>

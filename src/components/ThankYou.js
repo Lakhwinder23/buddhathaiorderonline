@@ -1,8 +1,12 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import Header from "./Header";
 import Footer from "./Footer";
 import { useSelector,useDispatch } from 'react-redux';
 function ThankYou(props){
+
+  useEffect(() => {
+  window.scrollTo(0, 0)
+}, [])
   //const paymentCheckout_data = useSelector(state =>state.PaymentCheckout)
   console.log("props.location",props.location.order_info)
   if(props.location.order_info === undefined){
@@ -11,13 +15,21 @@ function ThankYou(props){
   return(
     <>
                 <Header />
-                <div className = "row">
-                    <div className ="container">
-                        <div className ="Booking-confirmation">
-                        <h2>Thank You!</h2>
-                        <h2>Order Successful</h2>
-                        </div>
 
+                <div id="scrollmain" className="container" >
+                  <div className="main1-wrapper">
+                  <div className="row">
+                  <div className ="col-md-12 Booking-confirmation">
+                  <h2>Thank You!</h2>
+                  <h2>Order Successful</h2>
+                  </div>
+                  </div>
+                  </div>
+              </div>
+              <div className="container top_row_sc">
+                 <div className="main1-wrapper">
+                <div className = "row">
+                    <div className ="col-md-12">
                         <div className="row">
                           <div className="col-md-4"></div>
                           {props.location &&
@@ -143,6 +155,8 @@ function ThankYou(props){
                         </div>
                     </div>
                 </div>
+</div>
+</div>
                 <Footer />
             </>
   )

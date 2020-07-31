@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import {config} from '../config';
 
 function TermsOfUse(){
   return(
@@ -25,14 +26,12 @@ function TermsOfUse(){
                      <div>
 <p>
 The following terms and conditions (these “
-<strong>Terms and Conditions</strong>”) apply to your use of the Buddha Thai
-Cuisine websites, systems, and services (collectively, the “
-<strong>Services</strong>). Buddha Thai Cuisine’ online ordering is powered
+<strong>Terms and Conditions</strong>”) apply to your use of the {config.RestaurantName} websites, systems, and services (collectively, the “
+<strong>Services</strong>). {config.RestaurantName}’ online ordering is powered
 by Dining Software Group, Inc, (DiningTek). (“
-<strong>Buddha Thai Cuisine</strong>,” “<strong>us</strong>”, “
+<strong>{config.RestaurantName}</strong>,” “<strong>us</strong>”, “
 <strong>we</strong>”, and “<strong>our</strong>”). These Terms and
-Conditions apply to all customers, visitors, and users of Buddha Thai
-Cuisine sites (collectively, “<strong>User</strong>”, “
+Conditions apply to all customers, visitors, and users of {config.RestaurantName} sites (collectively, “<strong>User</strong>”, “
 <strong>Users</strong>”, “<strong>you</strong>” and “<strong>your</strong>
 ”). If you do not agree to be bound by these Terms and Conditions, promptly
 exit this site and cease using the Services.
@@ -54,7 +53,7 @@ and all applicable laws, regulations, and rules when you use the Services.
 <strong>Modifications:</strong>
 </p>
 <p>
-Buddha Thai Cuisine may revise and update these Terms and Conditions at any
+{config.RestaurantName} may revise and update these Terms and Conditions at any
 time. Your continued use of the Services after any changes to these Terms
 and Conditions shall be an acceptance of those changes.&nbsp;
 </p>
@@ -67,10 +66,10 @@ prices, and other terms and conditions on which the Services are offered to
 you.
 </p>
 <p>
-<strong>Communications with Buddha Thai Cuisine:</strong>
+<strong>Communications with {config.RestaurantName}:</strong>
 </p>
 <p>
-Buddha Thai Cuisine or DiningTek may contact you by email, telephone or
+{config.RestaurantName} or DiningTek may contact you by email, telephone or
 otherwise in order to send you Services-related and other communications or
 notices. If you do not want to receive these communications from us, you may
 opt-out by following the opt-out and/or unsubscribe instructions in the
@@ -92,23 +91,23 @@ inaccuracy arises, please inform us so that it can be corrected. Information
 contained on the Services may be changed or updated without notice.
 Additionally, we shall have no responsibility or liability for information
 or content posted to the Services from any third party not affiliated with
-Buddha Thai Cuisine.
+{config.RestaurantName}.
 </p>
 <p>
-<strong>Buddha Thai Cuisine Online Order Policy:&nbsp;</strong>
+<strong>{config.RestaurantName} Online Order Policy:&nbsp;</strong>
 </p>
 <p>
 <strong>Cash Purchases:</strong>
 </p>
-<p>Buddha Thai Cuisine is responsible for collecting cash payments.&nbsp;</p>
+<p>{config.RestaurantName} is responsible for collecting cash payments.&nbsp;</p>
 <p>
 <strong>Credit Card Purchases:</strong>
 </p>
 <p>
 Users that choose to make purchases with credit or debit cards consent to
-Buddha Thai Cuisine’ and/or its payment processors’ use of their payment
+{config.RestaurantName}’ and/or its payment processors’ use of their payment
 information to process and charge orders. Users must include all requested
-information to process the payments. Users are liable to Buddha Thai Cuisine
+information to process the payments. Users are liable to {config.RestaurantName}
 for the full amount of any order placed.
 </p>
 <p>
@@ -116,19 +115,18 @@ for the full amount of any order placed.
 </p>
 <p>
 <strong>
-If an issue with your order arises, please contact Buddha Thai Cuisine
+If an issue with your order arises, please contact {config.RestaurantName}
 immediately.&nbsp;
 </strong>
-Buddha Thai Cuisine is responsible for any issues with your order or that
+{config.RestaurantName} is responsible for any issues with your order or that
 may arise during the pick-up or delivery process (including orders that have
 not been delivered). Users agree that the risk of loss transfers to them
 upon delivery of the appropriate information to the restaurant or delivery
-service. Users must file any formal claims directly with Buddha Thai Cuisine
+service. Users must file any formal claims directly with {config.RestaurantName}
 or with a third party delivery service.&nbsp;&nbsp;
 </p>
 <p>
-However, if you are unsatisfied with your order, please let Buddha Thai
-Cuisine know at&nbsp;
+However, if you are unsatisfied with your order, please let {config.RestaurantName} know at&nbsp;
 <a href="mailto:support@diningtek.com">support@diningtek.com</a>&nbsp;as we
 may use that information to help remedy the situation and/or improve future
 service to our Users. Include all information regarding your order,
@@ -139,30 +137,30 @@ order, and the order mistake.
 <strong>Refunds:</strong>
 </p>
 <p>
-All orders are non-refundable. However, Buddha Thai Cuisine may, in its sole
+All orders are non-refundable. However, {config.RestaurantName} may, in its sole
 discretion, cancel and refund orders. This may occur if items are
-out-of-stock or unavailable. Buddha Thai Cuisine may choose to refund all or
+out-of-stock or unavailable. {config.RestaurantName} may choose to refund all or
 part of an order in their sole discretion or as required by their policies.
 </p>
 <p>
 <strong>Disclaimers and Exclusions:</strong>
 </p>
 <p>
-BUDDHA THAI CUISINE PROVIDES THE SERVICES ON AN “AS IS” AND “AS AVAILABLE”
-BASIS, WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND. BUDDHA THAI CUISINE
+{config.RestaurantName} PROVIDES THE SERVICES ON AN “AS IS” AND “AS AVAILABLE”
+BASIS, WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND. {config.RestaurantName}
 DOES NOT REPRESENT OR WARRANT THAT THE SERVICES OR THEIR USE: (I) WILL BE
 UNINTERRUPTED; (II) WILL BE FREE OF INACCURACIES OR ERRORS; (III) WILL MEET
 YOUR REQUIREMENTS OR EXPECTATIONS; OR (IV) WILL OPERATE IN THE CONFIGURATION
-OR WITH THE HARDWARE OR SOFTWARE YOU USE. BUDDHA THAI CUISINE MAKES NO
+OR WITH THE HARDWARE OR SOFTWARE YOU USE. {config.RestaurantName} MAKES NO
 WARRANTIES OTHER THAN THOSE MADE EXPRESSLY IN THESE TERMS AND CONDITIONS,
 AND HEREBY DISCLAIMS ANY AND ALL IMPLIED WARRANTIES, INCLUDING WITHOUT
 LIMITATION, WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY,
-TITLE, AND NON-INFRINGEMENT. BUDDHA THAI CUISINE DOES NOT WARRANT THE
+TITLE, AND NON-INFRINGEMENT. {config.RestaurantName} DOES NOT WARRANT THE
 ACCURACY, COMPLETENESS, OR TIMELINESS OF THE INFORMATION OBTAINED THROUGH
 THE SERVICES.
 </p>
 <p>
-Buddha Thai Cuisine disclaims any representations or warranties concerning
+{config.RestaurantName} disclaims any representations or warranties concerning
 any internet outage, technical issue, food order delay, order
 misinterpretation, food quality, food quantity, difference in orders,
 missing order information, missing payment method, payment processing
@@ -170,9 +168,9 @@ errors, overpayments, missing tax, regulatory fees, cash exchange, or any
 fees caused by technical errors.&nbsp;&nbsp;
 </p>
 <p>
-However, Buddha Thai Cuisine is committed to helping resolve any issues that
-may arise when using the Buddha Thai Cuisine online order system powered by
-DiningTek. In any case of errors please contact Buddha Thai Cuisine
+However, {config.RestaurantName} is committed to helping resolve any issues that
+may arise when using the {config.RestaurantName} online order system powered by
+DiningTek. In any case of errors please contact {config.RestaurantName}
 immediately through email at&nbsp;
 <a href="mailto:support@diningtek.com">support@diningtek.com</a>.
 </p>
@@ -180,10 +178,10 @@ immediately through email at&nbsp;
 <strong>Limitation of Liability:</strong>
 </p>
 <p>
-BUDDHA THAI CUISINE SPECIFICALLY DISCLAIMS ANY LIABILITY, WHETHER BASED IN
+{config.RestaurantName} SPECIFICALLY DISCLAIMS ANY LIABILITY, WHETHER BASED IN
 CONTRACT, TORT, STRICT LIABILITY OR OTHERWISE, FOR ANY DIRECT, INDIRECT,
 INCIDENTAL, CONSEQUENTIAL, OR SPECIAL DAMAGES ARISING OUT OF OR IN ANY WAY
-CONNECTED WITH ACCESS TO OR USE OF THE SERVICES, EVEN IF BUDDHA THAI CUISINE
+CONNECTED WITH ACCESS TO OR USE OF THE SERVICES, EVEN IF {config.RestaurantName}
 HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, INCLUDING BUT NOT
 LIMITED TO RELIANCE BY ANY PARTY ON ANY CONTENT OBTAINED THROUGH THE USE OF
 THE SERVICES, OR THAT ARISES IN CONNECTION WITH MISTAKES OR OMISSIONS IN, OR
@@ -197,7 +195,7 @@ INFORMATION OR PROGRAMS.
 <strong>Indemnification:</strong>
 </p>
 <p>
-You agree to indemnify, defend, and hold harmless Buddha Thai Cuisine, its
+You agree to indemnify, defend, and hold harmless {config.RestaurantName}, its
 directors, officers, employees, consultants, agents, and other
 representatives, from and against any and all claims, damages, losses, costs
 (including reasonable attorneys’ fees), and other expenses that arise
@@ -211,11 +209,10 @@ activities in connection with the Services.
 <strong>Trademarks:</strong>
 </p>
 <p>
-The Buddha Thai Cuisine name and logo, and all other trademarks, service
+The {config.RestaurantName} name and logo, and all other trademarks, service
 marks and trade names in relation to the Services (collectively, “
-<strong>Marks</strong>”) are owned by Buddha Thai Cuisine and may not be
-used in any manner without the express written consent of Buddha Thai
-Cuisine. Unauthorized use of any Marks may be a violation of federal and
+<strong>Marks</strong>”) are owned by {config.RestaurantName} and may not be
+used in any manner without the express written consent of {config.RestaurantName}. Unauthorized use of any Marks may be a violation of federal and
 state trademark laws.
 </p>
 <p>
@@ -226,45 +223,43 @@ Any and all intellectual property rights (“
 <strong>Intellectual Property</strong>”) associated with the Services and
 its contents (the “<strong>Content</strong>”) including, without limitation,
 text, video, graphics, logos, images, digital downloads, software, and
-instructional materials and curricula, are the sole property of Buddha Thai
-Cuisine, its affiliates or third parties. The Content is protected by
+instructional materials and curricula, are the sole property of {config.RestaurantName}, its affiliates or third parties. The Content is protected by
 copyright and other laws in both the United States and other countries.
 Elements of the Services are also protected by trade dress, trade secret,
 unfair competition, and other laws and may not be copied or imitated in
 whole or in part. Except as otherwise expressly authorized by these Terms
 and Conditions, you may not copy, reproduce, modify, lease, loan, sell,
 create derivative works from, upload, transmit or distribute the
-Intellectual Property of the Services in any way without the Buddha Thai
-Cuisine’s or the appropriate third party’s prior written permission. Except
-as expressly provided herein, Buddha Thai Cuisine does not grant to you any
-express or implied rights to Buddha Thai Cuisine’s or any third party’s
+Intellectual Property of the Services in any way without the {config.RestaurantName}’s or the appropriate third party’s prior written permission. Except
+as expressly provided herein, {config.RestaurantName} does not grant to you any
+express or implied rights to {config.RestaurantName}’s or any third party’s
 Intellectual Property.&nbsp;
 </p>
 <p>
-Buddha Thai Cuisine grants you a limited, personal, nontransferable,
+{config.RestaurantName} grants you a limited, personal, nontransferable,
 nonsublicensable, revocable license to access and use the Services only in
-the manner presented by Buddha Thai Cuisine. Except for this limited
-license, Buddha Thai Cuisine does not convey any interest in or to the
-Content or Services or any other Buddha Thai Cuisine property by permitting
+the manner presented by {config.RestaurantName}. Except for this limited
+license, {config.RestaurantName} does not convey any interest in or to the
+Content or Services or any other {config.RestaurantName} property by permitting
 you to access the Services. Except to the extent required by law or as
 expressly provided herein, none of the Content may be reverse-engineered,
 modified, reproduced, republished, translated into any language or computer
 language, re-transmitted in any form or by any means, resold or
-redistributed without the prior written consent of Buddha Thai Cuisine. You
+redistributed without the prior written consent of {config.RestaurantName}. You
 may not make, sell, offer for sale, modify, reproduce, display, publicly
 perform, import, distribute, retransmit or otherwise use the Content in any
-way, unless expressly permitted to do so by Buddha Thai Cuisine.
+way, unless expressly permitted to do so by {config.RestaurantName}.
 </p>
 <p>
 <strong>Security:</strong>
 </p>
 <p>
 You understand and acknowledge that no data transmission over the Internet
-can be guaranteed to be 100% secure, and that while Buddha Thai Cuisine
+can be guaranteed to be 100% secure, and that while {config.RestaurantName}
 engages industry standard payment processors and internet infrastructure
 providers, we cannot guarantee that any information you submit to us will be
 free from unauthorized third-party intrusion. You understand and agree that
-all information you submit to Buddha Thai Cuisine is done so at your own
+all information you submit to {config.RestaurantName} is done so at your own
 risk.
 </p>
 <p>
@@ -282,7 +277,7 @@ Services.
 <p>
 (c) You will not use or access any service, information, application or
 software available via the Services in a manner not expressly permitted by
-Buddha Thai Cuisine.
+{config.RestaurantName}.
 </p>
 <p>
 (d) You will not input or upload to the Services any information which
@@ -292,21 +287,20 @@ or expropriate any system, the Services or Content, or that infringes the
 Intellectual Property rights of another.
 </p>
 <p>
-(e) You may not use or access the Services in any way that, in Buddha Thai
-Cuisine’ judgment, adversely affects the performance or function of the
+(e) You may not use or access the Services in any way that, in {config.RestaurantName}’ judgment, adversely affects the performance or function of the
 Services or interferes with the ability of authorized parties to access the
 Services.
 </p>
 <p>
 (f) You may not frame or utilize framing techniques to enclose any portion
 or aspect of the Content or the Services without the express written consent
-of Buddha Thai Cuisine.
+of {config.RestaurantName}.
 </p>
 <p>
 <strong>Termination:</strong>
 </p>
 <p>
-Buddha Thai Cuisine may, in its sole discretion, terminate or suspend your
+{config.RestaurantName} may, in its sole discretion, terminate or suspend your
 use of the Services at any time and for any or no reason, even if we
 continue to allow others to access and use the Services.
 </p>
@@ -314,7 +308,7 @@ continue to allow others to access and use the Services.
 <strong>Arbitration:</strong>
 </p>
 <p>
-Any dispute between you and Buddha Thai Cuisine, its agents, employees,
+Any dispute between you and {config.RestaurantName}, its agents, employees,
 officers, directors, principals, successors, assigns, subsidiaries or
 affiliates arising from or relating to these Terms and Conditions and their
 interpretation or the breach, termination or validity thereof, the
@@ -325,8 +319,8 @@ settled by binding arbitration in accordance with the rules of the American
 Arbitration Association by a single arbitrator appointed in accordance with
 said rules. Prior to initiating any arbitration, the initiating party will
 give the other party at least 60-days’ advanced written notice of its intent
-to file for arbitration. Buddha Thai Cuisine will provide such notice by
-e-mail to your e-mail address on file with Buddha Thai Cuisine and you must
+to file for arbitration. {config.RestaurantName} will provide such notice by
+e-mail to your e-mail address on file with {config.RestaurantName} and you must
 provide such notice by e-mail to&nbsp;
 <a href="mailto:support@diningtek.com">support@diningtek.com</a>
 </p>
@@ -340,9 +334,9 @@ arbitrator(s) will be final and binding on each of the parties and may be
 entered as a judgment in any court of competent jurisdiction. The arbitrator
 will apply applicable law and the provisions of these Terms and Conditions
 and the failure to do so will be deemed an excess of arbitral authority and
-grounds for judicial review. Buddha Thai Cuisine and you agree that any
+grounds for judicial review. {config.RestaurantName} and you agree that any
 Covered Dispute hereunder will be submitted to arbitration on an individual
-basis only. Neither Buddha Thai Cuisine nor you are entitled to arbitrate
+basis only. Neither {config.RestaurantName} nor you are entitled to arbitrate
 any Covered Dispute as a class, representative or private attorney action
 and the arbitrator(s) will have no authority to proceed on a class,
 representative or private attorney general basis. If any provision of the
@@ -362,9 +356,8 @@ provision shall not affect the validity of the remaining provisions, which
 shall remain in full force and effect. No waiver of any of these Terms and
 Conditions shall be deemed a further or continuing waiver of such term or
 condition or any other term or condition. Except as expressly provided in a
-separate, written agreement between you and Buddha Thai Cuisine, these Terms
-and Conditions constitute the entire agreement between you and Buddha Thai
-Cuisine with respect to the Services, and supersede all discussions,
+separate, written agreement between you and {config.RestaurantName}, these Terms
+and Conditions constitute the entire agreement between you and {config.RestaurantName} with respect to the Services, and supersede all discussions,
 communications, conversations and agreements concerning the subject matters
 thereof.
 </p>
@@ -384,7 +377,7 @@ If you believe that your work has been copied and is accessible on the
 Services in a way that constitutes copyright infringement, or that the
 Services contains links or other references to another online location that
 contains material or activity that infringes your copyright rights, you may
-notify Buddha Thai Cuisine by providing the following information (as
+notify {config.RestaurantName} by providing the following information (as
 required by the Online Copyright Infringement Liability Limitation Act of
 the Digital Millennium Copyright Act, 17 U.S.C. sec. 512) to our copyright
 agent set forth below:
@@ -402,11 +395,11 @@ single notification, a representative list of such works at that site;
 (c) Identification of the material that is claimed to be infringing, or to
 be the subject of infringing activity, and that is to be removed or access
 to which is to be disabled, and information reasonably sufficient to permit
-Buddha Thai Cuisine, or its third party service providers, to locate the
+{config.RestaurantName}, or its third party service providers, to locate the
 material;
 </p>
 <p>
-(d) Information reasonably sufficient to permit Buddha Thai Cuisine, or its
+(d) Information reasonably sufficient to permit {config.RestaurantName}, or its
 third-party service providers, to contact the complaining party, such as an
 address, telephone number, and if available, an electronic mail address at
 which the complaining party may be contacted;
@@ -422,7 +415,7 @@ under penalty of perjury, that the complaining party is authorized to act on
 behalf of the owner of an exclusive right that is allegedly infringed.
 </p>
 <p>Copyright Manager</p>
-<p>Buddha Thai Cuisine</p>
+<p>{config.RestaurantName}</p>
 <p>
 2719 Iris Ave
 <br /> Boulder, CO, US, 80304

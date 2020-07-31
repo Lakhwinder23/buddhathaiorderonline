@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import {config} from '../config';
 
 function PrivacyPolicy(){
   return(
@@ -24,11 +25,10 @@ function PrivacyPolicy(){
                      <div className="col-md-11">
                      <div>
 <p>
- Buddha Thai Cuisine is committed to keeping your Personal Information
+ {config.RestaurantName} is committed to keeping your Personal Information
  private and secure. This Privacy Policy describes what Personal Information
- the Buddha Thai Cuisine platform and Buddha Thai Cuisineorderonline.com (the
- “website,” “us,” “our” and “we”) collects and how we use it. Buddha Thai
- Cuisine, buddhathaicuisine.com, and the Buddha Thai Cuisine services are
+ the {config.RestaurantName} platform and {config.RestaurantName}orderonline.com (the
+ “website,” “us,” “our” and “we”) collects and how we use it. {config.RestaurantName}, and the {config.RestaurantName} services are
  provided by Dining Software Group, Inc.
 </p>
 <p>
@@ -107,7 +107,7 @@ function PrivacyPolicy(){
  <strong>How We Use Your Personal Information</strong>
 </p>
 <p>
- Buddha Thai Cuisine primarily provides online ordering platforms, mobile
+ {config.RestaurantName} primarily provides online ordering platforms, mobile
  applications, and marketing services for the restaurant and hospitality
  industry. Most of the Personal Information we collect is for processing
  orders that customers place with our restaurant clients.
@@ -135,7 +135,7 @@ function PrivacyPolicy(){
  Disclosure of Order Information. We process food and services orders on
  behalf of our restaurant and hospitality clients and will disclose
  information related to those orders to such clients so that they may
- properly fulfill such orders. If you contact Buddha Thai Cuisine regarding
+ properly fulfill such orders. If you contact {config.RestaurantName} regarding
  your order or any issues with your order, we may also disclose some or all
  of those communications to the business about which you are calling so that
  we may troubleshoot and/or resolve your issue.&nbsp;
@@ -152,7 +152,7 @@ function PrivacyPolicy(){
  service providers to assist in providing data storage, website hosting,
  analytics, and other services. Personal Information is hosted on their
  servers and services on our behalf and is kept confidential and limited to
- Buddha Thai Cuisine’s use. Buddha Thai Cuisine uses industry standard
+ {config.RestaurantName}’s use. {config.RestaurantName} uses industry standard
  third-party payment processors to process orders, and discloses your payment
  information solely for the purpose of processing authorized payments.
 </p>
@@ -169,9 +169,9 @@ function PrivacyPolicy(){
  partners, advertisers, investors, users, and other third parties.
 </p>
 <p>
- Disclosure to Corporate Affiliates and Successors. Buddha Thai Cuisine may
+ Disclosure to Corporate Affiliates and Successors. {config.RestaurantName} may
  disclose Personal Information and other data to its parent, subsidiaries or
- other affiliates, if any.&nbsp; If Buddha Thai Cuisine is part of a merger,
+ other affiliates, if any.&nbsp; If {config.RestaurantName} is part of a merger,
  acquisition, reorganization, sale of some or all of its assets, or similar
  transaction, or takes steps in contemplation of such transactions (e.g., due
  diligence), Personal Information and other data may be shared or transferred
@@ -208,7 +208,7 @@ function PrivacyPolicy(){
  <strong>Storage and Retention</strong>
 </p>
 <p>
- Your Personal Information is stored by Buddha Thai Cuisine on our servers
+ Your Personal Information is stored by {config.RestaurantName} on our servers
  and on the servers of the cloud-based data storage providers that we engage.
  DiningTek retains Personal Information for the duration of our business
  relationship with you, for the purposes indicated in this Privacy Policy,
@@ -218,7 +218,7 @@ function PrivacyPolicy(){
  <strong>Data Security</strong>
 </p>
 <p>
- Buddha Thai Cuisine and DiningTek take the privacy of your information
+ {config.RestaurantName} and DiningTek take the privacy of your information
  seriously. We use industry standard physical, technical and administrative
  security measures and safeguards to protect the confidentiality and security
  of Personal Information. However, since the Internet is not a 100% secure

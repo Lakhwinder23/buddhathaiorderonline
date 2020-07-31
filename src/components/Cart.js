@@ -15,6 +15,10 @@ import { addTip } from '../Redux/AddTip/AddTipActions';
 import { fetchRestaurantInformation } from '../Redux/RestaurantInformation/RestaurantInformationActions';
 
 function Cart(){
+
+  useEffect(() => {
+  window.scrollTo(0, 0)
+}, [])
   // store data access start
 const merchant_data = useSelector(state =>state.MerchantToken)
 const config_data = useSelector(state =>state.Config)
@@ -28,6 +32,8 @@ const restaurantInformation_data = useSelector(state =>state.RestaurantInformati
   const store = useStore()
   const propsStateShipping = store.getState().UpdateShippingMethod
   const propsStateBucket = store.getState().Bucket
+  const propsStateAddTip = store.getState().AddTip
+  console.log('propsState', propsStateAddTip);
   // component all states define start
   const [merchantInfo,setMerchantInfo] = useState([])
   const [configInfo,setConfigInfo] = useState([])
@@ -551,10 +557,15 @@ const cart =
     <Header configInfo={configInfo}
     Detailed_cart_item={bucketDciResponseData.Detailed_cart_item}
     />
-    <div className="row">
+    <div className="container" id="scrollmain" >
+    <div className="row top_row"></div>
+    </div>
+    <div className="container">
+      <div className="main1-wrapper">
+        <div className="row">
           <div className="col-lg-4 col-md-4">
           </div>
-          <div className="col-lg-3 col-md-4 mobile-cart">
+          <div className={!propsStateAddTip.add_tip_loading && propsStateShipping && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? 'col-lg-4 col-md-4 mobile-cart' : 'col-lg-4 col-md-4 mobile-cart loadingstate'}>
             {bucketDciResponseData.Detailed_cart && Object.keys(bucketDciResponseData.Detailed_cart).length > 0 ? (
               <div className="cart">
                 <h2>Cart</h2>
@@ -671,8 +682,9 @@ const cart =
                     </div>
 
                     <div className="row cart-below-form">
-                      {propsStateShipping && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? delivery_content : (<span className="delivery-processing">Processing...</span>)}
+                      {/*<>propsStateShipping && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? delivery_content : (<span className="delivery-processing">Processing...</span>)<>*/}
                       {console.log('delivery_process', propsStateBucket.bucket_loading)}
+                      {delivery_content}
                     </div>
                     <div className="sub">
                       <div className="subtotal"></div>
@@ -690,7 +702,7 @@ const cart =
                               currentShippingMethodName:currentShippingMethodName
                             }}
                           >
-                            Checkout
+                            {!propsStateAddTip.add_tip_loading && propsStateShipping && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? 'Checkout' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
                           </Link>
                         </div>
                       ) : (
@@ -700,7 +712,7 @@ const cart =
                             disabled = {!delivery_click}
                             className="deliverymsg"
                           >
-                            Checkout
+                            {!propsStateAddTip.add_tip_loading && propsStateShipping && !propsStateShipping.update_shipping_method_loading && !propsStateBucket.bucket_loading ? 'Checkout' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
                           </button>
                         </div>
                       )}
@@ -723,6 +735,8 @@ const cart =
             )}
           </div>
           <div className="col-lg-4 col-md-4">
+          </div>
+          </div>
           </div>
           </div>
     <Footer configInfo={configInfo} merchantInfo={merchantInfo} banner_info={singleRestaurantResponseData.banner_info}/>

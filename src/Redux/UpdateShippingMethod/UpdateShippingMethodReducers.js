@@ -19,9 +19,9 @@ const UpdateShippingMethodReducers = (state = intialstate,action) =>{
     }
     case UPDATE_SHIPPING_METHOD_SUCCESS : return{
       ...state,
-      update_shipping_method_loading:false,
       update_shipping_method_success:true,
-      update_shipping_method:action.payload
+      update_shipping_method:action.payload,
+      update_shipping_method_loading:false,
     }
     case UPDATE_SHIPPING_METHOD_FALIURE : return{
       ...state,
