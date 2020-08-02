@@ -3743,3 +3743,19 @@ body.modal-open {
 .back-to-menu.text-center.disabled-menu {
     pointer-events: none;
 }
+.order-detail h2.inner.text-center {
+    margin: auto;
+    margin-bottom: 17px;
+}
+
+.ordernotes {
+    font-size: 21px;
+    margin-bottom: 12px;
+    font-style: italic;
+    font-weight: 600;
+}
+@media(max-width:500px) {
+  .modal-open .cart-mobile-view-button.text-center {
+    display: none;
+}
+}

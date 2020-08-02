@@ -40,7 +40,11 @@ function ThankYou(props){
 
                           {/* order detail start */}
 
+
                               <div className="order-detail">
+                              <div className="ordernotes">
+                              Notes : {props.location.order_info.object.order_detail.note ? props.location.order_info.object.order_detail.note : '--'}
+                              </div>
                                 <h2 className="inner text-center">ORDER DETAIL</h2>
                                 <div className="order-info">
                                 <div className="row">
