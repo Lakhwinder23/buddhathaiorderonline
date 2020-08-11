@@ -3759,3 +3759,14 @@ body.modal-open {
     display: none;
 }
 }
+html{
+    -webkit-overflow-scrolling: touch;
+}
+@media(max-width:500px){
+.modal-content {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    max-height: 90vh;
+
+}
+}
