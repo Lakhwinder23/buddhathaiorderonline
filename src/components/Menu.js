@@ -1354,9 +1354,8 @@ const incrementwithAddon = () =>{
 
         }
         <h3>
-          We Offer Gift Cerificates.{" "}
-          <a href="/gift-cards">Click Here</a> To View All Gift
-          Cerificates
+          We are offering Gift Certificates. {" "}
+          <a href="/gift-cards">Click here</a> to view all.
         </h3>
 
           <h2>MENU</h2>

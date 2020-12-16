@@ -1382,7 +1382,7 @@ const incrementwithAddon = () =>{
 
         }
 
-          <h2>Gift Cerificates</h2>
+          <h2>Gift Certificates</h2>
 
           </div>
           {menuListResponseData.restaurantsdata && menuListResponseData.restaurantsdata.length > 0 ? (
