@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import store from './Redux/store';
 import { Provider } from 'react-redux';
 import App from './App';
+import GiftCards from './GiftCards';
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import ThankYou from './components/ThankYou'
@@ -75,6 +76,7 @@ console.log('[Subscribe]', store.getState());
             <Router>
             <Switch>
                 <Route exact path="/"  component={App}/>
+                <Route exact path="/gift-cards"  component={GiftCards}/>
                 <Route path="/cart" component={Cart} />
                 <Route path="/thankyou" component={ThankYou} />
                 <Route path="/privacy-policy" component={PrivacyPolicy} />

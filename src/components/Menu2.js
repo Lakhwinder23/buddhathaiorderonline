@@ -839,7 +839,7 @@ const incrementwithAddon = () =>{
 
       const tip_rate_fees = [0,10,15,20];
   //menu category start
-    const category = menuListResponseData.restaurantsdata && menuListResponseData.restaurantsdata.length > 0 ? menuListResponseData.restaurantsdata.map((cat, index) => {
+    const category = menuList_data.menulist.gift_certificates && menuList_data.menulist.gift_certificates.length > 0 ? menuList_data.menulist.gift_certificates.map((cat, index) => {
       const hashlink = `#${cat.category.categoryName}`;
 
       return (
@@ -852,8 +852,9 @@ const incrementwithAddon = () =>{
 
     // menu data of particular restaurant start
 
-    const menuList = menuListResponseData.restaurantsdata && menuListResponseData.restaurantsdata.length > 0 ? menuListResponseData.restaurantsdata.map((cat, index) => {
+    const menuList = menuList_data.menulist.gift_certificates && menuList_data.menulist.gift_certificates.length > 0 ? menuList_data.menulist.gift_certificates.map((cat, index) => {
       const product = cat.products;
+      console.log('menu-data', menuList_data.menulist.gift_certificates);
       return (
         <ScrollableAnchor id={cat.category.categoryName} key={index}>
           <div className="pizza1">
@@ -862,69 +863,97 @@ const incrementwithAddon = () =>{
               <div className="row">
                 {product.map((item, index) => {
 
-                  const Add_Button =
-                singleRestaurantResponseData.maintenance_mode == "false" || singleRestaurantResponseData.maintenance_mode === undefined ?
-                configResponseData.is_shop_open == "false" || configResponseData.is_shop_open === undefined ? (
-                  <button
-                    className="addbutton"
-                    disabled
-                  >
-                    Closed
-                  </button>
-                ) : item.available_for_sale === false ? (
+                //   const Add_Button =
+                // singleRestaurantResponseData.maintenance_mode == "false" || singleRestaurantResponseData.maintenance_mode === undefined ?
+                // configResponseData.is_shop_open == "false" || configResponseData.is_shop_open === undefined ? (
+                //   <button
+                //     className="addbutton"
+                //     disabled
+                //   >
+                //     Closed
+                //   </button>
+                // ) : item.available_for_sale === false ? (
+                //   <>
+                //   <button
+                //     className="available-for-sale"
+                //     data-tip
+                //     data-for='happyFace'
+                //   >
+                //     ADD
+                //   </button>
+                //   <ReactTooltip id='happyFace' type='error'>
+                //       <span class="maintenance-content">Not Available at this Time.</span>
+                //   </ReactTooltip>
+                //   </>
+                //   ):
+                //   item.addonsGroups.length > 0 ? (
+                //     <>
+                //       <button
+                //         className="addbutton"
+                //         value={item.productId}
+                //         onClick={e =>handleShow(e)}
+                //       >
+                //         ADD
+                //       </button>
+                //     </>
+                //   ): item.enabledUserInstructions && item.enabledUserInstructions === true ? (
+                //       <button
+                //         className="addbutton"
+                //         value={item.productId}
+                //         onClick={(e) =>handleCookingInstruction(e)}
+                //       >
+                //         ADD
+                //       </button>
+                //     ) : (
+                //     <button
+                //       className="addbutton"
+                //       value={item.productId}
+                //       onClick={(e) =>handleSelect(e)}
+                //     >
+                //       ADD
+                //     </button>
+                //   ):(
+                //     <>
+                //     <button
+                //       className="addbutton"
+                //       data-tip
+                //       data-for='happyFace'
+                //     >
+                //       ADD
+                //     </button>
+                //     <ReactTooltip id='happyFace' type='error'>
+                //         <span class="maintenance-content">In Maintenance Mode</span>
+                //     </ReactTooltip>
+                //     </>
+                //   )
+                const Add_Button =
+                item.addonsGroups.length > 0 ? (
                   <>
-                  <button
-                    className="available-for-sale"
-                    data-tip
-                    data-for='happyFace'
-                  >
-                    ADD
-                  </button>
-                  <ReactTooltip id='happyFace' type='error'>
-                      <span class="maintenance-content">Not Available at this Time.</span>
-                  </ReactTooltip>
-                  </>
-                  ):
-                  item.addonsGroups.length > 0 ? (
-                    <>
-                      <button
-                        className="addbutton"
-                        value={item.productId}
-                        onClick={e =>handleShow(e)}
-                      >
-                        ADD
-                      </button>
-                    </>
-                  ): item.enabledUserInstructions && item.enabledUserInstructions === true ? (
-                      <button
-                        className="addbutton"
-                        value={item.productId}
-                        onClick={(e) =>handleCookingInstruction(e)}
-                      >
-                        ADD
-                      </button>
-                    ) : (
                     <button
                       className="addbutton"
                       value={item.productId}
-                      onClick={(e) =>handleSelect(e)}
+                      onClick={e =>handleShow(e)}
                     >
                       ADD
                     </button>
-                  ):(
-                    <>
+                  </>
+                ): item.enabledUserInstructions && item.enabledUserInstructions === true ? (
                     <button
                       className="addbutton"
-                      data-tip
-                      data-for='happyFace'
+                      value={item.productId}
+                      onClick={(e) =>handleCookingInstruction(e)}
                     >
                       ADD
                     </button>
-                    <ReactTooltip id='happyFace' type='error'>
-                        <span class="maintenance-content">In Maintenance Mode</span>
-                    </ReactTooltip>
-                    </>
-                  )
+                  ) : (
+                  <button
+                    className="addbutton"
+                    value={item.productId}
+                    onClick={(e) =>handleSelect(e)}
+                  >
+                    ADD
+                  </button>
+                )
                   let Current_Addons = [];
                   let current_Qnty = "";
                   let current_cart_item_id = "";
@@ -1347,19 +1376,14 @@ const incrementwithAddon = () =>{
     <div className="main1">
       <div className="container">
         <div className="main1-wrapper" id="menu">
-        <div className="row menu-heading text-center">
+        <div className="row menu-heading text-center giftcards">
         {
-        /*<h3>{singleRestaurantResponseData.business_data && singleRestaurantResponseData.business_data.SPECIAL_MESSAGE ? singleRestaurantResponseData.business_data.SPECIAL_MESSAGE : null}</h3>*/
-
+          <h3>{singleRestaurantResponseData.business_data && singleRestaurantResponseData.business_data.SPECIAL_MESSAGE ? singleRestaurantResponseData.business_data.SPECIAL_MESSAGE : null}</h3>
 
         }
-        <h3>
-          We Offer Gift Cerificates.{" "}
-          <a href="/gift-cards">Click Here</a> To View All Gift
-          Cerificates
-        </h3>
 
-          <h2>MENU</h2>
+          <h2>Gift Cerificates</h2>
+
           </div>
           {menuListResponseData.restaurantsdata && menuListResponseData.restaurantsdata.length > 0 ? (
             <div className="row">
