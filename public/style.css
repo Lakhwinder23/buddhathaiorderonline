@@ -3773,3 +3773,6 @@ html{
 .row.menu-heading.text-center.giftcards h2 {
     width: 64%;
 }
+.row.menu-heading.text-center h3 {
+	display: none;
+}
