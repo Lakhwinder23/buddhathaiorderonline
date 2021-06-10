@@ -52,7 +52,7 @@ export const paymentCheckout = (payment_checkout_info) =>{
               notes:payment_checkout_info.notes_restaurant,
               orderDate: "",
               orderTime: "",
-              paymentType: "stripe",
+              paymentType: payment_checkout_info.payment_token == "authnettoken" ? "authnet" : "stripe",
               postalCode: payment_checkout_info.postal_code != undefined ? payment_checkout_info.postal_code :"",
               state: payment_checkout_info.state != undefined ? payment_checkout_info.state : ""
             },
