@@ -3776,3 +3776,6 @@ html{
 .row.menu-heading.text-center h3 {
 	display: none;
 }
+.giftcardbox {
+    display: none;
+}
