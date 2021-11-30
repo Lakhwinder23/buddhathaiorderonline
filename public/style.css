@@ -3779,3 +3779,52 @@ html{
 .giftcardbox {
     display: none;
 }
+
+
+
+
+
+@media(max-width:1230px){
+.container .banner-info {
+  padding-top: 18px;
+  padding-bottom: 3px;
+}
+.container .banner-info .banner-left img {
+  width: 100%;
+  object-position: center;
+  object-fit: cover;
+}
+.container .banner-info .banner-right .col-md-4 {
+  max-width: 50%;
+  flex: 0 0 50%;
+}
+.container .banner-info .banner-right .restaurant-hours {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.container .banner-info .banner-right .row.restaurant-extra-info {
+  margin-top: 15px;
+}
+.container .banner-info .banner-right .row.restaurant-extra-info .restaurant-extra-info-part {
+  flex: 0 0 24%;
+  max-width: 24%;
+}
+.container .banner-info .banner-left {
+  align-self: center;
+}
+}
+
+
+
+@media(max-width:767px){
+.container .banner-info .banner-left img {
+  margin-bottom: 34px;
+}
+.container .banner-info .banner-right {
+  padding-left: 15px;
+}
+.container .banner-info .banner-right .row.restaurant-extra-info .restaurant-extra-info-part {
+  max-width: 30%!important;
+  flex: 0 0 30%!important;
+}
+}
