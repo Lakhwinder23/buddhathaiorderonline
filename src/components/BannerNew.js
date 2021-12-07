@@ -28,7 +28,8 @@ function BannerNew(){
                   <div className="col-xs-12 col-lg-4 col-md-4 restaurant-info">
                     <h3>{restaurantInformation_data.restaurant_info.object.name}</h3>
                     <p>{restaurantInformation_data.restaurant_info.object.tagLine ? restaurantInformation_data.restaurant_info.object.tagLine : null}</p>
-                    <p>{restaurantInformation_data.restaurant_info.object.address_address},  {restaurantInformation_data.restaurant_info.object.address_city}, {restaurantInformation_data.restaurant_info.object.name_point}</p>
+                    <p className="Hdraddress">{restaurantInformation_data.restaurant_info.object.address_address},</p>
+                    <p className="Hdraddresscity">{restaurantInformation_data.restaurant_info.object.address_city}, {restaurantInformation_data.restaurant_info.object.address_state} {restaurantInformation_data.restaurant_info.object.name_point}</p>
                   </div>
                   <div className="col-xs-12 col-lg-4 col-md-4">
                     <div className="restaurant-hours">
