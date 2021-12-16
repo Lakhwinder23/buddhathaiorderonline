@@ -53,7 +53,9 @@ const restaurantTiming_data = useSelector(state =>state.RestaurantTiming)
                 <div className="footer-address">
                     <h5>Address</h5>
                     <span className="time-ico"><img src="/img/home-icon.png" alt="" /></span>
-                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_address},  {props.banner_info.address_city},CO {props.banner_info.name_point}  </>) : null}<br></br>
+                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_address} </>) : null}<br></br></span>
+                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_city}, {props.banner_info.address_state} {props.banner_info.name_point}  </>) : null}<br></br></span>
+                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_country}  </>) : null}<br></br>
                     {
                     //   <span className="time-ico"><img src="/img/phone-icon.png" alt="" /></span>
                     // <span className="time-text">{this.props && this.props.banner_info ? this.props.banner_info.MERCHANT_CONTACT : null}<br></br></span>
