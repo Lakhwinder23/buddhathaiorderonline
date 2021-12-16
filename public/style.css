@@ -3828,3 +3828,6 @@ html{
   flex: 0 0 30%!important;
 }
 }
+span.time-ico {
+    height: 75px;
+}
