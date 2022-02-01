@@ -2088,10 +2088,11 @@ function Checkout(props) {
                           <i className="fa fa-clock-o"></i>
                         </div>
                         <div className="col-md-1"></div>
-                        <p>
+                        {banner_info.MERCHANT_ADD_FEAT_DELIVERY && banner_info.MERCHANT_ADD_FEAT_DELIVERY === "TRUE" ?
+                        (<p>
                           <span>Delivery :</span> Order will be delivered within{" "}
                           {banner_info.MERCHANT_ADD_FEAT_DELIVERY_TIME}.
-                        </p>
+                        </p>):null}
 
                         <p>
                           <span>Pickup :</span> Order will be ready within{" "}
