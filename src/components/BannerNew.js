@@ -18,9 +18,9 @@ function BannerNew(){
           <div className="banner-info">
             <div className="row">
               <div className="col-xs-12 col-lg-3 col-md-3 banner-left">
-              {restaurantInformation_data.restaurant_info.object.LOGO ?
+              {restaurantInformation_data.restaurant_info.object.BANNER ?
                 (
-                <img src={restaurantInformation_data.restaurant_info.object.LOGO} alt="images not found" />
+                <img src={restaurantInformation_data.restaurant_info.object.BANNER} alt="images not found" />
                 ) : null}
               </div>
               <div className="col-xs-12 col-lg-9  col-md-9 banner-right" >
