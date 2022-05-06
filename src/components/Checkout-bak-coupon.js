@@ -22,14 +22,6 @@ import { removeCoupon } from "../Redux/RemoveCoupon/RemoveCouponActions";
 import { paymentCheckout } from "../Redux/PaymentCheckout/PaymentCheckoutActions";
 import { addAddress } from "../Redux/AddAddress/AddAddressActions";
 
-import moment from 'moment';
-import Select from "react-select";
-import TimeSelect from "react-time-select";
-import DatePicker from "react-datepicker";
-import TimePicker from 'react-time-picker'
-
-import "react-datepicker/dist/react-datepicker.css";
-
 function Checkout(props) {
   // store data access start
   const countries_data = useSelector(state => state.GetCountries);
@@ -58,6 +50,7 @@ function Checkout(props) {
   const propsStateAddTip = store.getState().AddTip;
   const propsStateShipping = store.getState().UpdateShippingMethod;
   console.log("propsStateApplyCoupon", propsStateApplyCoupon);
+  console.log("giftinfo", propsStateApplyCoupon);
 
   // component all states define start
   const [finalUserEmail, setFinalUserEmail] = useState("");
@@ -95,6 +88,9 @@ function Checkout(props) {
   const [applyCouponAmount, setApplyCouponAmount] = useState(0);
   const [applyCouponState, setApplyCouponState] = useState(false);
   const [applyCouponInfo, setApplyCouponInfo] = useState([]);
+  const [applyGiftcardInfo, setApplyGiftcardInfo] = useState([]);
+  const [applyGiftcardAmount, setApplyGiftcardAmount] = useState(0);
+  const [applyGiftcardState, setApplyGiftcardState] = useState(false);
   const [couponError, setCouponError] = useState(null);
   const [couponErrorModal, setCouponErrorModal] = useState(false);
   const [removeCouponStatus, setRemoveCouponStatus] = useState(false);
@@ -135,27 +131,6 @@ function Checkout(props) {
   const [address_info, setAddress_info] = useState([]);
   const [showmodal_cart_empty, setShowmodal_cart_empty] = useState(false);
   const [showmodal_shop_closed, setShowmodal_shop_closed] = useState(false);
-  const [availableDates,setAvailableDates] = useState([]);
-  const [orderaheadSelectedDate, setOrderaheadSelectedDate] = useState({
-    selectedDate: null
-  });
-  const [orderaheadSelectedTime, setOrderaheadSelectedTime] = useState({
-    selectedTime: null
-  });
-  const [orderaheadactive, setOrderaheadactive] = useState([]);
-  const [localdate,setLocalDate] = useState(null)
-  const [localtime,setLocalTime] = useState(null)
-  const [localdateformatted,setLocalDateFormatted] = useState(null)
-  const [startDate, setStartDate] = useState(new Date());
-  const [startTime, setStartTime] = useState(new Date());
-  const [availableTimes, setAvailableTimes] = useState([]);
-  const [current_startTimeHours, setCurrent_startTimeHours] = useState(null);
-  const [current_startTimeMinutes, setCurrent_startTimeMinutes] = useState('00');
-  const [current_endTimeHours, setCurrent_endTimeHours] = useState('23');
-  const [current_endTimeMinutes, setCurrent_endTimeMinutes] = useState('55');
-
-  const [currentmerchantId, setCurrentmerchantid] = useState(null);
-
   const [currentShippingMethodName, setCurrentShippingMethodName] = useState(
     null
   );
@@ -170,7 +145,6 @@ function Checkout(props) {
       props.location.merchantInfo &&
       props.location.merchantInfo.access_token
     ) {
-      console.log('merchantInfo', props.location.merchantInfo);
       const user_email =
         localStorage.getItem("user") === null
           ? "guest@onlinebites.com"
@@ -235,36 +209,6 @@ function Checkout(props) {
   }, [props.location]);
   // add config data into config const hook end
 
-  // get restaurant related information and restaurant menu hook start
-    useMemo(() =>{
-      if(configResponseData && configResponseData.url_info && Object.keys(configResponseData.url_info).length>0){
-        //console.log('configResponseData11', configResponseData);
-        const restaurant_info_data = {
-          static_resource_endpoint:configResponseData.static_resource_endpoint,
-          static_resource_sufix:configResponseData.static_resource_sufix,
-          rest_merchant_id:configResponseData.url_info.MERCHANT_ID
-        }
-        const menulist_info = {
-          static_resource_endpoint:configResponseData.static_resource_endpoint,
-          static_resource_categories_prefix:configResponseData.static_resource_categories_prefix,
-          static_resource_sufix:configResponseData.static_resource_sufix,
-          rest_merchant_id:configResponseData.url_info.MERCHANT_ID
-        }
-        const localdateparam = `localdate-${configResponseData.url_info.MERCHANT_ID}` ;
-        const localtimeparam = `localtime-${configResponseData.url_info.MERCHANT_ID}` ;
-
-        const localdate = localStorage.getItem(localdateparam) ;
-        const localtime = JSON.parse(localStorage.getItem(localtimeparam));
-        setLocalTime(localtime);
-        setLocalDate(localdate);
-        const monthName = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        const selectedMonth = monthName[new Date(localdate).getDate()];
-        setLocalDateFormatted(`${new Date(localdate).getMonth()} ${selectedMonth} ${new Date(localdate).getFullYear()}`);
-
-      }
-    },[configResponseData && configResponseData.url_info])
-    // get restaurant related information and restaurant menu hook end
-
   // add config data into config const hook start
   useEffect(() => {
     if (
@@ -305,36 +249,6 @@ function Checkout(props) {
   useEffect(() => {
     if (props.location && props.location.tip_rate_fees) {
       setTip_rate_fees(props.location.tip_rate_fees);
-    }
-  }, [props.location]);
-  // add tip_rate_fees props into constant, hook End
-
-  // add tip_rate_fees props into constant, hook start
-  useEffect(() => {
-    if (props.location && props.location.localdate) {
-      setLocalDate(props.location.localdate);
-    }
-  }, [props.location]);
-  // add tip_rate_fees props into constant, hook End
-
-  // add tip_rate_fees props into constant, hook start
-  useEffect(() => {
-    if (props.location && props.location.localtime) {
-      setLocalTime(props.location.localtime);
-    }
-  }, [props.location]);
-  // add tip_rate_fees props into constant, hook End
-
-  useEffect(() => {
-    if (props.location && props.location.localdateformatted) {
-      setLocalDateFormatted(props.location.localdateformatted);
-    }
-  }, [props.location]);
-
-  // add tip_rate_fees props into constant, hook start
-  useEffect(() => {
-    if (props.location && props.location.merchantid) {
-      setCurrentmerchantid(props.location.merchantid);
     }
   }, [props.location]);
   // add tip_rate_fees props into constant, hook End
@@ -622,6 +536,37 @@ function Checkout(props) {
   }, [applyCoupon_data, dispatch, finalUserEmail, finalUserToken, uniqueBucketId]);
   //when fetch applyCoupon api after that data add into constant,hook End
 
+  //when fetch applyCoupon api after that data add into constant,hook start
+  useMemo(() => {
+    if (
+      applyCoupon_data &&
+      applyCoupon_data.apply_coupon &&
+      applyCoupon_data.apply_coupon.request_status === true &&
+      applyCoupon_data.apply_coupon.object &&
+      applyCoupon_data.apply_coupon.object.balance
+    ) {
+      setApplyGiftcardInfo(applyCoupon_data.apply_coupon.object);
+      setApplyGiftcardState(applyCoupon_data.apply_coupon.request_status);
+      setApplyGiftcardAmount(applyCoupon_data.apply_coupon.object.balance);
+      // const bucket_info = {
+      //   user_token: finalUserToken,
+      //   user_local_bucket_id: uniqueBucketId,
+      //   user_email: finalUserEmail
+      // };
+      // dispatch(fetchBucket(bucket_info));
+    } else if (
+      applyCoupon_data &&
+      applyCoupon_data.apply_coupon &&
+      applyCoupon_data.apply_coupon.request_status === false &&
+      applyCoupon_data.apply_coupon.object.error
+    ) {
+      setApplyCouponAmount(0);
+      setCouponErrorModal(true);
+      setCouponError(applyCoupon_data.apply_coupon.object.error);
+    }
+  }, [applyCoupon_data, dispatch, finalUserEmail, finalUserToken, uniqueBucketId]);
+  //when fetch applyCoupon api after that data add into constant,hook End
+
   //when fetch removeCoupon api after that data add into constant,hook start
   useMemo(() => {
     if (
@@ -670,13 +615,7 @@ function Checkout(props) {
           postal_code: undefined,
           state: undefined,
           final_user_checkout_email: finalUserEmail,
-          process_centeralized_payment: process_centeralized_payment,
-          cardNumber : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardNumber : '',
-          expiryMonth : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardExpMonth : '',
-          expiryYear : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardExpYear : '',
-          cvv : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardCvv : '',
-          orderDate:localdate,
-          orderTime:localtime
+          process_centeralized_payment: process_centeralized_payment
         };
         dispatch(paymentCheckout(payment_checkout_info));
         setPayment_complete(false);
@@ -732,13 +671,7 @@ function Checkout(props) {
           postal_code: inputValues.postal_code,
           state: inputValues.state,
           final_user_checkout_email: finalUserEmail,
-          process_centeralized_payment: process_centeralized_payment,
-          cardNumber : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardNumber : '',
-          expiryMonth : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardExpMonth : '',
-          expiryYear : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardExpYear : '',
-          cvv : configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet" ? inputValues.cardCvv : '',
-          orderDate:localdate,
-          orderTime:localtime
+          process_centeralized_payment: process_centeralized_payment
         };
         dispatch(paymentCheckout(payment_checkout_info));
         setPayment_complete(false);
@@ -755,15 +688,8 @@ function Checkout(props) {
       paymentCheckout_data.payment_checkout.request_status === true
     ) {
       setOrder_info(paymentCheckout_data.payment_checkout);
-      localStorage.clear();
       setOrder_loader(false);
       setCart_empty_click(true);
-      if(currentmerchantId != null) {
-        localStorage.removeItem(`localdate-${currentmerchantId}`);
-        localStorage.removeItem(`localtime-${currentmerchantId}`);
-
-      }
-
     } else if (
       paymentCheckout_data &&
       paymentCheckout_data.payment_checkout &&
@@ -941,35 +867,14 @@ function Checkout(props) {
 
   //handlerRemoveCoupon function start
   const handlerRemoveCoupon = () => {
-
-    if(bucketDciResponseData.Detailed_cart && bucketDciResponseData.Detailed_cart.applied_coupons && Object.keys(
-      bucketDciResponseData.Detailed_cart.applied_coupons
-    ).length > 0) {
-
-      setApplyCouponAmount(0);
-      const remove_coupon_info = {
-        final_user_checkout_token: finalUserToken,
-        final_user_checkout_email: finalUserEmail,
-        Unique_bucket_Id: uniqueBucketId,
-        apply_coupoon: Object.keys(bucketDciResponseData.Detailed_cart.applied_coupons)[0]
-      };
-      dispatch(removeCoupon(remove_coupon_info));
-
-    }
-    else {
-
-      setApplyCouponAmount(0);
-      const remove_coupon_info = {
-        final_user_checkout_token: finalUserToken,
-        final_user_checkout_email: finalUserEmail,
-        Unique_bucket_Id: uniqueBucketId,
-        apply_coupoon: applyCoupoon
-      };
-      dispatch(removeCoupon(remove_coupon_info));
-
-    }
-
-
+    setApplyCouponAmount(0);
+    const remove_coupon_info = {
+      final_user_checkout_token: finalUserToken,
+      final_user_checkout_email: finalUserEmail,
+      Unique_bucket_Id: uniqueBucketId,
+      apply_coupoon: applyCoupoon
+    };
+    dispatch(removeCoupon(remove_coupon_info));
   };
   //handlerRemoveCoupon function End
 
@@ -983,18 +888,6 @@ function Checkout(props) {
     }
   };
   //handleFirstNameChange function End
-
-  const resetdates = e => {
-    if(currentmerchantId != null) {
-      localStorage.removeItem(`localdate-${currentmerchantId}`);
-      localStorage.removeItem(`localtime-${currentmerchantId}`);
-
-    }
-    setLocalDate(null);
-    setLocalTime(null);
-    setLocalDateFormatted(null);
-  };
-
 
   //handleLastNameChange function start
   const handleLastNameChange = event => {
@@ -1081,18 +974,7 @@ function Checkout(props) {
       } catch (error) {
         console.log(error);
       }
-    }
-
-    else if (
-      configResponseData.stripe_info &&
-      configResponseData.stripe_info.PAYMENT_GATEWAY == "authnet"
-    ) {
-      console.log("with Authnet");
-      setPayment_complete(true);
-      setPayment_token('authnettoken');
-    }
-
-    else if (props.stripe) {
+    } else if (props.stripe) {
       props.stripe.createToken().then(payload => {
         if (payload && payload.token && payload.token.id) {
           setPayment_complete(true);
@@ -1144,70 +1026,6 @@ function Checkout(props) {
   };
   //handleclosecoupon function End
 
-  const handleDateChange = date => {
-    console.log(`Option selected:`, date);
-    setStartDate(date);
-    setOrderaheadSelectedDate({ selectedDate: `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`});
-    const weekday = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
-    const selectedDay = weekday[date.getDay()];
-    console.log('selectedDayselectedDay',selectedDay);
-    const filteredSelectedDay = availableTimes.filter((item,i)=>item.name === selectedDay);
-    console.log('filteredSelectedDay',filteredSelectedDay);
-    const amTime = filteredSelectedDay && filteredSelectedDay.length > 0 ? filteredSelectedDay[0].startTime === '12am' ? '12:00am': filteredSelectedDay[0].startTime : null;
-    const morningTime = filteredSelectedDay && filteredSelectedDay.length > 0 ? amTime.replaceAll('am','') : '12:00';
-    const eveningTime = filteredSelectedDay && filteredSelectedDay.length > 0 ? filteredSelectedDay[0].endTime.replaceAll('pm','') : '24:00';
-    const finalOpeningTimeHours = filteredSelectedDay && filteredSelectedDay.length > 0 ? moment(filteredSelectedDay[0].startTime, ["h:mm a"]).format("HH") : '00';
-    const finalOpeningTimeMinutes = filteredSelectedDay && filteredSelectedDay.length > 0 ? moment(filteredSelectedDay[0].startTime, ["h:mm a"]).format("mm") : '00';
-    const finalClosingTimeHours = filteredSelectedDay && filteredSelectedDay.length > 0 ? moment(filteredSelectedDay[0].endTime, ["h:mm a"]).format("HH") : '23';
-    const finalClosingTimeMinutes = filteredSelectedDay && filteredSelectedDay.length > 0 ? moment(filteredSelectedDay[0].endTime, ["h:mm a"]).format("mm") : '59';
-
-
-    setCurrent_startTimeHours(finalOpeningTimeHours);
-    setCurrent_startTimeMinutes(finalOpeningTimeMinutes);
-    setCurrent_endTimeHours(finalClosingTimeHours);
-    setCurrent_endTimeMinutes(finalClosingTimeMinutes);
-  };
-
-  const handleTimeChange = date => {
-    console.log(`Option selected:`, date);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    console.log('orderaheadSelectedTime', minutes);
-    setStartTime(date);
-    setOrderaheadSelectedTime({ selectedTime: `${hours}:${minutes === 0 ? '00' : minutes}` });
-  };
-
-  const currentrestlocaltime =
-    configResponseData && configResponseData.url_info
-      ? `localtime-${configResponseData.url_info.MERCHANT_ID}`
-      : null;
-  const currentrestlocaldate =
-        configResponseData && configResponseData.url_info
-          ? `localdate-${configResponseData.url_info.MERCHANT_ID}`
-          : null;
-
-  const handleSaveDateChange = e => {
-    console.log(`Option selected:`, e);
-    // const saveddatetime = JSON.stringify([
-    //   {
-    //     selectedDate: orderaheadSelectedDate.selectedDate,
-    //     selectedTime: orderaheadSelectedTime.selectedTime
-    //   }
-    // ]);
-    window.localStorage.setItem(currentrestlocaldate, orderaheadSelectedDate.selectedDate ? orderaheadSelectedDate.selectedDate : null);
-
-    window.localStorage.setItem(currentrestlocaltime, JSON.stringify(orderaheadSelectedTime.selectedTime));
-    setLocalDate(orderaheadSelectedDate.selectedDate);
-    setLocalTime(orderaheadSelectedTime.selectedTime);
-    const monthName = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    const selectedMonth = monthName[new Date(orderaheadSelectedDate.selectedDate).getDate()-1];
-    setLocalDateFormatted(`${new Date(orderaheadSelectedDate.selectedDate).getMonth()+1} ${selectedMonth} ${new Date(orderaheadSelectedDate.selectedDate).getFullYear()}`);
-    setOrderaheadactive(false);
-  };
-
-
-
-
   // component function end
 
   // component constant start that contain small part of html
@@ -1215,7 +1033,8 @@ function Checkout(props) {
   //cart details constant start
   const cart_details =
     bucketDciResponseData.Detailed_cart_item &&
-    bucketDciResponseData.Detailed_cart_item.length > 0 ? (
+    bucketDciResponseData.Detailed_cart_item.length > 0 &&
+    configResponseData.is_shop_open == "true" ? (
       bucketDciResponseData.Detailed_cart_item.map((item, index) => {
         let totalprice = 0;
         totalprice = item.unit_price * item.qty;
@@ -1228,7 +1047,7 @@ function Checkout(props) {
                 {item.addons && item.addons.length > 0 ? (
                   <>
                     <button
-                      className="counter-minus hideitnow"
+                      className="counter-minus"
                       onClick={() =>
                         decrementwithAddon(
                           item.item_id,
@@ -1239,9 +1058,9 @@ function Checkout(props) {
                     >
                       -
                     </button>
-                    <span className="">x</span> {item.qty}
+                    {item.qty}
                     <button
-                      className="counter-plus hideitnow"
+                      className="counter-plus"
                       onClick={() =>
                         incrementwithAddon(
                           item.item_id,
@@ -1256,16 +1075,16 @@ function Checkout(props) {
                 ) : (
                   <>
                     <button
-                      className="counter-minus hideitnow"
+                      className="counter-minus"
                       onClick={() =>
                         decrementNew(item.item_id, item.qty, uniqueBucketId)
                       }
                     >
                       -
                     </button>
-                    x {item.qty}
+                    {item.qty}
                     <button
-                      className="counter-plus hideitnow"
+                      className="counter-plus"
                       onClick={() =>
                         incrementNew(item.item_id, item.qty, uniqueBucketId)
                       }
@@ -1287,8 +1106,7 @@ function Checkout(props) {
   //cart details constant End
 
   //delivery_content constant start
-  const delivery_content = bucketDciResponseData.Delivery_method &&
-  bucketDciResponseData.Delivery_method.length > 0 ?
+  const delivery_content = (
     <Form className="delivery-form">
       <Form.Label>Services Categories</Form.Label>
       <Form.Group controlId="formBasicPickup">
@@ -1338,75 +1156,9 @@ function Checkout(props) {
             }
           )
         : null}
-    </Form> : null;
-  //delivery_content constant End
-
-
-  const orderaheadconainer = (
-    <div className="container">
-    {configResponseData && configResponseData.url_info && configResponseData.url_info.ORDER_AHEAD_DAYS ?
-      <div className="order-ahead">
-        <h1 className="selecttimehead">Select Date and Time for your order</h1>
-
-
-
-        <Row className="orderaheadcol">
-
-          <Col md={6}>
-            <h5>Date</h5>
-
-          <DatePicker
-           selected={startDate}
-           //onChange={(date) => setStartDate(date)}
-           onChange={(date) => handleDateChange(date)}
-           includeDates={availableDates}
-           //showTimeSelect
-           dateFormat="dd/MM/yyyy"
-           className="form-control dates"
-         />
-
-          </Col>
-          <Col md={6}>
-            <h5>Time</h5>
-            {current_startTimeHours && current_startTimeHours != null ?
-            <DatePicker
-        selected={startTime}
-        onChange={(date) => handleTimeChange(date)}
-        showTimeSelect
-        showTimeSelectOnly
-        timeIntervals={15}
-        minTime={new Date(null, null, null, current_startTimeHours, current_startTimeMinutes)}
-        maxTime={new Date(null, null, null, current_endTimeHours, current_endTimeMinutes)}
-        dateFormat="h:mm aa"
-         className="form-control times"
-      />
-      :
-      <DatePicker
-          showTimeSelectOnly
-          timeIntervals={15}
-          disabled
-          placeholderText="Select a Date first"
-          dateFormat="h:mm aa"
-          className="form-control times"
-  />
-    }
-          </Col>
-          <Col md={12}>
-            <button
-              className="selectdatetime"
-              onClick={e => handleSaveDateChange(e)}
-            >
-              Submit
-            </button>
-          </Col>
-        </Row>
-
-
-      </div>
-        : null}
-    </div>
+    </Form>
   );
-
+  //delivery_content constant End
 
   //stripe_amount constant start
   const stripe_amount =
@@ -1423,8 +1175,7 @@ function Checkout(props) {
       {order_info &&
       Object.keys(order_info).length > 0 &&
       order_info.request_status == true ? (
-
-        <Redirect to={{ pathname: "/thankyou", order_info: order_info, merchant_id:currentmerchantId, localdate:localdate, localtime:localtime  }} />
+        <Redirect to={{ pathname: "/thankyou", order_info: order_info }} />
       ) : null}
       {props.location &&
       props.location.banner_info &&
@@ -1467,7 +1218,7 @@ function Checkout(props) {
 
                 <div className="row main-checkout-row">
                   {cart_details}
-                  <div className="row cart-below-form">{bucketDciResponseData && bucketDciResponseData.current_shipment_method && bucketDciResponseData.current_shipment_method != null ? delivery_content : null}</div>
+                  <div className="row cart-below-form">{delivery_content}</div>
                 </div>
                 <div className="row Apply-Coupon">
                   <div className="Apply-Coupon-field">
@@ -1508,7 +1259,6 @@ function Checkout(props) {
                                   )[0]
                                 }
                               </span>
-
                               <input
                                 type="hidden"
                                 name="ApplyCoupon"
@@ -1523,8 +1273,8 @@ function Checkout(props) {
                               />
                               <button
                                 type="button"
-                                class="btn btn-secondary remove-btun hideitnow"
-                                //onClick={() => handlerRemoveCoupon()}
+                                class="btn btn-secondary remove-btun"
+                                onClick={() => handlerRemoveCoupon()}
                               >
                                 Remove
                               </button>
@@ -1747,24 +1497,7 @@ function Checkout(props) {
                                </div> */}
 
                       <div className="address-form">
-                        <h2 className="inner blacktxt">Your Order Details</h2>
-                        {localdate != null ? (<h3 className="orderahead-txt">
-                          Your selected date for order is {" "}<br/>
-                          <span
-                            className="futuredateclick"
-                            //onClick={e => setOrderaheadactive(true)}
-                          >
-                          {localdate}
-                          </span> at{" "}
-                          <span
-                            className="futuredateclick"
-                            //onClick={e => setOrderaheadactive(true)}
-                          >
-                           {localtime && localtime}
-                          </span>
-
-                        </h3> ): orderaheadconainer}
-
+                        <h2 className="inner">Your Order Details</h2>
                         {(selected_address != null &&
                           selected_address == "Saved Address") ||
                         selected_address == "New Address" ? (
@@ -2022,7 +1755,7 @@ function Checkout(props) {
                               </Form.Group>
                             </Form>
 
-                            {configResponseData.stripe_info.ENABLE_ORDER_AHEAD === true || configResponseData.is_shop_open === "true" ||
+                            {configResponseData.is_shop_open === "true" ||
                             configResponseData.is_shop_open === "True" ? (
                               stripe_amount != 0 ? (
                                 inputValues.first_name != "" &&
@@ -2114,10 +1847,9 @@ function Checkout(props) {
                                         </span>
                                       ) : null}
 
-                                      {
-                                        configResponseData.stripe_info
-                                        .PAYMENT_GATEWAY == "hps" || configResponseData.stripe_info
-                                        .PAYMENT_GATEWAY == "authnet" ? (
+                                      {configResponseData.stripe_info &&
+                                      configResponseData.stripe_info
+                                        .PAYMENT_GATEWAY == "hps" ? (
                                         <>
                                           <Form
                                             id="standard"
@@ -2310,7 +2042,7 @@ function Checkout(props) {
                                   );
                                 })
                               : null}
-                            {configResponseData.stripe_info.ENABLE_ORDER_AHEAD === true || configResponseData.is_shop_open === "true" ||
+                            {configResponseData.is_shop_open === "true" ||
                             configResponseData.is_shop_open === "True" ? (
                               stripe_amount != 0 ? (
                                 <>
@@ -2412,7 +2144,17 @@ function Checkout(props) {
                           All payments is 256 bits encrypted.
                         </p>
                       </div>
-                    
+                      <div className="Help-box">
+                        <a href="/contact-us">
+                          <i className="fa fa-life-ring" aria-hidden="true"></i>
+                        </a>
+                        <a href="/contact-us">
+                          <h4>Need Help?</h4>
+                        </a>
+                        {
+                          // <p>+13034422500</p>
+                        }
+                      </div>
                     </div>
                     <div className="col-md-6"></div>
                   </div>

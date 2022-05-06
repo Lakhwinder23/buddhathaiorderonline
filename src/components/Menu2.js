@@ -159,7 +159,8 @@ const [one_addon_of_particular_addongroups,setOne_addon_of_particular_addongroup
       const menulist_info = {
         static_resource_endpoint:configResponseData.static_resource_endpoint,
         static_resource_categories_prefix:configResponseData.static_resource_categories_prefix,
-        static_resource_sufix:configResponseData.static_resource_sufix
+        static_resource_sufix:configResponseData.static_resource_sufix,
+        rest_merchant_id:configResponseData.url_info.MERCHANT_ID
       }
       dispatch(fetchRestaurantInformation(restaurant_info_data))
       dispatch(fetchMenuList(menulist_info))

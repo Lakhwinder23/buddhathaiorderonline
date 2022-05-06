@@ -7,6 +7,7 @@ import GiftCards from './GiftCards';
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import ThankYou from './components/ThankYou'
+import RestaurantProfile from './components/RestaurantProfile'
 import PrivacyPolicy from './components/privacypolicy'
 import TermsOfUse from './components/termsofuse'
 import {StripeProvider} from 'react-stripe-elements';

@@ -5,6 +5,7 @@ import { fetchRestaurantTiming } from '../Redux/RestaurantTiming/RestaurantTimin
 function Footer(props){
   // store data access start
 const restaurantTiming_data = useSelector(state =>state.RestaurantTiming)
+  const restaurantInformation_data = useSelector(state =>state.RestaurantInformation)
 // store data access End
   const dispatch = useDispatch()  // for accessing the redux function
 
@@ -36,24 +37,16 @@ const restaurantTiming_data = useSelector(state =>state.RestaurantTiming)
                   //<div className="footer-logo"><img src={config.logo_img_root} alt="" /></div>
                 }
                 <div className="schedule">
-                <h5>Restaurant Hours</h5>
-                {restaurantTimingInfo && restaurantTimingInfo.length > 0 ? restaurantTimingInfo.map((time,index) =>{
-              return(
-                  <div key={index}>
-                  <span className="time-ico"><img src="/img/time-icon.png" alt="" /></span>
-                <span className="time-text"><span className="Day">{time.openingDay + " - " + time.closingDay}</span></span><br/>
-                <span className="opening-hours">Opening Hours : {time.openingTime} - {time.closingTime}</span><br></br><br></br>
-                  </div>
-                )
-
-              }) :null}
+                <a className="navbar-brand navbar-brand2" href="/">
+                    <img src={restaurantInformation_data && restaurantInformation_data.restaurant_info && restaurantInformation_data.restaurant_info.object && restaurantInformation_data.restaurant_info.object.LOGO ? restaurantInformation_data.restaurant_info.object.LOGO : '/img/logo-loader.gif'} alt="logo" />
+                  </a>
                 </div>
                 </div>
                 <div className="col-md-4 mb-3 border-right">
                 <div className="footer-address">
                     <h5>Address</h5>
                     <span className="time-ico"><img src="/img/home-icon.png" alt="" /></span>
-                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_address},  {props.banner_info.address_city},CO {props.banner_info.name_point}  </>) : null}<br></br>
+                    <span className="time-text">{props && props.banner_info ? (<>{props.banner_info.address_address},  {props.banner_info.address_city},{props.banner_info.address_state} {props.banner_info.name_point}  </>) : null}<br></br>
                     {
                     //   <span className="time-ico"><img src="/img/phone-icon.png" alt="" /></span>
                     // <span className="time-text">{this.props && this.props.banner_info ? this.props.banner_info.MERCHANT_CONTACT : null}<br></br></span>
@@ -88,7 +81,7 @@ const restaurantTiming_data = useSelector(state =>state.RestaurantTiming)
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12 copyright-text">
-                            © 2020  |  <a href="/privacy-policy">Privacy Policy</a> |  <a href="/terms-of-use">Terms of Use</a>
+                            © 2022  |  <a href="/privacy-policy">Privacy Policy</a> |  <a href="/terms-of-use">Terms of Use</a>
                         </div>
                         <div className="col-md-6 footer-social">
                         {

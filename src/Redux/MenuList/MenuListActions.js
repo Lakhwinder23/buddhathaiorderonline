@@ -27,9 +27,10 @@ export const fetchMenuListFaliure = (error) =>{
 }
 
 export const fetchMenuList = (menulist_info) =>{
+  console.log('menulist_info1', menulist_info);
     return(dispatch) => {
       dispatch(fetchMenuListRequest(menulist_info))
-      const url =`${menulist_info.static_resource_endpoint}${menulist_info.static_resource_categories_prefix}${config.resid}${menulist_info.static_resource_sufix}`;
+      const url =`${menulist_info.static_resource_endpoint}${menulist_info.static_resource_categories_prefix}${menulist_info.rest_merchant_id}${menulist_info.static_resource_sufix}`;
       const request_option = {
       method: "GET",
       headers: {

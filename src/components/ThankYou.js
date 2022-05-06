@@ -1,12 +1,21 @@
-import React,{useEffect} from 'react'
+import React,{useEffect, useMemo} from 'react'
 import Header from "./Header";
 import Footer from "./Footer";
 import { useSelector,useDispatch } from 'react-redux';
 function ThankYou(props){
 
+  const config_data = useSelector(state =>state.Config)
+
   useEffect(() => {
   window.scrollTo(0, 0)
 }, [])
+
+useMemo(() => {
+  if (props.location && props.location.merchant_id) {
+    localStorage.removeItem(`localdate-${props.location.merchant_id}`);
+    localStorage.removeItem(`localtime-${props.location.merchant_id}`);
+  }
+}, [props.location.merchant_id]);
   //const paymentCheckout_data = useSelector(state =>state.PaymentCheckout)
   console.log("props.location",props.location.order_info)
   if(props.location.order_info === undefined){
@@ -14,7 +23,7 @@ function ThankYou(props){
   }
   return(
     <>
-                <Header />
+                <Header configInfo={config_data && config_data.config && config_data.config.object ? config_data.config.object : null } />
 
                 <div id="scrollmain" className="container" >
                   <div className="main1-wrapper">
@@ -44,8 +53,25 @@ function ThankYou(props){
                               <div className="order-detail">
                               <div className="ordernotes">
                               Notes : {props.location.order_info.object.order_detail.note ? props.location.order_info.object.order_detail.note : '--'}
-                              </div>
+                              <br/><br/></div>
                                 <h2 className="inner text-center">ORDER DETAIL</h2>
+
+                                {props && props.location && props.location.localdate != null ? (<h3 className="orderahead-txt">
+                                  Your selected date for order is {" "}<br/>
+                                  <span
+                                    className="futuredateclick"
+                                    //onClick={e => setOrderaheadactive(true)}
+                                  >
+                                  {props && props.location && props.location.localdate}
+                                  </span> at{" "}
+                                  <span
+                                    className="futuredateclick"
+                                    //onClick={e => setOrderaheadactive(true)}
+                                  >
+                                   {props && props.location && props.location.localtime && props.location.localtime}
+                                  </span>
+
+                                </h3> ): null}
                                 <div className="order-info">
                                 <div className="row">
                                   <div className="col-5">
@@ -53,7 +79,7 @@ function ThankYou(props){
                                   </div>
                                   <div className="col-7">
                                     <p><span className="font-weight-bold placed-at">Placed at: </span>
-                                    <span class="order-time">{props.location.order_info.object.order_detail.orderedDate ? props.location.order_info.object.order_detail.orderedDate :null}</span></p>
+                                    <span class="order-time">{props.location.order_info.object.order_detail.orderCreatedDate ? props.location.order_info.object.order_detail.orderCreatedDate :null}</span></p>
                                   </div>
                                 </div>
                                 {/*item start */}

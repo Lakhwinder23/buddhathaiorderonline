@@ -1,14 +1,12 @@
 import {
   APPLY_COUPON_REQUEST,
   APPLY_COUPON_SUCCESS,
-  APPLY_COUPON_FALIURE,
-  APPLY_GIFT_SUCCESS
+  APPLY_COUPON_FALIURE
 } from './ApplyCouponConstants'
 
 const intialstate = {
   apply_coupon_loading : false,
   apply_coupon : [],
-  apply_gift : [],
   apply_coupon_error : '',
   apply_coupon_success : false
 }
@@ -24,12 +22,6 @@ const ApplyCouponReducers = (state = intialstate,action) =>{
       apply_coupon_loading:false,
       apply_coupon_success:true,
       apply_coupon:action.payload
-    }
-    case APPLY_GIFT_SUCCESS : return{
-      ...state,
-      apply_coupon_loading:false,
-      apply_coupon_success:true,
-      apply_gift:action.payload
     }
     case APPLY_COUPON_FALIURE : return{
       ...state,

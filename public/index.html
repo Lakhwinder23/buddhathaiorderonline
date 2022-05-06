@@ -5,11 +5,11 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta property="og:title" content="Buddha Thai Cuisine" />
+    <meta property="og:title" content="Tandoori Grill" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://buddhathaiorderonline.com/" />
-<meta property="og:image" content="https://buddhathaiorderonline.com/img/buddhathai-logo-og.jpg" />
-<meta property="og:description" content="Buddha Thai Cuisine. 2719 Iris Ave, Boulder, 80304" />
+<meta property="og:url" content="https://tandooriorderonline.com" />
+<meta property="og:image" content="https://tandooriorderonline.com/img/tandoori-new-logo.png" />
+<meta property="og:description" content="Tandoori Grill" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -34,11 +34,13 @@
 
       <!-- Main StyleSheet -->
       <link rel="stylesheet" href="/style.css" />
+      <link rel="stylesheet" href="/style2.css" />
 
       <!-- Responsive CSS -->
       <link rel="stylesheet" href="/css/responsive.css" />
-    <title>Buddha Thai Cuisine</title>
+    <title>Tandoori Grill</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -70,9 +72,20 @@
       emailjs.init("user_QiafFoPvqno8AGpks7CTe");
    })();
 </script>
+<script>
+function myFunction() {
+  var checkBox = document.getElementById("myCheck");
+  var text = document.getElementById("form");
+  if (checkBox.checked == true){
+    text.style.display = "block";
+  } else {
+     text.style.display = "none";
+  }
+}
+</script>
 
+<script type="text/javascript" src="https://api2.heartlandportico.com/SecureSubmit.v1/token/2.1/securesubmit.js"></script>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbGLWqhmWGpFt8Ppc8WSDc8mDfyv2oI84&libraries=places"></script>
-
   </body>
 </html>

@@ -13,6 +13,7 @@ import { fetchRestaurantInformation, fetchOfferlists } from '../Redux/Restaurant
 import { fetchMenuList } from '../Redux/MenuList/MenuListActions';
 import { fetchBucketId } from '../Redux/BucketId/BucketIdActions';
 import { fetchOfferData } from '../Redux/BucketId/BucketIdActions';
+import { updateOrderAhead } from '../Redux/OrderAheadData/OrderAheadActions';
 import { addItems } from '../Redux/AddItems/AddItemsActions';
 import { updateShippingMethod } from '../Redux/UpdateShippingMethod/UpdateShippingMethodActions';
 import { updateItemQuantity } from '../Redux/UpdateItemQuantity/UpdateItemQuantityActions';
@@ -29,21 +30,17 @@ import setMinutes from "date-fns/setMinutes";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-function Menu(props){
+function OrderAheadData(props){
 
 //moment.tz.setDefault("America/Denver");
   // store data access start
 const bucket_data = useSelector(state =>state.Bucket)
-const bucket_data_Id = useSelector(state =>state.BucketId)
 const restaurantInformation_data = useSelector(state =>state.RestaurantInformation)
 const menuList_data = useSelector(state =>state.MenuList)
 const bucketId_data = useSelector(state =>state.BucketId)
 const item_data = useSelector(state =>state.AddItems)
 const updateShippingMethod_data = useSelector(state =>state.UpdateShippingMethod)
 const updateItemQuantity_data = useSelector(state =>state.UpdateItemQuantity)
-const orderAheadPropsData = useSelector(state =>state.OrderAhead)
-
-console.log('updateItemQuantity_data', updateItemQuantity_data)
 const tip_data = useSelector(state => state.AddTip)
 // store data access End
   const dispatch = useDispatch()  // for accessing the redux function
@@ -233,6 +230,7 @@ const [currentFreeSelected,setCurrentFreeSelected] = useState(0)
       const localtime = JSON.parse(localStorage.getItem(localtimeparam));
       setLocalTime(localtime);
       setLocalDate(localdate);
+      dispatch(updateOrderAhead(localdate,localtime))
       const monthName = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       const selectedMonth = monthName[new Date(localdate).getDate()];
       setLocalDateFormatted(`${new Date(localdate).getMonth()} ${selectedMonth} ${new Date(localdate).getFullYear()}`);
@@ -268,11 +266,6 @@ useMemo(() =>{
     })
   },[menuList_data && menuList_data.menulist && menuList_data.menulist.data && menuList_data.menulist.request_status === true])
 // add restaurant menu data into constant hook end
-
-useMemo(() =>{
-  setLocalDate(orderAheadPropsData.localdate);
-  setLocalTime(orderAheadPropsData.localtime);
-},[orderAheadPropsData && orderAheadPropsData.localdate && orderAheadPropsData.localtime && orderAheadPropsData.request_status === true])
 
 // get bucket id hook start
   useEffect(() =>{              // this hook execute once
@@ -357,22 +350,12 @@ useMemo(() => {
 
 // when bucket dci have error then respone add into constant hook start
   useMemo(() =>{
-    if(bucket_data && bucket_data.bucket &&  bucket_data.bucket.object && bucket_data.bucket.request_status === false && bucket_data.bucket.object.error === "Invalid Bucket" ){
+    if(bucket_data && bucket_data.bucket &&  bucket_data.bucket.object && bucket_data.bucket.request_status === false && bucket_data.bucket.object.error == "Invalid Bucket" ){
       setBucketInfo(bucket_data.bucket.object)
       setUniqueBucketId("")
       localStorage.removeItem("user_local_bucket_id");
     }
   },[bucket_data && bucket_data.bucket &&  bucket_data.bucket.object])
-// when bucket dci have error then respone add into constant hook end
-
-// when bucket dci have error then respone add into constant hook start
-  useMemo(() =>{
-    if(bucket_data_Id && bucket_data_Id.bucket_id &&  bucket_data_Id.bucket_id.object && bucket_data_Id.bucket_id.request_status === false && bucket_data_Id.bucket_id.object.error && bucket_data_Id.bucket_id.object.error === "Invalid Bucket" ){
-      setBucketInfo(bucket_data_Id.bucket_id.object)
-      setUniqueBucketId("")
-      localStorage.removeItem("user_local_bucket_id");
-    }
-  },[bucket_data_Id && bucket_data_Id.bucket_id && bucket_data_Id.bucket_id.object && bucket_data_Id.bucket_id.request_status === false])
 // when bucket dci have error then respone add into constant hook end
 
 // add bucketinfo data into constant hook start
@@ -386,8 +369,7 @@ useMemo(() => {
         Delivery_method:bucketInfo && bucketInfo.available_delivery_methods ? bucketInfo.available_delivery_methods : [],
         pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : [],
         offer_data:bucketInfo && bucketInfo.offer_name && bucketInfo.offer_name.length > 0 ? bucketInfo.offer_name : [],
-        free_available_item:bucketInfo && bucketInfo.offer_name && bucketInfo.offer_name.length > 0 ? true : false,
-        current_shipment_method:bucketInfo && bucketInfo.shippment_method ? bucketInfo.shippment_method : null
+        free_available_item:bucketInfo && bucketInfo.offer_name && bucketInfo.offer_name.length > 0 ? true : false
       })
       setLoadingData(null)
       setShow(false)
@@ -496,8 +478,7 @@ useMemo(() =>{
       Delivery_method:bucketInfo && bucketInfo.available_delivery_methods ? bucketInfo.available_delivery_methods : [],
       pickup_restaurant:bucketInfo && bucketInfo.available_pickup_methods ? bucketInfo.available_pickup_methods : [],
       offer_data:bucketInfo && bucketInfo.offer_name && bucketInfo.offer_name.length > 0 ? bucketInfo.offer_name : [],
-        free_available_item:bucketInfo && bucketInfo.offer_name && bucketInfo.offer_name.length > 0 ? true : false,
-        current_shipment_method:bucketInfo && bucketInfo.shippment_method ? bucketInfo.shippment_method : null
+        free_available_item:bucketInfo && bucketInfo.offer_name && bucketInfo.offer_name.length > 0 ? true : false
     })
     setLoadingData(false)
   },[bucketInfo && bucketInfo.request_status === true && final_addon_array.length > 0])
@@ -867,6 +848,7 @@ const handleSaveDateChange = e => {
   window.localStorage.setItem(currentrestlocaltime, JSON.stringify(orderaheadSelectedTime.selectedTime));
   setLocalDate(orderaheadSelectedDate.selectedDate);
   setLocalTime(orderaheadSelectedTime.selectedTime);
+  dispatch(updateOrderAhead(orderaheadSelectedDate.selectedDate,orderaheadSelectedTime.selectedTime))
   const monthName = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   const selectedMonth = monthName[new Date(orderaheadSelectedDate.selectedDate).getDate()-1];
   setLocalDateFormatted(`${new Date(orderaheadSelectedDate.selectedDate).getMonth()+1} ${selectedMonth} ${new Date(orderaheadSelectedDate.selectedDate).getFullYear()}`);
@@ -887,6 +869,7 @@ const resetdates = e => {
   setLocalTime(null);
   setLocalDateFormatted(null);
   setOrderaheadactive(false);
+  dispatch(updateOrderAhead(null,null))
 };
 
 
@@ -1295,8 +1278,6 @@ const orderaheadconainer = (
               <div className="row">
                 {product.map((item, index) => {
 
-
-
                   const Add_Button =
                 singleRestaurantResponseData.maintenance_mode == "false" || singleRestaurantResponseData.maintenance_mode === undefined ?
                 (configResponseData.is_shop_open == "false" || configResponseData.is_shop_open === undefined) && localdate === null && localtime === null ? (
@@ -1589,7 +1570,7 @@ const orderaheadconainer = (
                               <code>
                                 <input
                                   type="radio"
-                                  name={`addon-${addongroup.name}`}
+                                  name="addon"
                                   value={addon.addOnId}
                                   onChange={(e) =>radiohandlechange(e)}
                                 />{" "}
@@ -1654,7 +1635,7 @@ const orderaheadconainer = (
 
   const delivery_content = (
     <Form className="delivery-form">
-
+      <Form.Label>Delivery</Form.Label>
       <Form.Group controlId="formBasicPickup">
         <Form.Check
           type="radio"
@@ -1663,7 +1644,6 @@ const orderaheadconainer = (
           id="Pickup at Restaurant"
           value={bucketDciResponseData.pickup_restaurant}
           onClick={event => deliveryhandler(event)}
-          defaultChecked={bucketDciResponseData.current_shipment_method === bucketDciResponseData.pickup_restaurant ? true : false}
           //onChange={(evt) => this.changeTitle(evt)}
         />
         <Form.Text className="text-muted cart-text">$0</Form.Text>
@@ -1679,7 +1659,6 @@ const orderaheadconainer = (
                   id={delivery.name}
                   value={delivery.id}
                   onClick={event =>deliveryhandler(event)}
-                  defaultChecked={bucketDciResponseData.current_shipment_method === delivery.id ? true : false}
                   //onChange={(evt) => this.changeTitle(evt)}
                 />
                 <Form.Text className="text-muted cart-text">
@@ -2005,446 +1984,54 @@ const orderaheadconainer = (
   </div>);
 
 
-    console.log('availableDates',availableDates);
 
-  return(
-    <>
-    <div className="main1">
-    <div id="Restaurents_details">
-      {configResponseData &&
-      configResponseData.url_info &&
-      configResponseData.url_info.ENABLE_ORDER_AHEAD == true &&
-      orderaheadactive == false ? (
-      <div className="container">
 
-          {menuListResponseData.restaurantsdata && menuListResponseData.restaurantsdata.length > 0 ? (
-            <div className="row">
-              <div className="col-lg-3 col-md-4">
-                <div className={`main-link sticky-top ${activeClass}`}>
-                  <ul>
-                    {/* <li className="active-item"><a href="#">Pizzas</a></li> */}
-                    {category}
-                  </ul>
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-4">
-                <div className="main-contant">{menuList}</div>
-                {bucketDciResponseData.Detailed_cart
-                && bucketDciResponseData.Detailed_cart.total_amount ? (<>
-                  <div className="cart-mobile-view-button text-center">
-                  <Link
-                    to={{
-                      pathname: "/cart",
-                      // cartinfodata: this.state
-                      //   .restaurantDataHeaderinfo,
-                        cart_cart_above_data: singleRestaurantResponseData.banner_info,
-                    //  business_data : this.state.business_data.business.FEES,
-                      cartdetails_item: bucketDciResponseData.Detailed_cart_item,
-                      cartdetails: bucketDciResponseData.Detailed_cart,
-                      cartdetails_checkout_method: bucketDciResponseData.Detailed_cart_checkout_method,
-                      cart_Delivery_method: bucketDciResponseData
-                        .Delivery_method,
-                      cart_pickup_restaurant: bucketDciResponseData
-                        .pickup_restaurant,
-                        bucket_id: uniqueBucketId,
-                        cart_business_data:singleRestaurantResponseData.business_data,
-                        cart_Delivery_cost: delivery_cost
-                    }}
-                  >
-                    View cart
-                  </Link>
-                  </div>
-                   </>) : null}
-              </div>
-              <div className="col-lg-3 col-md-4">
-                {bucketDciResponseData.Detailed_cart
-               ? singleRestaurantResponseData.maintenance_mode === "false" || singleRestaurantResponseData.maintenance_mode === undefined ? (
-                  <>
-                  <div className="row sticky-top cartside">
-                    <div className="col-lg-12 col-xl-12">
-                      <h2 className="headings">Cart</h2>
-                    </div>
-                    <div className="col-lg-12 col-xl-12">
-                      {bucketDciResponseData.Detailed_cart
-                        .total_amount &&
-                      singleRestaurantResponseData.business_data ? (
-                        <div className="cart_details">
-                          <div className="cart-mobile-view-button text-center">
-                            <Link
-                              to={{
-                                pathname: `/cart`,
-                                // cartinfodata: this.state
-                                //   .restaurantDataHeaderinfo,
-                                cart_cart_above_data:
-                                  singleRestaurantResponseData.banner_info,
-                                //  business_data : this.state.business_data.business.FEES,
-                                cartdetails_item:
-                                  bucketDciResponseData.Detailed_cart_item,
-                                cartdetails:
-                                  bucketDciResponseData.Detailed_cart,
-                                cartdetails_checkout_method:
-                                  bucketDciResponseData.Detailed_cart_checkout_method,
-                                cart_Delivery_method:
-                                  bucketDciResponseData.Delivery_method,
-                                cart_pickup_restaurant:
-                                  bucketDciResponseData.pickup_restaurant,
-                                bucket_id: uniqueBucketId,
-                                cart_business_data:
-                                  singleRestaurantResponseData.business_data,
-                                cart_Delivery_cost: delivery_cost
-                              }}
-                            >
-                              View cart
-                            </Link>
-                          </div>
-                          <div className="corn">{cart}</div>
-                          <div className="cart_listing">
-                            <ul>
-                              <li>
-                                <span className="left_side">
-                                  Subtotal
-                                </span>
-                                <span className="right_side">
-                                  $
-                                  {Number(
-                                    bucketDciResponseData.Detailed_cart &&
-                                      bucketDciResponseData
-                                        .Detailed_cart.sub_total,
-                                    2
-                                  ).toFixed(2)}
-                                </span>
-                              </li>
-                              {bucketDciResponseData.Detailed_cart &&
-                              bucketDciResponseData.Detailed_cart.taxes
-                                ? bucketDciResponseData.Detailed_cart &&
-                                  bucketDciResponseData.Detailed_cart.taxes.map(
-                                    (taxes_name, index) => (
-                                      <li>
-                                        <span className="left_side">
-                                          {taxes_name.name}
-                                        </span>
-                                        <span className="right_side">
-                                          $
-                                          {Number(
-                                            taxes_name.amount,
-                                            2
-                                          ).toFixed(2)}{" "}
-                                        </span>
-                                      </li>
-                                    )
-                                  )
-                                : null}
-
-                              <li className="add_tips">
-                                <span className="left_side">Tip</span>
-                                <span className="right_side">
-                                  <select
-                                    onChange={e => tiphandlerchange(e)}
-                                    className="form-control"
-                                    id="tip-select"
-                                  >
-                                    {bucketDciResponseData.cart_item_tip &&
-                                    bucketDciResponseData.cart_item_tip
-                                      .length > 0 ? (
-                                      tip_rate_fees.map(
-                                        (item, index) => {
-                                          const fee_id =
-                                            bucketDciResponseData
-                                              .cart_item_tip[0].fee_id;
-                                          const fee_rate =
-                                            bucketDciResponseData
-                                              .cart_item_tip[0].rate;
-                                          const selected =
-                                            fee_rate === item
-                                              ? "selected"
-                                              : null;
-                                          return (
-                                            <option
-                                              value={item}
-                                              key={index}
-                                              selected={selected}
-                                            >
-                                              {item}%
-                                            </option>
-                                          );
-                                        }
-                                      )
-                                    ) : (
-                                      <option value="0">0%</option>
-                                    )}
-                                  </select>
-                                </span>
-                              </li>
-                              <li>
-                                <span className="left_side">
-                                  Tip Amount
-                                </span>
-                                <span className="right_side">
-                                  $
-                                  {bucketDciResponseData
-                                    .cart_item_tip[0]
-                                    ? bucketDciResponseData
-                                        .cart_item_tip[0].amount
-                                    : "0"}
-                                </span>
-                              </li>
-                              {bucketDciResponseData.Detailed_cart &&
-                              bucketDciResponseData.Detailed_cart
-                                .additional_fees
-                                ? bucketDciResponseData.Detailed_cart.additional_fees.map(
-                                    (additional_fee_name, index) => (
-                                      <li>
-                                        <span className="left_side">
-                                          {additional_fee_name.name}
-                                        </span>
-                                        <span className="right_side">
-                                          $
-                                          {Number(
-                                            additional_fee_name.amount,
-                                            2
-                                          ).toFixed(2)}
-                                        </span>
-                                      </li>
-                                    )
-                                  )
-                                : null}
-                              <li>
-                                <span className="left_side">
-                                  Delivery Fees
-                                </span>
-                                <span className="right_side">
-                                  {" "}
-                                  $
-                                  {delivery_cost == 0
-                                    ? "0"
-                                    : delivery_cost}
-                                </span>
-                              </li>
-                              <li>
-                                <span className="left_side">Total</span>
-                                <span className="right_side">
-                                  $
-                                  {bucketDciResponseData.Detailed_cart
-                                    ? Number(
-                                        bucketDciResponseData
-                                          .Detailed_cart.total_amount,
-                                        2
-                                      ).toFixed(2)
-                                    : 0}
-                                </span>
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="cart_checkout">
-                            <h4>Services Categories</h4>
-                            <ul>{delivery_content}</ul>
-                            <button className="checkout_btn">
-                              {console.log(
-                                "delivery_info",
-                                delivery_info
-                              )}
-                              {bucketDciResponseData && bucketDciResponseData.current_shipment_method != null ? (
-                                <>
-                                  <div className="checkout text-center">
-                                    <Link
-                                      to={{
-                                        pathname: "/checkout",
-                                        bucketDciResponseData: bucketDciResponseData,
-                                        banner_info:
-                                          singleRestaurantResponseData.banner_info,
-                                        configInfo: configInfo,
-                                        merchantInfo: props && props.merchantInfo ? props.merchantInfo : null,
-                                        Delivery_cost: delivery_cost,
-                                        tip_rate_fees: tip_rate_fees,
-                                        currentShippingMethodName: currentShippingMethodName,
-                                        localdate:localdate,
-                                        localtime:localtime,
-                                        localdateformatted:localdateformatted,
-                                        merchantID:configResponseData && configResponseData.url_info.MERCHANT_ID ? configResponseData.url_info.MERCHANT_ID : null
-                                      }}
-                                    >
-                                      {!propsStateAddTip.add_tip_loading &&
-                                      propsStateShipping &&
-                                      !propsStateShipping.update_shipping_method_loading &&
-                                      !propsStateBucket.bucket_loading ? (
-                                        "Checkout"
-                                      ) : (
-                                        <span className="paymentload">
-                                          PROCESSING{" "}
-                                          <i class="fa fa-spinner fa-spin"></i>
-                                        </span>
-                                      )}
-                                    </Link>
-                                  </div>
-                                </>
-                              ) : (
-                                <div className="checkout text-center">
-                                  <button
-                                    onClick={() =>
-                                      deliverChooseHandle()
-                                    }
-                                    className="deliverymsg"
-                                  >
-                                    Checkout
-                                  </button>
-                                </div>
-                              )}
-                            </button>
-                          </div>
-                          <div className="freeitem-container">
-        {bucketDciResponseData.free_available_item ?  freeitemcontent : null}
-
-        </div>
-                        </div>
-                      ) : (
-                        <div className="Empty-cart dt-cart">
-                          <h4>Empty cart</h4>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-                ) : null : null}
-              </div>
-            </div>
-          ) : (
-            <div className="menuLoader hm">
-              <img src="/img/menu-item-loader.gif"/>
-                <img src="/img/menu-item-loader.gif"/>
-                  <img src="/img/menu-item-loader.gif"/>
-                    <img src="/img/menu-item-loader.gif"/>
-            </div>
-          )}
-        </div>
-      ) : (
-        orderaheadconainer
-      )}
-      </div>
+  return (
+    <div className="main2">
+    {configResponseData &&
+    configResponseData.url_info &&
+    configResponseData.url_info.ENABLE_ORDER_AHEAD == true &&
+    orderaheadactive == false ? (
+    <div className="container">
+    {localdate === null && localtime === null ? (
+      <h3 className="orderahead-txt">
+        We are open and accepting orders.For Future Order{" "}
+        <span
+          className="futuredateclick"
+          onClick={e => setOrderaheadactive(true)}
+        >
+          Click here
+        </span>{" "}
+      </h3>
+    ) : (
+      <h3 className="orderahead-txt">
+        Your selected date for order is {" "}
+        <span
+          className="futuredateclick"
+          //onClick={e => setOrderaheadactive(true)}
+        >
+        {localdate}
+        </span> at{" "}
+        <span
+          className="futuredateclick"
+          //onClick={e => setOrderaheadactive(true)}
+        >
+         {localtime}
+        </span>
+        <span
+          className="futuredateclick reset"
+          onClick={e => resetdates(e)}
+        >
+         Reset
+        </span>
+      </h3>
+    )}
     </div>
-    <Modal show={show} onHide={() =>handleClose()} id="modal1" data-backdrop="static" data-keyboard="false">
-          <Modal.Body>
-            {modal_content}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="success" className="total-butn">
-              TOTAL $
-              {total_price.toFixed(2)}
-            </Button>
-              {!propsStateAddItem.add_item_loading &&  !propsStateBucket.bucket_loading ? (<Button variant="secondary" className = "close-butn" onClick={() =>handleClose()}>
-             CLOSE
-            </Button>) : null}
-            {isRequired_addongroup.length > 0 ?
-              isRequired_addongroup_state == true ?
-              (
-              <Button
-                variant="success"
-                className="add-butn"
-                onClick={() =>{saveAddon()}}
-              >
-                {!propsStateAddItem.add_item_loading && !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
-              </Button>
-            ):(<Button
-              variant="success"
-              className="add-butn"
-              //onClick={this.saveAddon}
-            >
-              {!propsStateAddItem.add_item_loading && !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
-            </Button>) : (
-              <Button
-                variant="success"
-                className="add-butn"
-                onClick={() =>{saveAddon();}}
-              >
-                {!propsStateAddItem.add_item_loading && !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
-              </Button>
-            )}
-
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={showmodal2}
-          onHide={() =>handleClosemodal2()}
-          id="modal2"
-        >
-          <Modal.Body>
-
-              <Row className="show-grid">
-                <Col md={12}>
-                  <h4>Repeat last used customization?</h4>
-                </Col>
-              </Row>
-
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              className="Ichosse"
-              value={current_product_id}
-              onClick={e =>handleShow(e)}
-            >
-              I'LL CHOOSE
-            </Button>
-            {/* {this.state.current_product_token != null ? ( */}
-            <Button
-              variant="success"
-              className="repeat-last"
-              onClick={() =>repeat_last(
-                current_modal_cart_item_id,
-                current_modal_qty
-              )}
-            >
-              REPEAT LAST
-            </Button>
-            {/* ) : null} */}
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={showmodaldelivery} id="modal3" size="sm">
-          <Modal.Body>Please select a delivery method.</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() =>handleclosedelivery()}>
-              ok
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={cookingShow} id="modal3" >
-        <Modal.Body>{cooking_instruction_modal_content}</Modal.Body>
-        <Modal.Footer>
-        <Button variant="secondary" className = "close-butn" onClick={() =>handleCookingClose()}>
-          CLOSE
-        </Button>
-        <Button
-          variant="success"
-          className="add-butn"
-          value={withoutAddonProductId}
-          onClick={(e) =>handleSelect(e)}
-        >
-        {!propsStateAddItem.add_item_loading &&  !propsStateBucket.bucket_loading ? 'ADD ITEMS' : (<span className="paymentload">PROCESSING <i class="fa fa-spinner fa-spin"></i></span>)}
-        </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={freemodal} onHide={() =>handleclosefreemodal()} id="modal5">
-              <Modal.Body>
-                <Container><h3>Available Free Items</h3>
-                {freemenuList}
-                </Container>
-              </Modal.Body>
-              <Modal.Footer>
-
-                <Button
-                  variant="success"
-                  className="add-butn"
-                  onClick={() =>handleclosefreemodal()}
-                >
-                  Close
-                </Button>
-              </Modal.Footer>
-            </Modal>
-    </>
+  ) : (
+    orderaheadconainer
+  )}
+    </div>
   )
 }
 
-export default Menu
+export default OrderAheadData

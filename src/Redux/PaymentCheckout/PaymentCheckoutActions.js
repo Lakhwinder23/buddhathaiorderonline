@@ -52,9 +52,15 @@ export const paymentCheckout = (payment_checkout_info) =>{
               notes:payment_checkout_info.notes_restaurant,
               orderDate: "",
               orderTime: "",
-              paymentType: "stripe",
+              paymentType: payment_checkout_info.payment_token == "authnettoken" ? "authnet" : "stripe",
               postalCode: payment_checkout_info.postal_code != undefined ? payment_checkout_info.postal_code :"",
-              state: payment_checkout_info.state != undefined ? payment_checkout_info.state : ""
+              state: payment_checkout_info.state != undefined ? payment_checkout_info.state : "",
+              cardNumber : payment_checkout_info.cardNumber ? payment_checkout_info.cardNumber : '',
+              expiryMonth : payment_checkout_info.expiryMonth ? payment_checkout_info.expiryMonth : '',
+              expiryYear : payment_checkout_info.expiryYear ? payment_checkout_info.expiryYear : '',
+              cvv : payment_checkout_info.cvv ? payment_checkout_info.cvv : '',
+              orderDate:payment_checkout_info.orderDate ? payment_checkout_info.orderDate : '',
+              orderTime:payment_checkout_info.orderTime ? payment_checkout_info.orderTime : ''
             },
             form_id: "",
             user_id: payment_checkout_info.final_user_checkout_email,

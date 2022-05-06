@@ -6,7 +6,7 @@ import { fetchConfig } from './Redux/Config/ConfigActions';
 import Header from './components/Header'
 import BelowHeader from './components/BelowHeader'
 import BannerNew from './components/BannerNew'
-import Menu from './components/Menu'
+import Menu3 from './components/Menu3'
 import BookTable from './components/BookTable'
 import Footer from './components/Footer'
 
@@ -62,11 +62,25 @@ const banner_info_callbackFunction = (childdata) =>{
       //  <BelowHeader />
       }
       <BannerNew />
-      <Menu configInfo={configInfo}
+
+      {merchantInfo ?
+
+      <Menu3 configInfo={configInfo}
       merchantInfo={merchantInfo}
       detailed_cart_item_parentcallbackfunction = {detailed_cart_item_callbackFunction}
       banner_info_parentcallbackfunction = {banner_info_callbackFunction}
       />
+     :(<div className="row">
+     <div className="col-12">
+       <div className="menuLoader hm front">
+         <img src="/img/menu-item-loader.gif"/>
+         <img src="/img/menu-item-loader.gif"/>
+           <img src="/img/menu-item-loader.gif"/>
+             <img src="/img/menu-item-loader.gif"/>
+       </div>
+       </div>
+      </div>
+     )}
       {
         // <BookTable />
       }

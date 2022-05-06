@@ -17,7 +17,7 @@ import AddAddressReducers from './AddAddress/AddAddressReducers'
 import GetCountriesReducers from './GetCountries/GetCountriesReducers'
 import GetStatesReducers from './GetStates/GetStatesReducers'
 import GetAddressReducers from './GetAddress/GetAddressReducers'
-
+import OrderAheadReducers from './OrderAheadData/OrderAheadReducers'
 
 
 
@@ -39,7 +39,8 @@ const rootReducer = combineReducers({
        AddAddress:AddAddressReducers,
        GetCountries:GetCountriesReducers,
        GetStates:GetStatesReducers,
-       GetAddress:GetAddressReducers
+       GetAddress:GetAddressReducers,
+       OrderAhead:OrderAheadReducers
 })
 
 export default rootReducer

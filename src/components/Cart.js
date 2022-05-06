@@ -124,7 +124,8 @@ const [currentShippingMethodName,setCurrentShippingMethodName] = useState(null)
     if(configResponseData && configResponseData.url_info && Object.keys(configResponseData.url_info).length>0){
       const restaurant_info_data = {
         static_resource_endpoint:configResponseData.static_resource_endpoint,
-        static_resource_sufix:configResponseData.static_resource_sufix
+        static_resource_sufix:configResponseData.static_resource_sufix,
+        rest_merchant_id:configResponseData.url_info.MERCHANT_ID
       }
       dispatch(fetchRestaurantInformation(restaurant_info_data))
     }
@@ -415,7 +416,7 @@ useMemo(() =>{
         </div>
       );
 
-  const tip_rate_fees = configResponseData.tip_fees != '' ? configResponseData.tip_fees.split("|") : null;
+  const tip_rate_fees = configResponseData.tip_fees != '' && configResponseData.tip_fees != undefined ? configResponseData.tip_fees.split("|") : null;
 
   // delivery content start
   const delivery_content = (
