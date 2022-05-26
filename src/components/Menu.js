@@ -503,7 +503,18 @@ useMemo(() =>{
 // when updateItemQuantity api have error then  response data into constant hook start
 useMemo(() =>{
   if(updateItemQuantity_data && updateItemQuantity_data.update_item_qty && updateItemQuantity_data.update_item_qty.object && updateItemQuantity_data.update_item_qty.request_status === false && updateItemQuantity_data.update_item_qty.object.error == "Invalid Bucket"){
-    setUpdateItemQuantityInfo(updateItemQuantity_data.update_item_qty.object)
+    if(updateItemQuantity_data && updateItemQuantity_data.update_item_qty && updateItemQuantity_data.update_item_qty.object && updateItemQuantity_data.update_item_qty.request_status === false && updateItemQuantity_data.update_item_qty.object.error == "Invalid Bucket"){
+    setBucketDciResponseData({Detailed_cart:[],
+    Detailed_cart_item:[],
+    cart_item_tip:[],
+    Detailed_cart_checkout_method:[],
+    Delivery_method:[],
+    pickup_restaurant:[],
+    offer_data:[],
+    free_available_item:false
+  })
+  setLoadingData(null)
+  setUpdateItemQuantityInfo(updateItemQuantity_data.update_item_qty.object)
     setUniqueBucketId("")
     localStorage.removeItem("user_local_bucket_id");
 
