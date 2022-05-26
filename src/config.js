@@ -10,3 +10,4 @@ export const config = {
     facebook_link:'#',
     RestaurantName:"Buddha Thai Kitchen"
 };
+
